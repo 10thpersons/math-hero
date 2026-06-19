@@ -550,6 +550,42 @@
     font-style: italic;
     max-width: 100%;
   }
+  .login-entry-btn, .admin-entry-btn {
+    width: 100%;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 800;
+    padding: 12px 16px;
+    border-radius: 14px;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 6px;
+    transition: transform 0.1s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .login-entry-btn {
+    background: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 100%);
+    color: white;
+    box-shadow: 0 4px 0 #6d28d9;
+  }
+  .login-entry-btn:hover { transform: translateY(-1px); }
+  .login-entry-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #6d28d9; }
+  .admin-entry-btn {
+    background: linear-gradient(135deg, #6b7280 0%, #374151 100%);
+    color: white;
+    box-shadow: 0 4px 0 #111827;
+  }
+  .admin-entry-btn:hover { transform: translateY(-1px); }
+  .admin-entry-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #111827; }
+  .admin-entry-btn.pulse-once { animation: adminEntryPulse 1.2s ease-out 1; }
+  @keyframes adminEntryPulse {
+    0% { transform: scale(1); box-shadow: 0 4px 0 #111827; }
+    50% { transform: scale(1.06); box-shadow: 0 6px 0 #111827, 0 0 0 8px rgba(107,114,128,0.3); }
+    100% { transform: scale(1); box-shadow: 0 4px 0 #111827; }
+  }
   .start-btn {
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     color: white;
@@ -923,6 +959,309 @@
   }
   @keyframes toastIn { from { transform: translate(-50%, 30px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
 
+  /* ============================
+     LOGIN SCREEN (Phase 8)
+     ============================ */
+  .login-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .login-header h2 { font-size: 18px; margin: 0; text-align: center; flex: 1; }
+  .login-step {
+    background: linear-gradient(135deg, #fff5e0 0%, #ffe8d6 100%);
+    border-radius: 18px;
+    padding: 18px;
+    border: 3px solid #ffd9a8;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+  .login-hint {
+    font-size: 14px;
+    font-weight: 700;
+    color: #5a4226;
+    text-align: center;
+    margin: 0;
+    line-height: 1.4;
+  }
+  .login-hint small { font-weight: 600; opacity: 0.7; font-size: 11px; }
+  .login-name-input {
+    font-family: inherit;
+    font-size: 20px;
+    font-weight: 800;
+    padding: 14px 18px;
+    border-radius: 14px;
+    border: 3px solid #ffd9a8;
+    background: white;
+    color: #5a4226;
+    text-align: center;
+    width: 100%;
+    max-width: 280px;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+  .login-name-input:focus { border-color: #f59e0b; }
+  .login-name-input::placeholder { color: #c4a883; font-weight: 600; }
+  .login-name-actions {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    max-width: 280px;
+  }
+  .login-btn {
+    flex: 1;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 800;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    background: #f3f4f6;
+    color: #5a4226;
+    transition: transform 0.1s ease;
+  }
+  .login-btn:hover { transform: translateY(-1px); }
+  .login-btn:active { transform: translateY(1px); }
+  .login-btn.primary {
+    background: linear-gradient(135deg, #fcd34d 0%, #f59e0b 100%);
+    color: white;
+    box-shadow: 0 3px 0 #b45309;
+  }
+  .login-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    max-width: 320px;
+  }
+  .login-suggestion-chip {
+    background: white;
+    border: 2px solid #ffd9a8;
+    color: #5a4226;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .login-suggestion-chip:hover { background: #fff5e0; border-color: #f59e0b; }
+
+  /* PIN dots + keypad */
+  .pin-dots {
+    display: flex;
+    gap: 14px;
+    margin: 6px 0 4px;
+  }
+  .pin-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid #ffd9a8;
+    transition: all 0.15s ease;
+  }
+  .pin-dot.filled {
+    background: #f59e0b;
+    border-color: #b45309;
+    transform: scale(1.1);
+  }
+  .pin-dot.wrong {
+    background: #ef4444;
+    border-color: #991b1b;
+    animation: pinShake 0.4s ease;
+  }
+  @keyframes pinShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+  .pin-pad {
+    display: grid;
+    grid-template-columns: repeat(3, 64px);
+    grid-template-rows: repeat(4, 64px);
+    gap: 8px;
+    justify-content: center;
+  }
+  .pin-key {
+    background: white;
+    border: 3px solid #ffd9a8;
+    color: #5a4226;
+    font-family: inherit;
+    font-size: 22px;
+    font-weight: 800;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: transform 0.08s ease, background 0.1s ease;
+    box-shadow: 0 3px 0 #c4a883;
+  }
+  .pin-key:hover { background: #fff5e0; }
+  .pin-key:active { transform: translateY(2px); box-shadow: 0 1px 0 #c4a883; }
+  .pin-key-blank { visibility: hidden; cursor: default; }
+  .pin-key-blank:hover { background: white; }
+  .pin-key-del { background: #fef3c7; color: #b45309; }
+  .pin-key-del:hover { background: #fde68a; }
+  .login-pin-error {
+    font-size: 12px;
+    font-weight: 700;
+    color: #b91c1c;
+    text-align: center;
+    min-height: 16px;
+    margin: 0;
+  }
+
+  /* ============================
+     ADMIN SCREEN (Phase 8)
+     ============================ */
+  .admin-hero-picker {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .admin-profile-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .admin-profile-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, #fff5e0 0%, #ffe8d6 100%);
+    border: 3px solid #ffd9a8;
+    border-radius: 12px;
+    padding: 10px 12px;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+    transition: all 0.15s ease;
+  }
+  .admin-profile-row:hover { border-color: #f59e0b; transform: translateX(2px); }
+  .admin-profile-row.selected {
+    border-color: #f59e0b;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  }
+  .admin-profile-row .apr-art {
+    width: 44px; height: 44px;
+    flex-shrink: 0;
+  }
+  .admin-profile-row .apr-art svg { width: 100%; height: 100%; display: block; }
+  .admin-profile-row .apr-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .admin-profile-row .apr-name {
+    font-weight: 800;
+    font-size: 14px;
+    color: #5a4226;
+  }
+  .admin-profile-row .apr-meta {
+    font-size: 11px;
+    color: #8b6f47;
+    font-weight: 600;
+  }
+  .admin-profile-info {
+    background: linear-gradient(135deg, #fff5e0 0%, #ffe8d6 100%);
+    border: 3px solid #ffd9a8;
+    border-radius: 14px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #5a4226;
+    line-height: 1.6;
+  }
+  .admin-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: white;
+    border: 2px solid #f3f4f6;
+    border-radius: 12px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+  }
+  .admin-row.admin-danger {
+    border-color: #fecaca;
+    background: #fef2f2;
+  }
+  .admin-label {
+    font-size: 12px;
+    font-weight: 800;
+    color: #5a4226;
+  }
+  .admin-input-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .admin-num-input {
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 800;
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 2px solid #ffd9a8;
+    background: white;
+    color: #5a4226;
+    width: 80px;
+    text-align: center;
+    outline: none;
+  }
+  .admin-num-input:focus { border-color: #f59e0b; }
+  .admin-btn {
+    flex: 1;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    background: #f3f4f6;
+    color: #374151;
+    transition: transform 0.08s ease;
+  }
+  .admin-btn:hover { transform: translateY(-1px); }
+  .admin-btn:active { transform: translateY(1px); }
+  .admin-btn.primary {
+    background: linear-gradient(135deg, #fcd34d 0%, #f59e0b 100%);
+    color: white;
+  }
+  .admin-btn.warn {
+    background: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 100%);
+    color: white;
+  }
+  .admin-btn.danger {
+    background: linear-gradient(135deg, #f87171 0%, #dc2626 100%);
+    color: white;
+  }
+  .admin-status {
+    font-size: 12px;
+    font-weight: 700;
+    color: #5a4226;
+    text-align: center;
+    min-height: 18px;
+    margin: 8px 0 0;
+  }
+  .admin-status.success { color: #15803d; }
+  .admin-status.error { color: #b91c1c; }
+
+  /* Long-press hint visual on title bar */
+  .title.admin-pulsing {
+    animation: adminPulse 0.8s ease-in-out infinite;
+  }
+  @keyframes adminPulse {
+    0%, 100% { transform: scale(1); color: #5a4226; }
+    50% { transform: scale(1.04); color: #f59e0b; }
+  }
+
   /* Reset confirmation overlay (3-tap body card) */
   .reset-overlay {
     position: fixed;
@@ -1293,6 +1632,9 @@
     <h1 class="title">Math Hero</h1>
     <p class="subtitle">KSSR Quest — Belajar Sambil Main!</p>
 
+    <button class="login-entry-btn" id="login-entry-btn">👋 Log Masuk / Daftar</button>
+    <button class="admin-entry-btn" id="admin-entry-btn" style="display:none">🛡️ Admin Panel</button>
+
     <div>
       <p class="label" id="body-label">Pilih hero kamu:</p>
       <div class="body-grid" id="body-grid"></div>
@@ -1430,6 +1772,143 @@
       <span class="star">⭐</span>
       <span class="star">⭐</span>
       <span class="star">⭐</span>
+    </div>
+  </section>
+
+  <!-- LOGIN SCREEN (Phase 8) -->
+  <section id="screen-login" class="screen">
+    <div class="login-header">
+      <button class="editor-back" id="login-back-btn">← Kembali</button>
+      <h2 id="login-title">👋 Hai! Siapa nama kamu?</h2>
+      <div style="width:80px"></div>
+    </div>
+
+    <div id="login-name-step" class="login-step">
+      <p class="login-hint">Taip nama kamu (3-12 huruf):</p>
+      <input type="text" id="login-name-input" maxlength="12" placeholder="Nama kamu"
+        autocomplete="off" inputmode="text" class="login-name-input" />
+      <div class="login-name-actions">
+        <button class="login-btn primary" id="login-name-next-btn">Seterusnya →</button>
+      </div>
+    </div>
+
+    <div id="login-choose-step" class="login-step" style="display:none">
+      <p class="login-hint" id="login-choose-hint">Pilih hero kamu, <span id="login-choose-name">kawan</span>:</p>
+      <div class="body-grid" id="login-body-grid"></div>
+    </div>
+
+    <div id="login-pin-step" class="login-step" style="display:none">
+      <p class="login-hint">
+        <span id="login-pin-mode">Pilih 4 nombor rahsia kamu.</span><br>
+        <small>(Nombor ni untuk log masuk lain kali)</small>
+      </p>
+      <div class="pin-dots" id="pin-dots">
+        <span class="pin-dot"></span><span class="pin-dot"></span>
+        <span class="pin-dot"></span><span class="pin-dot"></span>
+      </div>
+      <div class="pin-pad" id="pin-pad">
+        <button class="pin-key" data-key="1">1</button>
+        <button class="pin-key" data-key="2">2</button>
+        <button class="pin-key" data-key="3">3</button>
+        <button class="pin-key" data-key="4">4</button>
+        <button class="pin-key" data-key="5">5</button>
+        <button class="pin-key" data-key="6">6</button>
+        <button class="pin-key" data-key="7">7</button>
+        <button class="pin-key" data-key="8">8</button>
+        <button class="pin-key" data-key="9">9</button>
+        <button class="pin-key pin-key-blank"></button>
+        <button class="pin-key" data-key="0">0</button>
+        <button class="pin-key pin-key-del" id="pin-del-btn">⌫</button>
+      </div>
+      <p class="login-pin-error" id="login-pin-error"></p>
+    </div>
+
+    <div id="login-existing-step" class="login-step" style="display:none">
+      <p class="login-hint">Jumpa profil kamu — taip nama:</p>
+      <input type="text" id="login-existing-input" maxlength="12" placeholder="Nama kamu"
+        autocomplete="off" inputmode="text" class="login-name-input" />
+      <div class="login-suggestions" id="login-existing-suggestions"></div>
+      <div class="login-name-actions">
+        <button class="login-btn" id="login-existing-back-btn">Batal</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ADMIN SCREEN (Phase 8) -->
+  <section id="screen-admin" class="screen">
+    <div class="login-header">
+      <button class="editor-back" id="admin-back-btn">← Kembali</button>
+      <h2>🛡️ Admin Panel</h2>
+      <div style="width:80px"></div>
+    </div>
+
+    <div id="admin-pin-step" class="login-step">
+      <p class="login-hint">Taip PIN admin:</p>
+      <div class="pin-dots" id="admin-pin-dots">
+        <span class="pin-dot"></span><span class="pin-dot"></span>
+        <span class="pin-dot"></span><span class="pin-dot"></span>
+      </div>
+      <div class="pin-pad" id="admin-pin-pad">
+        <button class="pin-key" data-key="1">1</button>
+        <button class="pin-key" data-key="2">2</button>
+        <button class="pin-key" data-key="3">3</button>
+        <button class="pin-key" data-key="4">4</button>
+        <button class="pin-key" data-key="5">5</button>
+        <button class="pin-key" data-key="6">6</button>
+        <button class="pin-key" data-key="7">7</button>
+        <button class="pin-key" data-key="8">8</button>
+        <button class="pin-key" data-key="9">9</button>
+        <button class="pin-key pin-key-blank"></button>
+        <button class="pin-key" data-key="0">0</button>
+        <button class="pin-key pin-key-del" id="admin-pin-del-btn">⌫</button>
+      </div>
+      <p class="login-pin-error" id="admin-pin-error"></p>
+    </div>
+
+    <div id="admin-panel" style="display:none">
+      <div class="admin-hero-picker" id="admin-hero-picker">
+        <p class="label">Pilih profil:</p>
+        <div class="admin-profile-list" id="admin-profile-list"></div>
+      </div>
+
+      <div id="admin-detail" style="display:none">
+        <div class="admin-profile-info" id="admin-profile-info"></div>
+
+        <div class="admin-row">
+          <label class="admin-label">🪙 Tambah syiling:</label>
+          <div class="admin-input-row">
+            <input type="number" id="admin-coins-input" value="50" min="1" class="admin-num-input" />
+            <button class="admin-btn primary" data-admin="add-coins">+ Tambah</button>
+            <button class="admin-btn warn" data-admin="set-coins">= Set</button>
+          </div>
+        </div>
+
+        <div class="admin-row">
+          <label class="admin-label">💎 Tambah permata:</label>
+          <div class="admin-input-row">
+            <input type="number" id="admin-gems-input" value="5" min="1" class="admin-num-input" />
+            <button class="admin-btn primary" data-admin="add-gems">+ Tambah</button>
+            <button class="admin-btn warn" data-admin="set-gems">= Set</button>
+          </div>
+        </div>
+
+        <div class="admin-row">
+          <label class="admin-label">📦 Beri semua barang:</label>
+          <button class="admin-btn primary" data-admin="grant-all-items">Beri Semua Item</button>
+        </div>
+
+        <div class="admin-row">
+          <label class="admin-label">🏆 Buka semua achievement:</label>
+          <button class="admin-btn primary" data-admin="unlock-achievements">Buka Semua</button>
+        </div>
+
+        <div class="admin-row admin-danger">
+          <label class="admin-label">⚠️ Reset profil ini:</label>
+          <button class="admin-btn danger" data-admin="reset-profile">Padam Profil</button>
+        </div>
+
+        <p class="admin-status" id="admin-status"></p>
+      </div>
     </div>
   </section>
 
@@ -1577,8 +2056,57 @@ const BODIES = HEROES;
    PROFILE MODULE — LocalStorage per body
    =========================== */
 const PROFILE_KEY = (bodyId) => `math-hero-profile-${bodyId}`;
+const PROFILE_INDEX_KEY = 'math-hero-profile-index'; // { name_lower: [bodyIds] }
+const ADMIN_PIN = '1234';
 
-function createProfile(bodyId) {
+// Simple PIN hash: NOT real security — kid-resistant not hacker-resistant.
+// Stores a salted SHA-256-ish fingerprint of the 4-digit PIN.
+async function hashPin(pin) {
+  const salt = 'math-hero-v2';
+  const data = new TextEncoder().encode(salt + ':' + pin);
+  const buf = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Profile name index — used to find existing profiles by name on this device
+function loadProfileIndex() {
+  try { return JSON.parse(localStorage.getItem(PROFILE_INDEX_KEY) || '{}'); }
+  catch (e) { return {}; }
+}
+function saveProfileIndex(idx) {
+  localStorage.setItem(PROFILE_INDEX_KEY, JSON.stringify(idx));
+}
+function indexAddProfile(name, bodyId) {
+  const idx = loadProfileIndex();
+  const key = name.trim().toLowerCase();
+  if (!idx[key]) idx[key] = [];
+  if (!idx[key].includes(bodyId)) idx[key].push(bodyId);
+  saveProfileIndex(idx);
+}
+function indexRemoveProfile(name, bodyId) {
+  const idx = loadProfileIndex();
+  const key = name.trim().toLowerCase();
+  if (idx[key]) {
+    idx[key] = idx[key].filter(b => b !== bodyId);
+    if (idx[key].length === 0) delete idx[key];
+    saveProfileIndex(idx);
+  }
+}
+function indexFindByName(name) {
+  const idx = loadProfileIndex();
+  const key = name.trim().toLowerCase();
+  const bodyIds = idx[key] || [];
+  return bodyIds.map(bid => loadProfile(bid)).filter(Boolean);
+}
+function indexSuggestNames(prefix) {
+  const idx = loadProfileIndex();
+  const p = (prefix || '').trim().toLowerCase();
+  return Object.keys(idx)
+    .filter(k => !p || k.includes(p))
+    .slice(0, 6);
+}
+
+function createProfile(bodyId, opts = {}) {
   const b = BODIES.find(x => x.id === bodyId);
   // Starter pack: 1 common item per slot so the editor has something to show
   const inventory = {};
@@ -1596,6 +2124,8 @@ function createProfile(bodyId) {
   return {
     body: bodyId,
     bodyName: b.name, bodyEmoji: b.emoji, bodyClass: b.cls, classIcon: b.icon, classColor: b.color,
+    name: opts.name || b.name,
+    pinHash: opts.pinHash || null,
     coins: 0, gems: 0,
     equipped,
     inventory,
@@ -1608,8 +2138,10 @@ function createProfile(bodyId) {
 }
 
 function saveProfile(p) {
-  try { localStorage.setItem(PROFILE_KEY(p.body), JSON.stringify(p)); }
-  catch (e) { console.warn('Profile save failed:', e); }
+  try {
+    localStorage.setItem(PROFILE_KEY(p.body), JSON.stringify(p));
+    if (p.name) indexAddProfile(p.name, p.body);
+  } catch (e) { console.warn('Profile save failed:', e); }
 }
 function loadProfile(bodyId) {
   try {
@@ -1618,7 +2150,24 @@ function loadProfile(bodyId) {
   } catch (e) { return null; }
 }
 function deleteProfile(bodyId) {
+  // Find the profile before removing so we can also clean the name index
+  const p = loadProfile(bodyId);
+  if (p && p.name) indexRemoveProfile(p.name, bodyId);
   localStorage.removeItem(PROFILE_KEY(bodyId));
+}
+function listAllProfiles() {
+  // Walk all localStorage keys for body profiles
+  const out = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k && k.startsWith('math-hero-profile-') && k !== PROFILE_INDEX_KEY) {
+      try {
+        const p = JSON.parse(localStorage.getItem(k));
+        if (p && p.body) out.push(p);
+      } catch (e) {}
+    }
+  }
+  return out;
 }
 
 /* ===========================
@@ -1844,7 +2393,486 @@ const screens = {
   shop: el('screen-shop'),
   game: el('screen-game'),
   end: el('screen-end'),
+  login: el('screen-login'),
+  admin: el('screen-admin'),
 };
+
+/* ===========================
+   LOGIN FLOW (Phase 8)
+   =========================== */
+// Login state machine
+const loginState = {
+  step: 'name',          // 'name' | 'choose' | 'pin-create' | 'pin-load'
+  name: '',
+  pendingBodyId: null,   // for create flow
+  pin: '',
+  // For pin-load: list of profile candidates matching the typed name
+  candidates: [],
+  candidateIndex: 0,     // which candidate we're trying PIN against
+};
+
+// Generic PIN pad setup. Returns object with current PIN string.
+function setupPinPad(padId, dotsId, onComplete, delBtnId, errorId) {
+  const pad = el(padId);
+  const dots = el(dotsId);
+  const errEl = errorId ? el(errorId) : null;
+  let pin = '';
+  function render() {
+    [...dots.children].forEach((d, i) => {
+      d.classList.toggle('filled', i < pin.length);
+      d.classList.remove('wrong');
+    });
+    if (errEl) errEl.textContent = '';
+  }
+  function press(k) {
+    Sound.click();
+    if (pin.length >= 4) return;
+    pin += k;
+    render();
+    if (pin.length === 4) {
+      onComplete(pin);
+    }
+  }
+  function del() {
+    Sound.click();
+    if (pin.length === 0) return;
+    pin = pin.slice(0, -1);
+    render();
+  }
+  function shakeError(msg) {
+    [...dots.children].forEach(d => {
+      d.classList.add('wrong');
+    });
+    if (errEl) errEl.textContent = msg || '';
+    setTimeout(() => {
+      [...dots.children].forEach(d => d.classList.remove('wrong'));
+      pin = '';
+      render();
+    }, 700);
+  }
+  function reset() {
+    pin = '';
+    render();
+  }
+  pad.querySelectorAll('.pin-key[data-key]').forEach(btn => {
+    btn.addEventListener('click', () => press(btn.dataset.key));
+  });
+  if (delBtnId) {
+    const delBtn = el(delBtnId);
+    if (delBtn) delBtn.addEventListener('click', del);
+  }
+  return { render, reset, shakeError, getPin: () => pin };
+}
+
+function showLoginStep(stepName) {
+  ['login-name-step', 'login-choose-step', 'login-pin-step', 'login-existing-step']
+    .forEach(id => { el(id).style.display = 'none'; });
+  if (stepName === 'name') el('login-name-step').style.display = '';
+  if (stepName === 'choose') el('login-choose-step').style.display = '';
+  if (stepName === 'pin') el('login-pin-step').style.display = '';
+  if (stepName === 'existing') el('login-existing-step').style.display = '';
+}
+
+function startLoginFlow() {
+  loginState.step = 'name';
+  loginState.name = '';
+  loginState.pendingBodyId = null;
+  loginState.pin = '';
+  loginState.candidates = [];
+  el('login-name-input').value = '';
+  showLoginStep('name');
+  setTimeout(() => el('login-name-input').focus(), 50);
+}
+
+// "Seterusnya" from name step
+el('login-name-next-btn').addEventListener('click', async () => {
+  const raw = el('login-name-input').value.trim();
+  if (raw.length < 3) {
+    showToast('Nama kena 3 huruf atau lebih ✏️');
+    return;
+  }
+  loginState.name = raw;
+  // Does this name already have profiles?
+  const existing = indexFindByName(raw);
+  if (existing.length > 0) {
+    loginState.candidates = existing;
+    loginState.candidateIndex = 0;
+    goToLoadPin();
+  } else {
+    goToChooseBody();
+  }
+});
+
+// Enter key in name input
+el('login-name-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') el('login-name-next-btn').click();
+});
+
+function goToChooseBody() {
+  loginState.step = 'choose';
+  el('login-choose-name').textContent = loginState.name;
+  const grid = el('login-body-grid');
+  grid.innerHTML = '';
+  BODIES.forEach(b => {
+    const btn = document.createElement('button');
+    btn.className = 'body-btn';
+    btn.dataset.body = b.id;
+    btn.innerHTML = `
+      <div class="body-art">${renderAvatar(b.id, {})}</div>
+      <span class="body-name">${b.name}</span>
+      <span class="body-class" style="color:${b.color}">${b.icon} ${b.cls}</span>`;
+    btn.addEventListener('click', () => {
+      Sound.click();
+      loginState.pendingBodyId = b.id;
+      goToCreatePin();
+    });
+    grid.appendChild(btn);
+  });
+  showLoginStep('choose');
+}
+
+async function goToCreatePin() {
+  loginState.step = 'pin-create';
+  el('login-pin-mode').textContent = `Pilih 4 nombor rahsia kamu, ${loginState.name}.`;
+  loginPad.reset();
+  showLoginStep('pin');
+}
+
+async function goToLoadPin() {
+  loginState.step = 'pin-load';
+  const p = loginState.candidates[loginState.candidateIndex];
+  el('login-pin-mode').textContent = `Taip 4 nombor rahsia kamu, ${p.name || p.bodyName}.`;
+  loginPad.reset();
+  showLoginStep('pin');
+}
+
+// User picked PIN (4 digits) — dispatch based on mode
+async function onLoginPinComplete(pin) {
+  if (loginState.step === 'pin-create') {
+    const pinHash = await hashPin(pin);
+    const bodyId = loginState.pendingBodyId;
+    const body = BODIES.find(b => b.id === bodyId);
+    const p = createProfile(bodyId, { name: loginState.name, pinHash });
+    // First-day bonus for new player (don't auto-deduct from existing flow)
+    checkDailyBonus(p);
+    saveProfile(p);
+    state.profile = p;
+    Sound.correct();
+    showToast(`Selamat datang, ${p.name}! 🌟`);
+    // Wire end-screen too so the welcome card shows
+    finishLogin(p);
+  } else if (loginState.step === 'pin-load') {
+    const target = loginState.candidates[loginState.candidateIndex];
+    const pinHash = await hashPin(pin);
+    if (target.pinHash === pinHash) {
+      // Success — load profile
+      checkDailyBonus(target);
+      saveProfile(target);
+      state.profile = target;
+      Sound.correct();
+      showToast(`Selamat kembali, ${target.name}! 🎉`);
+      finishLogin(target);
+    } else {
+      // Try next candidate (in case same name has multiple bodies)
+      loginState.candidateIndex++;
+      if (loginState.candidateIndex < loginState.candidates.length) {
+        const next = loginState.candidates[loginState.candidateIndex];
+        el('login-pin-mode').textContent = `Taip 4 nombor rahsia kamu, ${next.name || next.bodyName}.`;
+        loginPad.shakeError('Cuba lagi untuk profil seterusnya…');
+      } else {
+        loginPad.shakeError('Nombor salah. Cuba lagi.');
+      }
+    }
+  }
+}
+
+const loginPad = setupPinPad('pin-pad', 'pin-dots', onLoginPinComplete, 'pin-del-btn', 'login-pin-error');
+
+function finishLogin(p) {
+  // Re-render bodies so the new profile gets a coin count badge
+  renderBodies();
+  // Pop the welcome card on start screen
+  showWelcome(p);
+  // Switch back to start
+  showScreen('start');
+  state.grade = null;
+  state.subject = null;
+  state.subjectName = null;
+  document.querySelectorAll('.grade-btn').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('.subject-btn').forEach(b => b.classList.remove('selected'));
+  el('subject-section').style.display = 'none';
+  updateStartBtn();
+}
+
+el('login-back-btn').addEventListener('click', () => {
+  Sound.click();
+  if (loginState.step === 'choose' || loginState.step === 'pin-create') {
+    showLoginStep('name');
+    loginState.step = 'name';
+    setTimeout(() => el('login-name-input').focus(), 50);
+  } else if (loginState.step === 'pin-load') {
+    showLoginStep('name');
+    loginState.step = 'name';
+  } else {
+    showScreen('start');
+    renderBodies();
+  }
+});
+
+/* ===========================
+   ADMIN FLOW (Phase 8)
+   =========================== */
+const adminState = {
+  pin: '',
+  selectedBodyId: null,
+};
+
+// 5 quick taps on title = reveal admin entry button (sneaky for kids)
+let _titleTapHistory = [];
+// Use the actual title h1
+(function() {
+  const title = document.querySelector('h1.title');
+  if (!title) return;
+  title.addEventListener('click', () => {
+    const now = Date.now();
+    _titleTapHistory = _titleTapHistory.filter(t => now - t < 1500);
+    _titleTapHistory.push(now);
+    if (_titleTapHistory.length >= 5) {
+      _titleTapHistory = [];
+      title.classList.add('admin-pulsing');
+      showToast('Admin unlocked! 🛡️ Tekan butang di bawah.');
+      enableAdminButton();
+    } else if (_titleTapHistory.length >= 3) {
+      title.classList.add('admin-pulsing');
+      setTimeout(() => title.classList.remove('admin-pulsing'), 800);
+    }
+  });
+})();
+
+function enableAdminButton() {
+  const btn = el('admin-entry-btn');
+  if (btn) {
+    btn.style.display = '';
+    btn.classList.add('pulse-once');
+  }
+}
+
+function showAdminPinScreen() {
+  adminState.pin = '';
+  adminPad.reset();
+  el('admin-pin-step').style.display = '';
+  el('admin-panel').style.display = 'none';
+  el('admin-detail').style.display = 'none';
+  showScreen('admin');
+}
+
+async function onAdminPinComplete(pin) {
+  if (pin === ADMIN_PIN) {
+    adminPad.reset();
+    Sound.correct();
+    showAdminPanel();
+  } else {
+    adminPad.shakeError('PIN salah. Cuba lagi.');
+  }
+}
+
+const adminPad = setupPinPad('admin-pin-pad', 'admin-pin-dots', onAdminPinComplete, 'admin-pin-del-btn', 'admin-pin-error');
+
+function showAdminPanel() {
+  el('admin-pin-step').style.display = 'none';
+  el('admin-panel').style.display = '';
+  el('admin-detail').style.display = 'none';
+  adminState.selectedBodyId = null;
+  renderAdminProfileList();
+}
+
+function renderAdminProfileList() {
+  const list = el('admin-profile-list');
+  list.innerHTML = '';
+  const profiles = listAllProfiles();
+  if (profiles.length === 0) {
+    list.innerHTML = `<p style="text-align:center;color:#9ca3af;font-size:12px;padding:14px;">
+      Tiada profil lagi. Sila buat profil dari skrin utama dulu.
+    </p>`;
+    return;
+  }
+  // Sort: most recently created first
+  profiles.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+  profiles.forEach(p => {
+    const row = document.createElement('button');
+    row.className = 'admin-profile-row';
+    if (adminState.selectedBodyId === p.body) row.classList.add('selected');
+    row.innerHTML = `
+      <div class="apr-art">${renderAvatar(p.body, p.equipped || {})}</div>
+      <div class="apr-info">
+        <div class="apr-name">${p.name || p.bodyName}</div>
+        <div class="apr-meta">${p.bodyName} · ${p.coins} 🪙 · ${p.gems} 💎 · 🔥${p.loginStreakDays || 0}</div>
+      </div>
+    `;
+    row.addEventListener('click', () => {
+      Sound.click();
+      adminState.selectedBodyId = p.body;
+      renderAdminDetail(p);
+      // Re-mark selected
+      list.querySelectorAll('.admin-profile-row').forEach(r => r.classList.remove('selected'));
+      row.classList.add('selected');
+    });
+    list.appendChild(row);
+  });
+}
+
+function renderAdminDetail(p) {
+  el('admin-detail').style.display = '';
+  el('admin-profile-info').innerHTML = `
+    <div><b>${p.name || p.bodyName}</b> · ${p.bodyName} ${p.classIcon || ''}</div>
+    <div>📅 Dibuat: ${new Date(p.createdAt).toLocaleDateString('ms-MY')}</div>
+    <div>🎮 Main: ${p.totalGames || 0} · ✅ Betul: ${p.totalCorrect || 0} · 🏆 Sempurna: ${p.perfectScores || 0}</div>
+    <div>🔥 Streak terbaik: ${p.bestStreak || 0} · Hari berturut: ${p.loginStreakDays || 0}</div>
+    <div>🏅 Achievements: ${(p.achievements || []).length}/14</div>
+  `;
+  el('admin-coins-input').value = 50;
+  el('admin-gems-input').value = 5;
+  el('admin-status').textContent = '';
+  el('admin-status').className = 'admin-status';
+}
+
+function adminStatus(msg, type = '') {
+  const el2 = el('admin-status');
+  el2.textContent = msg;
+  el2.className = 'admin-status' + (type ? ' ' + type : '');
+}
+
+function getSelectedProfile() {
+  if (!adminState.selectedBodyId) return null;
+  return loadProfile(adminState.selectedBodyId);
+}
+
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-admin]');
+  if (!btn) return;
+  Sound.click();
+  const action = btn.dataset.admin;
+  const p = getSelectedProfile();
+  if (!p) {
+    adminStatus('Pilih profil dulu ✋', 'error');
+    return;
+  }
+  switch (action) {
+    case 'add-coins': {
+      const n = Math.max(0, parseInt(el('admin-coins-input').value, 10) || 0);
+      p.coins += n;
+      saveProfile(p);
+      adminStatus(`+${n} 🪙 ditambah. Sekarang ${p.coins} 🪙`, 'success');
+      renderAdminProfileList();
+      renderAdminDetail(p);
+      break;
+    }
+    case 'set-coins': {
+      const n = Math.max(0, parseInt(el('admin-coins-input').value, 10) || 0);
+      p.coins = n;
+      saveProfile(p);
+      adminStatus(`Syiling diset kepada ${n} 🪙`, 'success');
+      renderAdminProfileList();
+      renderAdminDetail(p);
+      break;
+    }
+    case 'add-gems': {
+      const n = Math.max(0, parseInt(el('admin-gems-input').value, 10) || 0);
+      p.gems += n;
+      saveProfile(p);
+      adminStatus(`+${n} 💎 ditambah. Sekarang ${p.gems} 💎`, 'success');
+      renderAdminProfileList();
+      renderAdminDetail(p);
+      break;
+    }
+    case 'set-gems': {
+      const n = Math.max(0, parseInt(el('admin-gems-input').value, 10) || 0);
+      p.gems = n;
+      saveProfile(p);
+      adminStatus(`Permata diset kepada ${n} 💎`, 'success');
+      renderAdminProfileList();
+      renderAdminDetail(p);
+      break;
+    }
+    case 'grant-all-items': {
+      if (window.ITEMS) {
+        let count = 0;
+        for (const slot of ITEMS.meta.slots) {
+          for (const it of (ITEMS[slot] || [])) {
+            if (!p.inventory[it.id]) {
+              p.inventory[it.id] = true;
+              count++;
+            }
+          }
+        }
+        saveProfile(p);
+        adminStatus(`+${count} barang ditambah ke inventori ✨`, 'success');
+      } else {
+        adminStatus('Item data belum dimuatkan ❌', 'error');
+      }
+      renderAdminDetail(p);
+      break;
+    }
+    case 'unlock-achievements': {
+      const all = ['first-correct','ten-correct','fifty-correct','hundred-correct','five-hundred-correct',
+        'first-game','ten-games','fifty-games',
+        'first-perfect','five-perfect',
+        'streak-10','streak-20',
+        'first-legendary','legendary-5',
+        'login-7','login-30'];
+      if (!Array.isArray(p.achievements)) p.achievements = [];
+      let count = 0;
+      for (const a of all) {
+        if (!p.achievements.includes(a)) {
+          p.achievements.push(a);
+          count++;
+        }
+      }
+      saveProfile(p);
+      adminStatus(`+${count} achievement dibuka 🏆`, 'success');
+      renderAdminDetail(p);
+      break;
+    }
+    case 'reset-profile': {
+      if (!confirm(`Padam profil "${p.name || p.bodyName}"? Semua duit, barang dan rekod akan hilang.`)) {
+        return;
+      }
+      deleteProfile(p.body);
+      adminStatus(`Profil ${p.name || p.bodyName} dipadam ❌`, 'success');
+      adminState.selectedBodyId = null;
+      el('admin-detail').style.display = 'none';
+      renderAdminProfileList();
+      renderBodies();
+      // If this was the active profile, clear it
+      if (state.profile && state.profile.body === p.body) {
+        state.profile = null;
+        el('welcome-card').style.display = 'none';
+        document.querySelectorAll('.body-btn').forEach(b => b.classList.remove('selected'));
+        el('body-label').textContent = 'Pilih hero kamu:';
+        updateStartBtn();
+      }
+      break;
+    }
+  }
+});
+
+el('admin-back-btn').addEventListener('click', () => {
+  Sound.click();
+  if (el('admin-pin-step').style.display !== 'none' && !adminState.selectedBodyId) {
+    showScreen('start');
+    renderBodies();
+  } else {
+    // Back to picker if detail shown
+    if (el('admin-detail').style.display !== 'none') {
+      el('admin-detail').style.display = 'none';
+      adminState.selectedBodyId = null;
+      renderAdminProfileList();
+    } else {
+      showScreen('start');
+      renderBodies();
+    }
+  }
+});
 
 /* ===========================
    START SCREEN — body picker + welcome card
@@ -1966,7 +2994,7 @@ function updateWelcomeCard() {
   const p = state.profile;
   if (!p) return;
   el('welcome-art').innerHTML = renderAvatar(p.body, p.equipped || {});
-  el('welcome-name').textContent = p.bodyName;
+  el('welcome-name').textContent = p.name || p.bodyName;
   el('welcome-class').innerHTML = `<span style="color:${p.classColor}">${p.classIcon}</span> ${p.bodyClass}`;
   el('welcome-coins').textContent = p.coins;
   el('welcome-gems').textContent = p.gems;
@@ -2324,6 +3352,19 @@ function updateStartBtn() {
 }
 
 el('start-btn').addEventListener('click', startGame);
+
+// Login entry button — start the kid-facing login flow
+el('login-entry-btn').addEventListener('click', () => {
+  Sound.click();
+  startLoginFlow();
+  showScreen('login');
+});
+
+// Admin entry button — only shown after title 5-tap reveal
+el('admin-entry-btn').addEventListener('click', () => {
+  Sound.click();
+  showAdminPinScreen();
+});
 
 // Sound toggle button
 (function initSoundToggle() {
