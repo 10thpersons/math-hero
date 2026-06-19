@@ -627,6 +627,50 @@
     .q-visual { font-size: 32px; letter-spacing: 2px; }
     .option { font-size: 16px; padding: 12px 8px; }
   }
+
+  /* ===== ITEM RARITY VISUALS ===== */
+  .rarity-common {
+    border: 2px solid #d4d4d8;
+  }
+  .rarity-rare {
+    border: 2px solid #60a5fa;
+    box-shadow: 0 0 12px rgba(96, 165, 250, 0.35);
+  }
+  .rarity-legendary {
+    border: 2px solid #fbbf24;
+    box-shadow: 0 0 18px rgba(251, 191, 36, 0.55), inset 0 0 8px rgba(251, 191, 36, 0.15);
+    animation: legendaryPulse 2.4s ease-in-out infinite;
+  }
+  @keyframes legendaryPulse {
+    0%, 100% { box-shadow: 0 0 18px rgba(251, 191, 36, 0.55), inset 0 0 8px rgba(251, 191, 36, 0.15); }
+    50%      { box-shadow: 0 0 28px rgba(251, 191, 36, 0.85), inset 0 0 12px rgba(251, 191, 36, 0.25); }
+  }
+  .rarity-tag {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 800;
+    padding: 1px 6px;
+    border-radius: 6px;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+  .rarity-tag.common { background: #e4e4e7; color: #52525b; }
+  .rarity-tag.rare { background: #dbeafe; color: #1d4ed8; }
+  .rarity-tag.legendary { background: linear-gradient(135deg, #fde68a 0%, #fbbf24 100%); color: #78350f; }
+
+  /* Item card preview */
+  .item-card { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 6px; border-radius: 14px; background: #fff; }
+  .item-card .item-svg { width: 72px; height: 72px; }
+  .item-card .item-name { font-size: 12px; font-weight: 700; line-height: 1.1; text-align: center; }
+  .item-card .item-price { font-size: 11px; font-weight: 700; color: #b45309; }
+
+  /* Debug HUD (top-right) */
+  .phase2-hud {
+    position: fixed; top: 6px; right: 6px;
+    background: rgba(0,0,0,0.7); color: #fff;
+    font-size: 10px; padding: 4px 8px; border-radius: 6px;
+    z-index: 9999; font-family: monospace;
+  }
 </style>
 </head>
 <body>
@@ -762,6 +806,8 @@
 </div>
 
 <div class="confetti-container" id="confetti"></div>
+
+<script src="data/items.js"></script>
 
 <script>
 /* ===========================
@@ -1363,6 +1409,39 @@ function fireConfetti() {
    =========================== */
 renderBodies();
 updateStartBtn();
+
+// Phase 2: validate items load + show debug HUD
+if (window.ITEMS) {
+  const counts = {};
+  let total = 0;
+  for (const slot of ITEMS.meta.slots) {
+    counts[slot] = (ITEMS[slot] || []).length;
+    total += counts[slot];
+  }
+  const rarity = { common: 0, rare: 0, legendary: 0 };
+  for (const slot of ITEMS.meta.slots) {
+    for (const item of (ITEMS[slot] || [])) {
+      rarity[item.rarity] = (rarity[item.rarity] || 0) + 1;
+    }
+  }
+  console.log('[Phase 2] Items loaded:', { total, counts, rarity });
+  const hud = document.createElement('div');
+  hud.className = 'phase2-hud';
+  hud.innerHTML = `Phase 2: ${total} items · ${rarity.common}C · ${rarity.rare}R · ${rarity.legendary}L`;
+  document.body.appendChild(hud);
+  // Verify each item has non-empty svg
+  let broken = 0;
+  for (const slot of ITEMS.meta.slots) {
+    for (const item of (ITEMS[slot] || [])) {
+      if (!item.svg || item.svg.length < 5) { console.warn('Empty svg:', item.id); broken++; }
+    }
+  }
+  if (broken > 0) console.warn(`[Phase 2] ${broken} items with empty SVG`);
+  // Expose for Phase 4 avatar editor
+  window.__itemsReady = true;
+} else {
+  console.error('[Phase 2] ITEMS not loaded!');
+}
 
 // Disable double-tap zoom on iOS
 let lastTouchEnd = 0;
