@@ -331,6 +331,32 @@
     font-family: 'Fredoka', sans-serif;
     font-size: 22px;
   }
+  .first-quiz-banner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 100%);
+    color: white;
+    padding: 18px 28px;
+    border-radius: 22px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 18px;
+    line-height: 1.4;
+    box-shadow: 0 10px 0 #7c3aed, 0 16px 40px rgba(124, 58, 237, 0.4);
+    z-index: 200;
+    animation: bounce 0.6s ease, fadeOut 0.5s ease 1.8s forwards;
+    max-width: 90vw;
+    border: 3px solid #ddd6fe;
+  }
+  .first-quiz-banner .first-quiz-sub {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0.9;
+    margin-top: 4px;
+  }
   @keyframes fadeOut {
     to { opacity: 0; transform: translateX(-50%) translateY(-20px); }
   }
@@ -345,6 +371,26 @@
   }
   .coin-float { color: #b45309; text-shadow: 0 2px 0 #fef3c7, 0 0 12px #fbbf24; }
   .gem-float { color: #7c3aed; text-shadow: 0 2px 0 #ddd6fe, 0 0 12px #a78bfa; font-size: 28px; }
+  .fly-coin, .fly-gem {
+    position: fixed;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 800;
+    pointer-events: none;
+    z-index: 200;
+    font-size: 26px;
+    text-shadow: 0 2px 0 rgba(0,0,0,0.2);
+    will-change: transform, left, top;
+  }
+  .fly-coin { color: #fbbf24; }
+  .fly-gem { color: #a78bfa; font-size: 30px; }
+  .hud-pop {
+    animation: hud-pop 0.5s ease;
+  }
+  @keyframes hud-pop {
+    0% { transform: scale(1); color: inherit; }
+    30% { transform: scale(1.5); color: #fbbf24; text-shadow: 0 0 12px #fbbf24; }
+    100% { transform: scale(1); color: inherit; }
+  }
   @keyframes float-up {
     0% { opacity: 0; transform: translateY(0) scale(0.5); }
     20% { opacity: 1; transform: translateY(-10px) scale(1.2); }
@@ -475,13 +521,39 @@
     box-shadow: inset 0 -2px 0 rgba(0,0,0,0.1);
   }
   .mascot {
-    font-size: 64px;
-    text-align: center;
+    width: 120px;
+    height: 120px;
+    margin: 6px auto 8px;
+    display: block;
     transition: transform 0.3s ease;
-    margin: 4px 0;
+    position: relative;
+    filter: drop-shadow(0 4px 8px rgba(124, 58, 237, 0.15));
   }
+  .mascot-art { width: 100%; height: 100%; display: block; }
+  .mascot-art svg { width: 100%; height: 100%; display: block; }
   .mascot.happy { animation: bounce 0.5s ease; }
   .mascot.sad { animation: shake 0.4s ease; }
+  .mascot.happy::after {
+    content: '✨';
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    font-size: 24px;
+    animation: sparkle-fade 0.8s ease forwards;
+  }
+  .mascot.sad::after {
+    content: '💨';
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    font-size: 22px;
+    animation: sparkle-fade 0.6s ease forwards;
+  }
+  @keyframes sparkle-fade {
+    0% { opacity: 0; transform: scale(0.4) rotate(-20deg); }
+    40% { opacity: 1; transform: scale(1.2) rotate(15deg); }
+    100% { opacity: 0; transform: scale(0.8) rotate(0deg) translateY(-12px); }
+  }
   @keyframes bounce {
     0%, 100% { transform: translateY(0) scale(1); }
     50% { transform: translateY(-15px) scale(1.1); }
@@ -867,16 +939,83 @@
     align-items: center;
     padding: 12px 0;
   }
-  .end-emoji { font-size: 80px; animation: bounce 1s ease infinite; }
+  .end-hero {
+    width: 140px;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: -4px;
+    filter: drop-shadow(0 4px 12px rgba(124, 58, 237, 0.2));
+    animation: hero-celebrate 1.2s ease infinite;
+  }
+  .end-hero svg { width: 100%; height: 100%; display: block; }
+  @keyframes hero-celebrate {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-8px) rotate(-3deg); }
+    50% { transform: translateY(-2px) rotate(0deg); }
+    75% { transform: translateY(-8px) rotate(3deg); }
+  }
+  .end-emoji { font-size: 60px; margin-top: -8px; }
   .end-grade {
     font-family: 'Fredoka', sans-serif;
-    font-size: 64px;
+    font-size: 56px;
     font-weight: 800;
     background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
     line-height: 1;
+  }
+  .end-earned-card {
+    background: linear-gradient(135deg, #fef9e7 0%, #fef3c7 100%);
+    border: 2px solid #fcd34d;
+    border-radius: 14px;
+    padding: 12px 14px;
+    width: 100%;
+    text-align: left;
+    box-shadow: 0 2px 0 #f59e0b;
+  }
+  .end-earned-title {
+    font-weight: 800;
+    font-size: 14px;
+    color: #92400e;
+    margin-bottom: 8px;
+    text-align: center;
+    letter-spacing: 0.3px;
+  }
+  .end-earned-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    font-size: 13px;
+  }
+  .end-earned-label {
+    color: #78350f;
+    font-weight: 600;
+  }
+  .end-earned-val {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: #b45309;
+  }
+  .end-earned-total {
+    border-top: 2px dashed #fcd34d;
+    margin-top: 6px;
+    padding-top: 8px;
+  }
+  .end-earned-total .end-earned-label {
+    font-weight: 800;
+    color: #78350f;
+  }
+  .end-earned-total .end-earned-val {
+    font-size: 16px;
+    color: #92400e;
+    background: #fef3c7;
+    padding: 2px 8px;
+    border-radius: 8px;
   }
   .end-stats {
     display: grid;
@@ -1114,7 +1253,7 @@
     </div>
     <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
 
-    <div class="mascot" id="mascot">🦊</div>
+    <div class="mascot" id="mascot"><div class="mascot-art" id="mascot-art"></div></div>
 
     <div class="question-box">
       <div class="q-num" id="q-num">Soalan 1 / 15</div>
@@ -1137,11 +1276,32 @@
   <!-- END SCREEN -->
   <section id="screen-end" class="screen">
     <div class="end-card">
+      <div class="end-hero" id="end-hero"></div>
       <div class="end-emoji" id="end-emoji">🏆</div>
       <div>
         <div class="end-grade" id="end-grade">A+</div>
       </div>
       <p class="end-msg" id="end-msg">Tahniah!</p>
+
+      <div class="end-earned-card" id="end-earned-card">
+        <div class="end-earned-title">🎁 Hadiah kamu!</div>
+        <div class="end-earned-row">
+          <span class="end-earned-label">Soalan betul</span>
+          <span class="end-earned-val" id="end-earned-coins">+0 🪙</span>
+        </div>
+        <div class="end-earned-row" id="end-earned-streak-row" style="display:none">
+          <span class="end-earned-label">Bonus streak</span>
+          <span class="end-earned-val" id="end-earned-streak">+0 🪙</span>
+        </div>
+        <div class="end-earned-row" id="end-earned-perfect-row" style="display:none">
+          <span class="end-earned-label">Bonus sempurna</span>
+          <span class="end-earned-val" id="end-earned-perfect">+0 🪙 +0 💎</span>
+        </div>
+        <div class="end-earned-row end-earned-total">
+          <span class="end-earned-label">Jumlah</span>
+          <span class="end-earned-val" id="end-earned-total">+0 🪙 +0 💎</span>
+        </div>
+      </div>
 
       <div class="end-stats">
         <div class="stat">
@@ -1272,7 +1432,7 @@ function createProfile(bodyId) {
     equipped,
     inventory,
     totalCorrect: 0, totalGames: 0, bestStreak: 0, perfectScores: 0,
-    lastPlayDate: null, loginStreakDays: 0,
+    lastPlayDate: null, loginStreakDays: 0, firstQuizToday: true,
     createdAt: new Date().toISOString(),
   };
 }
@@ -1308,6 +1468,8 @@ function checkDailyBonus(p) {
   const gems = streak >= 7 ? 1 : 0;
   p.coins += coins;
   p.gems += gems;
+  // Mark this as a fresh login — first quiz today grants 2× coins
+  p.firstQuizToday = true;
   saveProfile(p);
   return { isNewDay: true, coins, gems, streak };
 }
@@ -1327,12 +1489,61 @@ function showFloat(text, kind = 'coin', x = null, y = null) {
   setTimeout(() => el.remove(), 1500);
 }
 
+function flyToHud(text, kind, sourceEl, targetEl) {
+  // Create floating element at source position
+  const flyer = document.createElement('div');
+  flyer.className = kind === 'gem' ? 'fly-gem' : 'fly-coin';
+  flyer.textContent = text;
+  document.body.appendChild(flyer);
+
+  const sRect = sourceEl.getBoundingClientRect();
+  const tRect = targetEl.getBoundingClientRect();
+  const startX = sRect.left + sRect.width / 2;
+  const startY = sRect.top + sRect.height / 2;
+  const endX = tRect.left + tRect.width / 2;
+  const endY = tRect.top + tRect.height / 2;
+
+  // Position at source
+  flyer.style.left = `${startX}px`;
+  flyer.style.top = `${startY}px`;
+  flyer.style.transform = 'translate(-50%, -50%) scale(1)';
+
+  // Force layout
+  flyer.offsetHeight;
+
+  // Animate to target with arc
+  const dx = endX - startX;
+  const dy = endY - startY;
+  flyer.style.transition = 'all 0.8s cubic-bezier(0.42, 0, 0.58, 1)';
+  flyer.style.left = `${endX}px`;
+  flyer.style.top = `${endY}px`;
+  flyer.style.transform = 'translate(-50%, -50%) scale(0.4) rotate(360deg)';
+
+  // Pop the target HUD counter
+  setTimeout(() => {
+    targetEl.classList.remove('hud-pop');
+    void targetEl.offsetWidth; // restart animation
+    targetEl.classList.add('hud-pop');
+  }, 750);
+
+  setTimeout(() => flyer.remove(), 900);
+}
+
 function showDailyBonusBanner(bonus) {
   const b = document.createElement('div');
   b.className = 'daily-bonus-banner';
   b.innerHTML = `🎁 Hari ke-<span class="streak-num">${bonus.streak}</span>! +${bonus.coins} 🪙${bonus.gems ? ` +${bonus.gems} 💎` : ''}`;
   document.body.appendChild(b);
   setTimeout(() => b.remove(), 3300);
+  Sound.streak();
+}
+
+function showFirstQuizBanner() {
+  const b = document.createElement('div');
+  b.className = 'first-quiz-banner';
+  b.innerHTML = `🌟 <b>Quiz pertama hari ini!</b><br><span class="first-quiz-sub">2× duit syiling untuk setiap betul!</span>`;
+  document.body.appendChild(b);
+  setTimeout(() => b.remove(), 2400);
   Sound.streak();
 }
 
@@ -1383,6 +1594,8 @@ const state = {
   locked: false,
   coinsEarned: 0,
   gemsEarned: 0,
+  streakCoinsEarned: 0,
+  streakGemsEarned: 0,
 };
 
 /* ===========================
@@ -1456,6 +1669,16 @@ function updateWelcomeCard() {
   el('welcome-coins').textContent = p.coins;
   el('welcome-gems').textContent = p.gems;
   el('welcome-streak').textContent = p.loginStreakDays;
+}
+
+function renderMascot() {
+  const art = el('mascot-art');
+  if (!art) return;
+  if (state.profile) {
+    art.innerHTML = renderAvatar(state.profile.body, state.profile.equipped || {});
+  } else {
+    art.innerHTML = '';
+  }
 }
 
 el('change-hero-btn').addEventListener('click', () => {
@@ -1814,6 +2037,8 @@ async function startGame() {
     state.correct = 0;
     state.coinsEarned = 0;
     state.gemsEarned = 0;
+    state.streakCoinsEarned = 0;
+    state.streakGemsEarned = 0;
     showScreen('game');
     renderQuestion();
   } catch (e) {
@@ -1881,7 +2106,7 @@ function renderQuestion() {
   el('feedback').className = 'feedback';
   document.querySelectorAll('#stars-row .star').forEach(s => s.classList.remove('earned'));
   el('mascot').className = 'mascot';
-  el('mascot').textContent = state.profile ? state.profile.bodyEmoji : '🦊';
+  renderMascot();
 
   updateHud();
 }
@@ -1916,7 +2141,6 @@ function handleAnswer(btn, chosen) {
     state.lives -= 1;
     state.streak = 0;
     el('mascot').classList.add('sad');
-    el('mascot').textContent = '😢';
     el('feedback').textContent = `❌ Jawapan betul: ${q.answer}`;
     el('feedback').className = 'feedback wrong';
     Sound.wrong();
@@ -1925,16 +2149,31 @@ function handleAnswer(btn, chosen) {
     state.streak += 1;
     if (state.streak > state.bestStreak) state.bestStreak = state.streak;
     el('mascot').classList.add('happy');
-    el('mascot').textContent = '😄';
     Sound.correct();
 
     // Award coins for correct answer
     if (state.profile) {
-      state.profile.coins += 1;
+      const isFirstQuizToday = !!state.profile.firstQuizToday;
+      const coinMultiplier = isFirstQuizToday ? 2 : 1;
+      const earnedCoins = 1 * coinMultiplier;
+      state.profile.coins += earnedCoins;
       state.profile.totalCorrect += 1;
-      state.coinsEarned += 1;
+      state.coinsEarned += earnedCoins;
       saveProfile(state.profile);
-      showFloat('+1 🪙', 'coin');
+      // Fly coin from clicked button to HUD coin counter
+      const hudCoin = el('hud-coins');
+      const coinLabel = isFirstQuizToday ? `+${earnedCoins} 🪙 (×2)` : `+${earnedCoins} 🪙`;
+      if (hudCoin) {
+        flyToHud(coinLabel, 'coin', btn, hudCoin);
+      } else {
+        showFloat(coinLabel, 'coin');
+      }
+      // Show "First quiz today!" banner on first correct answer
+      if (isFirstQuizToday) {
+        state.profile.firstQuizToday = false;
+        saveProfile(state.profile);
+        setTimeout(() => showFirstQuizBanner(), 400);
+      }
     }
 
     let starsThisQ = 1;
@@ -1955,12 +2194,25 @@ function handleAnswer(btn, chosen) {
       const bonusGems = isTenth ? 1 : 0;
       state.profile.coins += bonusCoins;
       state.profile.gems += bonusGems;
-      state.coinsEarned += bonusCoins;
-      state.gemsEarned += bonusGems;
+      state.streakCoinsEarned += bonusCoins;
+      state.streakGemsEarned += bonusGems;
       saveProfile(state.profile);
       Sound.streak();
       showStreakBanner(state.streak, bonusCoins, bonusGems);
-      if (bonusGems > 0) showFloat(`+${bonusGems} 💎`, 'gem');
+      if (bonusGems > 0) {
+        const hudGem = el('hud-gems');
+        if (hudGem) {
+          flyToHud(`+${bonusGems} 💎`, 'gem', btn, hudGem);
+        } else {
+          showFloat(`+${bonusGems} 💎`, 'gem');
+        }
+      }
+      if (bonusCoins > 0) {
+        const hudCoin = el('hud-coins');
+        if (hudCoin) {
+          flyToHud(`+${bonusCoins} 🪙`, 'coin', btn, hudCoin);
+        }
+      }
     }
     el('feedback').textContent = `✅ Betul! +${starsThisQ} ⭐ +1 🪙`;
     el('feedback').className = 'feedback correct';
@@ -2036,6 +2288,47 @@ function endGame() {
   el('end-correct').textContent = `${state.correct}/${total}`;
   el('end-stars').textContent = state.stars;
   el('end-best-streak').textContent = state.bestStreak;
+
+  // Render hero showcase with full equipped gear
+  if (state.profile) {
+    el('end-hero').innerHTML = renderAvatar(state.profile.body, state.profile.equipped || {});
+  } else {
+    el('end-hero').innerHTML = '';
+  }
+
+  // Populate earned summary card (only show rows if non-zero)
+  if (state.profile) {
+    const correctCoins = state.coinsEarned;
+    const streakCoins = state.streakCoinsEarned;
+    const streakGems = state.streakGemsEarned;
+    const perfectCoins = state.profile && state.correct === total ? 5 : 0;
+    const perfectGems = state.profile && state.correct === total ? 1 : 0;
+    const totalCoins = correctCoins + streakCoins + perfectCoins;
+    const totalGems = streakGems + perfectGems;
+
+    el('end-earned-coins').textContent = `+${correctCoins} 🪙`;
+    const streakRow = el('end-earned-streak-row');
+    if (streakCoins > 0 || streakGems > 0) {
+      streakRow.style.display = 'flex';
+      el('end-earned-streak').textContent = streakGems > 0
+        ? `+${streakCoins} 🪙 +${streakGems} 💎`
+        : `+${streakCoins} 🪙`;
+    } else {
+      streakRow.style.display = 'none';
+    }
+    const perfectRow = el('end-earned-perfect-row');
+    if (perfectCoins > 0 || perfectGems > 0) {
+      perfectRow.style.display = 'flex';
+      el('end-earned-perfect').textContent = `+${perfectCoins} 🪙 +${perfectGems} 💎`;
+    } else {
+      perfectRow.style.display = 'none';
+    }
+    const totalGemStr = totalGems > 0 ? ` +${totalGems} 💎` : '';
+    el('end-earned-total').textContent = `+${totalCoins} 🪙${totalGemStr}`;
+  } else {
+    // No profile: hide earned card
+    el('end-earned-card').style.display = 'none';
+  }
 
   if (pct >= 0.9) {
     setTimeout(fireConfetti, 400);
