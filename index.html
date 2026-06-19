@@ -145,6 +145,8 @@
     position: relative;
   }
   .body-btn .body-emoji { font-size: 36px; line-height: 1; }
+  .body-btn .body-art { width: 70px; height: 70px; display: block; }
+  .body-btn .body-art svg { width: 100%; height: 100%; display: block; }
   .body-btn .body-name { font-size: 13px; font-weight: 800; }
   .body-btn .body-class { font-size: 11px; font-weight: 700; }
   .body-btn .body-coins {
@@ -195,6 +197,8 @@
   }
   .welcome-hero { display: flex; align-items: center; gap: 10px; flex: 1; }
   .welcome-emoji { font-size: 42px; line-height: 1; }
+  .welcome-art { width: 64px; height: 64px; display: inline-block; flex-shrink: 0; }
+  .welcome-art svg { width: 100%; height: 100%; display: block; }
   .welcome-info { display: flex; flex-direction: column; gap: 2px; }
   .welcome-name { font-weight: 800; font-size: 16px; line-height: 1.1; }
   .welcome-class { font-size: 12px; font-weight: 700; opacity: 0.8; }
@@ -689,7 +693,8 @@
 
     <div id="welcome-card" style="display: none;">
       <div class="welcome-hero">
-        <span class="welcome-emoji" id="welcome-emoji">🦊</span>
+        <div class="welcome-art" id="welcome-art"></div>
+        <span class="welcome-emoji" id="welcome-emoji" style="display:none">🦊</span>
         <div class="welcome-info">
           <span class="welcome-name" id="welcome-name">Fox Knight</span>
           <span class="welcome-class" id="welcome-class">⚔️ Warrior</span>
@@ -1035,7 +1040,8 @@ function renderBodies() {
     btn.dataset.body = b.id;
     if (existing) btn.classList.add('has-profile');
     btn.innerHTML = `
-      <span class="body-emoji">${b.emoji}</span>
+      <div class="body-art">${renderAvatar(b.id, {})}</div>
+      <span class="body-emoji" style="display:none">${b.emoji}</span>
       <span class="body-name">${b.name}</span>
       <span class="body-class" style="color:${b.color}">${b.icon} ${b.cls}</span>
       ${existing
@@ -1073,7 +1079,7 @@ function selectBody(bodyId) {
 function updateWelcomeCard() {
   const p = state.profile;
   if (!p) return;
-  el('welcome-emoji').textContent = p.bodyEmoji;
+  el('welcome-art').innerHTML = renderAvatar(p.body, p.equipped || {});
   el('welcome-name').textContent = p.bodyName;
   el('welcome-class').innerHTML = `<span style="color:${p.classColor}">${p.classIcon}</span> ${p.bodyClass}`;
   el('welcome-coins').textContent = p.coins;
