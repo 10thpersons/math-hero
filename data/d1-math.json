@@ -4,7 +4,7 @@
   "grade": 1,
   "questions": [
     { "text": "Berapakah bilangan objek di bawah?", "visual": "🍎🍎🍎🍎🍎🍎🍎", "options": [6, 7, 8, 9], "answer": 7 },
-    { "text": "Berapakah bilangan objek di bawah?", "visual": "⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐", "options": [10, 11, 12, 13], "answer": 12 },
+    { "text": "Berapakah bilangan objek di bawah?", "visual": "🐟🐟🐟🐟🐟🐟🐟🐟🐟🐟🐟🐟", "options": [10, 11, 12, 13], "answer": 12 },
     { "text": "Berapakah bilangan objek di bawah?", "visual": "🐟🐟🐟🐟🐟🐟🐟🐟🐟", "options": [8, 9, 10, 11], "answer": 9 },
     { "text": "Antara berikut, nombor manakah yang paling besar?", "options": [25, 17, 32, 28], "answer": 32 },
     { "text": "Antara berikut, nombor manakah yang paling kecil?", "options": [14, 9, 22, 17], "answer": 9 },

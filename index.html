@@ -415,11 +415,15 @@
     margin: 4px 0;
   }
   .q-visual {
-    font-size: 38px;
-    letter-spacing: 4px;
-    line-height: 1.2;
-    word-spacing: 4px;
-    padding: 8px 0;
+    font-size: 32px;
+    letter-spacing: 1px;
+    line-height: 1.4;
+    word-spacing: 6px;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    text-align: center;
+    max-width: 100%;
+    padding: 8px 4px;
   }
   .q-equation {
     font-size: 32px;
@@ -1087,6 +1091,20 @@ function shuffle(arr) {
   return arr;
 }
 
+// Group emoji visuals into rows of 5 for easy counting (KSSR standard).
+// Each emoji is a single grapheme cluster (e.g. 🍎 is 1), so we walk the string
+// using Array.from which respects Unicode code points.
+function formatVisual(s) {
+  if (!s) return '';
+  const chars = Array.from(s);
+  if (chars.length <= 5) return chars.join('');
+  const rows = [];
+  for (let i = 0; i < chars.length; i += 5) {
+    rows.push(chars.slice(i, i + 5).join(''));
+  }
+  return rows.join('<br>');
+}
+
 function renderQuestion() {
   state.locked = false;
   state.qStartTime = Date.now();
@@ -1094,7 +1112,7 @@ function renderQuestion() {
 
   el('q-num').textContent = `Soalan ${state.index + 1} / ${state.questions.length} · ${state.subjectName || ''}`;
   el('q-text').textContent = q.text;
-  el('q-visual').innerHTML = q.visual ? q.visual : '';
+  el('q-visual').innerHTML = q.visual ? formatVisual(q.visual) : '';
   el('q-visual').style.display = q.visual ? 'block' : 'none';
   el('q-equation').textContent = q.equation ? q.equation : '';
   el('q-equation').style.display = q.equation ? 'block' : 'none';
