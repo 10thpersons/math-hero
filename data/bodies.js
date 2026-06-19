@@ -217,23 +217,30 @@ function bodyTiger() {
   return `
     <!-- tail -->
     <path d="M55,140 Q25,150 25,170 Q35,165 45,160 Q40,170 50,170" fill="none" stroke="#fb923c" stroke-width="10" stroke-linecap="round"/>
-    <path d="M30,158 L42,156" stroke="#1f2937" stroke-width="2" stroke-linecap="round"/>
-    <path d="M28,168 L40,165" stroke="#1f2937" stroke-width="2" stroke-linecap="round"/>
+    <path d="M40,150 L52,147" stroke="#1f2937" stroke-width="3" stroke-linecap="round"/>
+    <path d="M30,160 L46,156" stroke="#1f2937" stroke-width="3" stroke-linecap="round"/>
+    <path d="M27,170 L44,166" stroke="#1f2937" stroke-width="3" stroke-linecap="round"/>
     <!-- legs -->
     <ellipse cx="80" cy="180" rx="8" ry="6" fill="#fb923c"/>
     <ellipse cx="120" cy="180" rx="8" ry="6" fill="#fb923c"/>
+    <!-- leg stripes -->
+    <path d="M74,176 L78,182 M80,174 L84,180" stroke="#1f2937" stroke-width="2.5"/>
+    <path d="M114,176 L118,182 M120,174 L124,180" stroke="#1f2937" stroke-width="2.5"/>
     <!-- body -->
     <ellipse cx="100" cy="140" rx="32" ry="30" fill="#fb923c"/>
     <!-- arms -->
     <ellipse cx="68" cy="135" rx="10" ry="18" fill="#fb923c" transform="rotate(-15 68 135)"/>
     <ellipse cx="132" cy="135" rx="10" ry="18" fill="#fb923c" transform="rotate(15 132 135)"/>
+    <!-- arm stripes -->
+    <path d="M62,124 L68,128 M60,135 L66,139 M64,144 L70,148" stroke="#1f2937" stroke-width="2.5"/>
+    <path d="M138,124 L132,128 M140,135 L134,139 M136,144 L130,148" stroke="#1f2937" stroke-width="2.5"/>
     <!-- belly (lighter) -->
     <ellipse cx="100" cy="148" rx="18" ry="16" fill="#fed7aa"/>
-    <!-- stripes on body -->
-    <path d="M75,125 L78,135" stroke="#1f2937" stroke-width="2.5"/>
-    <path d="M122,125 L120,135" stroke="#1f2937" stroke-width="2.5"/>
-    <path d="M85,155 L88,165" stroke="#1f2937" stroke-width="2"/>
-    <path d="M115,155 L112,165" stroke="#1f2937" stroke-width="2"/>
+    <!-- body stripes (bold) -->
+    <path d="M72,118 Q70,130 73,142" stroke="#1f2937" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M84,115 Q83,128 86,140" stroke="#1f2937" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M128,118 Q130,130 127,142" stroke="#1f2937" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M116,115 Q117,128 114,140" stroke="#1f2937" stroke-width="4" fill="none" stroke-linecap="round"/>
     <!-- head -->
     <circle cx="100" cy="80" r="32" fill="#fb923c"/>
     <!-- ears -->
@@ -241,13 +248,15 @@ function bodyTiger() {
     <polygon points="74,52 78,38 86,50" fill="#fce7f3"/>
     <polygon points="128,55 122,28 110,52" fill="#fb923c"/>
     <polygon points="126,52 122,38 114,50" fill="#fce7f3"/>
-    <!-- face stripes -->
-    <path d="M72,75 L80,80" stroke="#1f2937" stroke-width="2"/>
-    <path d="M128,75 L120,80" stroke="#1f2937" stroke-width="2"/>
-    <path d="M75,90 L82,90" stroke="#1f2937" stroke-width="2"/>
-    <path d="M125,90 L118,90" stroke="#1f2937" stroke-width="2"/>
-    <path d="M88,72 L92,68" stroke="#1f2937" stroke-width="2"/>
-    <path d="M112,72 L108,68" stroke="#1f2937" stroke-width="2"/>
+    <!-- forehead stripes (the classic tiger "wang" / 王 mark) -->
+    <path d="M100,55 L100,72" stroke="#1f2937" stroke-width="3" stroke-linecap="round"/>
+    <path d="M93,58 Q92,65 95,72" stroke="#1f2937" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M107,58 Q108,65 105,72" stroke="#1f2937" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <!-- cheek stripes (longer, bolder) -->
+    <path d="M70,78 Q78,82 84,86" stroke="#1f2937" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M130,78 Q122,82 116,86" stroke="#1f2937" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M72,90 L84,92" stroke="#1f2937" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M128,90 L116,92" stroke="#1f2937" stroke-width="2.5" stroke-linecap="round"/>
     <!-- eyes -->
     <ellipse cx="88" cy="83" rx="3" ry="3.5" fill="#fbbf24"/>
     <ellipse cx="112" cy="83" rx="3" ry="3.5" fill="#fbbf24"/>
@@ -362,7 +371,13 @@ function bodyUnicorn() {
 
 // Export for browser
 if (typeof window !== 'undefined') {
-  window.BODIES_DATA = BODIES;
+  window.BODIES_DATA = BODIES_DATA;
   window.getBody = getBody;
   window.renderAvatar = renderAvatar;
+  window.bodyFox = bodyFox;
+  window.bodyCat = bodyCat;
+  window.bodyPanda = bodyPanda;
+  window.bodyTiger = bodyTiger;
+  window.bodyDragon = bodyDragon;
+  window.bodyUnicorn = bodyUnicorn;
 }
