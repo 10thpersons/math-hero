@@ -11,7 +11,7 @@
 //   - Pet:        (50, 170)  (bottom-left, beside feet)
 //   - Headgear:   y=20-75    (on top of head)
 
-const BODIES = {
+const BODIES_DATA = {
   meta: {
     version: 1,
     count: 6,
