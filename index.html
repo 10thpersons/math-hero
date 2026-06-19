@@ -862,7 +862,10 @@ const Sound = (() => {
    BODIES (RPG hero creatures — each is a profile)
    Synced from /data/bodies.js (Phase 3)
    =========================== */
-const BODIES = window.BODIES_DATA
+// NOTE: Use a different name (HEROES) to avoid clashing with bodies.js
+// which already exports BODIES_DATA. We map the rich data to a flat array
+// for the simple per-card rendering on the start screen.
+const HEROES = window.BODIES_DATA
   ? ['fox','cat','panda','tiger','dragon','unicorn'].map(id => {
       const b = window.BODIES_DATA[id];
       return {
@@ -878,6 +881,8 @@ const BODIES = window.BODIES_DATA
       { id: 'dragon', emoji: '🐉', name: 'Naga Kecil',        cls: 'Mistik',       icon: '🔥', color: '#10b981' },
       { id: 'unicorn', emoji: '🦄', name: 'Unicorn Penyembuh',cls: 'Penyembuh',    icon: '💖', color: '#ec4899' }
     ];
+// Alias for backwards compatibility
+const BODIES = HEROES;
 
 /* ===========================
    PROFILE MODULE — LocalStorage per body
