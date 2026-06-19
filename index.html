@@ -603,6 +603,233 @@
   }
   .feedback.correct { color: var(--success); }
   .feedback.wrong { color: var(--danger); }
+  /* ============ SHOP (Phase 5) ============ */
+  .shop-coins {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin: 0 0 10px;
+  }
+  .shop-coins .ec-coin, .shop-coins .ec-gem {
+    background: var(--card);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 16px;
+    box-shadow: var(--shadow);
+  }
+  .shop-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+    padding: 4px 2px 80px;
+  }
+  .shop-card {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 8px 6px 6px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    border: 3px solid transparent;
+    cursor: pointer;
+    transition: transform .15s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-height: 150px;
+  }
+  .shop-card:active { transform: scale(0.96); }
+  .shop-card.rarity-common  { border-color: #d1d5db; }
+  .shop-card.rarity-rare    { border-color: #60a5fa; box-shadow: 0 0 0 1px #60a5fa inset, 0 8px 0 rgba(31,31,61,0.15); }
+  .shop-card.rarity-legendary { border-color: #facc15; animation: legendaryPulse 2.2s ease-in-out infinite; }
+  @keyframes legendaryPulse {
+    0%, 100% { box-shadow: 0 0 0 1px #facc15 inset, 0 8px 0 rgba(31,31,61,0.15); }
+    50%      { box-shadow: 0 0 0 1px #facc15 inset, 0 8px 0 rgba(31,31,61,0.15), 0 0 18px rgba(250,204,21,0.6); }
+  }
+  .shop-card.owned { background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); }
+  .shop-card.equipped { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-color: var(--secondary); }
+  .shop-card.locked { opacity: 0.92; }
+  .shop-card.cant-afford { opacity: 0.55; }
+  .shop-thumb {
+    background: var(--bg-2);
+    border-radius: 10px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .shop-thumb svg { width: 56px; height: 56px; }
+  .shop-name {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 1.1;
+    color: var(--text);
+    min-height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .shop-price {
+    font-weight: 800;
+    font-size: 14px;
+  }
+  .shop-price.coins { color: #d97706; }
+  .shop-price.gems  { color: #7c3aed; }
+  .shop-tag {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 999px;
+    font-weight: 700;
+  }
+  .shop-tag.equipped { background: var(--secondary); color: white; }
+  .shop-tag.owned    { background: var(--success); color: white; }
+  .shop-tag.locked   { background: rgba(0,0,0,0.55); color: white; }
+
+  /* Buy confirm modal */
+  .modal-bg {
+    position: fixed;
+    inset: 0;
+    background: rgba(15,23,42,0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    padding: 20px;
+    animation: fadeIn .2s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal-card {
+    background: var(--card);
+    border-radius: 22px;
+    padding: 24px 20px;
+    max-width: 360px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 16px 0 rgba(31,31,61,0.25);
+    animation: popIn .3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes popIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .modal-title {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    color: var(--text);
+    margin: 0 0 10px;
+  }
+  .modal-thumb {
+    background: var(--bg-2);
+    border-radius: 14px;
+    padding: 12px;
+    margin: 10px auto;
+    width: 110px;
+    height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-thumb svg { width: 90px; height: 90px; }
+  .modal-desc { font-size: 14px; color: var(--muted); margin: 6px 0 14px; }
+  .modal-actions { display: flex; gap: 10px; justify-content: center; }
+  .modal-btn {
+    border: none;
+    padding: 12px 22px;
+    border-radius: 999px;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    min-width: 110px;
+  }
+  .modal-btn.cancel { background: #e5e7eb; color: var(--text); }
+  .modal-btn.buy    { background: var(--primary); color: white; box-shadow: 0 4px 0 var(--primary-dark); }
+  .modal-btn:active { transform: translateY(2px); box-shadow: none; }
+
+  /* Toast for errors (insufficient funds) */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--danger);
+    color: white;
+    padding: 12px 22px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 14px;
+    box-shadow: 0 6px 0 #991b1b;
+    z-index: 1000;
+    animation: toastIn .3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes toastIn { from { transform: translate(-50%, 30px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+
+  /* Celebration overlay for legendary purchases */
+  .celebrate-bg {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(250,204,21,0.4) 0%, rgba(0,0,0,0.7) 70%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 998;
+    padding: 20px;
+  }
+  .celebrate-card {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-radius: 24px;
+    padding: 28px 24px;
+    text-align: center;
+    max-width: 360px;
+    width: 100%;
+    box-shadow: 0 0 60px rgba(250,204,21,0.8), 0 16px 0 rgba(31,31,61,0.25);
+    animation: popIn .5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .celebrate-emoji { font-size: 72px; animation: bounce 1s ease infinite; }
+  .celebrate-title {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 800;
+    font-size: 26px;
+    color: #92400e;
+    margin: 10px 0 4px;
+  }
+  .celebrate-name {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--text);
+    margin: 4px 0 14px;
+  }
+  .celebrate-thumb {
+    background: white;
+    border-radius: 16px;
+    width: 130px;
+    height: 130px;
+    margin: 0 auto 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 0 rgba(31,31,61,0.15);
+  }
+  .celebrate-thumb svg { width: 110px; height: 110px; }
+
+  /* Sparkle particles */
+  .sparkle {
+    position: absolute;
+    font-size: 28px;
+    pointer-events: none;
+    animation: sparkleFly 1.2s ease-out forwards;
+  }
+  @keyframes sparkleFly {
+    0%   { transform: translate(0,0) scale(0); opacity: 1; }
+    50%  { opacity: 1; }
+    100% { transform: translate(var(--dx,40px), var(--dy,-60px)) scale(1.4); opacity: 0; }
+  }
+
   .stars-row {
     display: flex;
     justify-content: center;
@@ -786,6 +1013,7 @@
       </div>
       <button class="change-hero-btn" id="change-hero-btn">🔄 Ganti Hero</button>
       <button class="edit-hero-btn" id="edit-hero-btn">✨ Sunting Hero</button>
+      <button class="edit-hero-btn" id="shop-hero-btn" style="background:linear-gradient(135deg,#fcd34d 0%,#f59e0b 100%);color:white;">🛒 Kedai</button>
     </div>
 
     <div>
@@ -850,6 +1078,20 @@
     <p style="text-align:center;color:#9ca3af;font-size:11px;margin-top:8px;">
       💡 Item berkunci boleh dibeli di Kedai (Phase 5)
     </p>
+  <section id="screen-shop" class="screen">
+    <div class="editor-header">
+      <button class="editor-back" id="shop-back-btn">← Kembali</button>
+      <h2>🛒 Kedai Hero</h2>
+      <div style="width:80px"></div>
+    </div>
+
+    <div class="shop-coins">
+      <span class="ec-coin"><span id="shop-coins">0</span> 🪙</span>
+      <span class="ec-gem"><span id="shop-gems">0</span> 💎</span>
+    </div>
+
+    <div class="slot-tabs" id="shop-tabs"></div>
+    <div class="shop-items" id="shop-items"></div>
   </section>
 
   <!-- GAME SCREEN -->
@@ -1305,16 +1547,208 @@ function renderEditorItems() {
     grid.appendChild(card);
   }
 }
-function equipItem(slot, itemId) {
+function equipItem(slot, itemId, silent = false) {
   state.profile.equipped[slot] = itemId;
   saveProfile(state.profile);
-  renderEditorPreview();
-  renderEditorSlots();
-  renderEditorItems();
+  if (!silent) {
+    renderEditorPreview();
+    renderEditorSlots();
+    renderEditorItems();
+  }
 }
 
 el('edit-hero-btn').addEventListener('click', openEditor);
 el('editor-back-btn').addEventListener('click', closeEditor);
+
+// ============================================================
+// SHOP (Phase 5) — buy locked items, auto-equip on purchase
+// ============================================================
+let shopSlot = 'background'; // active slot tab in shop
+
+function openShop() {
+  if (!state.profile) { alert('Pilih hero dulu!'); return; }
+  showScreen('shop');
+  shopSlot = 'background';
+  renderShopHeader();
+  renderShopSlots();
+  renderShopItems();
+}
+
+function closeShop() {
+  showScreen('start');
+  updateWelcomeCard();
+}
+
+function refreshHud() {
+  if (!state.profile) return;
+  el('hud-coins').textContent = state.profile.coins;
+  el('hud-gems').textContent  = state.profile.gems;
+}
+
+function renderShopHeader() {
+  el('shop-coins').textContent = state.profile.coins;
+  el('shop-gems').textContent  = state.profile.gems;
+}
+
+function renderShopSlots() {
+  const slots = ITEMS.meta.slots;
+  const labels = {
+    background: '🖼️ Latar',
+    headgear:   '🎩 Topi',
+    top:        '👕 Baju',
+    cape:       '🧣 Cape',
+    hand:       '📦 Tangan',
+    pet:        '🐾 Haiwan'
+  };
+  const tabs = slots.map(slot => {
+    const ownedCount = (ITEMS[slot] || []).filter(i => state.profile.inventory[i.id]).length;
+    const totalCount = (ITEMS[slot] || []).length;
+    return `<button class="slot-tab ${shopSlot === slot ? 'active' : ''}" data-slot="${slot}">${labels[slot]}<br><small>${ownedCount}/${totalCount}</small></button>`;
+  }).join('');
+  el('shop-tabs').innerHTML = tabs;
+  el('shop-tabs').querySelectorAll('.slot-tab').forEach(tab => {
+    tab.addEventListener('click', () => { Sound.click(); shopSlot = tab.dataset.slot; renderShopSlots(); renderShopItems(); });
+  });
+}
+
+function renderShopItems() {
+  const items = (ITEMS[shopSlot] || []).slice().sort((a, b) => {
+    // Sort: owned-but-not-equipped first, then owned-equipped, then locked (price ascending)
+    const aOwned = !!state.profile.inventory[a.id];
+    const bOwned = !!state.profile.inventory[b.id];
+    const aEquipped = state.profile.equipped[shopSlot] === a.id;
+    const bEquipped = state.profile.equipped[shopSlot] === b.id;
+    if (aEquipped && !bEquipped) return -1;
+    if (bEquipped && !aEquipped) return 1;
+    if (aOwned && !bOwned) return -1;
+    if (bOwned && !aOwned) return 1;
+    // Sort by price (coins ascending, gems last)
+    const ap = a.priceGems || a.priceCoins || 0;
+    const bp = b.priceGems || b.priceCoins || 0;
+    return ap - bp;
+  });
+
+  const html = items.map(item => {
+    const owned = !!state.profile.inventory[item.id];
+    const equipped = state.profile.equipped[shopSlot] === item.id;
+    let tagClass = 'locked';
+    let tagText = '🔒';
+    let cardClass = 'rarity-' + item.rarity;
+    let priceClass = item.priceGems ? 'gems' : 'coins';
+    let priceText = item.priceGems ? `${item.priceGems} 💎` : `${item.priceCoins} 🪙`;
+    let canAfford = true;
+    if (equipped) { tagClass = 'equipped'; tagText = '✓ Pakai'; cardClass += ' equipped'; }
+    else if (owned) { tagClass = 'owned'; tagText = '✓ Ada'; cardClass += ' owned'; }
+    else {
+      canAfford = item.priceGems ? state.profile.gems >= item.priceGems : state.profile.coins >= item.priceCoins;
+      if (!canAfford) { cardClass += ' cant-afford'; priceText = '🔒 ' + priceText; }
+    }
+    return `
+      <div class="shop-card ${cardClass}" data-item-id="${item.id}" data-action="${equipped ? 'noop' : (owned ? 'equip' : (canAfford ? 'buy' : 'toast'))}">
+        <span class="shop-tag ${tagClass}">${tagText}</span>
+        <div class="shop-thumb">${item.svg}</div>
+        <div class="shop-name">${item.name}</div>
+        <div class="shop-price ${priceClass}">${priceText}</div>
+      </div>`;
+  }).join('');
+
+  el('shop-items').innerHTML = html;
+  el('shop-items').querySelectorAll('.shop-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const action = card.dataset.action;
+      const itemId = card.dataset.itemId;
+      if (action === 'buy')      { Sound.click(); openBuyConfirm(shopSlot, itemId); }
+      else if (action === 'equip') { Sound.click(); equipItem(shopSlot, itemId); renderShopHeader(); renderShopItems(); }
+      else if (action === 'toast') {
+        Sound.wrong();
+        const item = getItem(shopSlot, itemId);
+        showToast(`Tidak cukup ${item.priceGems ? '💎' : '🪙'} untuk ${item.name}!`);
+      }
+    });
+  });
+}
+
+function openBuyConfirm(slot, itemId) {
+  const item = getItem(slot, itemId);
+  if (!item) return;
+  const currency = item.priceGems ? '💎' : '🪙';
+  const amount   = item.priceGems || item.priceCoins;
+  const rarity   = item.rarity === 'legendary' ? '🌟 LEGENDARY!' : (item.rarity === 'rare' ? '✨ Rare' : 'Common');
+
+  const bg = document.createElement('div');
+  bg.className = 'modal-bg';
+  bg.innerHTML = `
+    <div class="modal-card">
+      <h3 class="modal-title">Beli ${item.name}?</h3>
+      <div class="modal-thumb">${item.svg}</div>
+      <p class="modal-desc">${rarity}<br>Harga: <strong>${amount} ${currency}</strong></p>
+      <div class="modal-actions">
+        <button class="modal-btn cancel" id="modal-cancel">Batal</button>
+        <button class="modal-btn buy" id="modal-buy">🛒 Beli</button>
+      </div>
+    </div>`;
+  document.body.appendChild(bg);
+
+  const cleanup = () => bg.remove();
+  bg.querySelector('#modal-cancel').addEventListener('click', () => { Sound.click(); cleanup(); });
+  bg.querySelector('#modal-buy').addEventListener('click', () => {
+    Sound.correct();
+    // Deduct currency
+    if (item.priceGems) state.profile.gems  -= item.priceGems;
+    else                state.profile.coins -= item.priceCoins;
+    state.profile.inventory[item.id] = true;
+    // Auto-equip on purchase
+    equipItem(slot, item.id, /*silent=*/true);
+    saveProfile();
+    cleanup();
+    renderShopHeader();
+    renderShopSlots();
+    renderShopItems();
+    refreshHud();
+    // Legendary gets celebration overlay
+    if (item.rarity === 'legendary') showLegendaryCelebration(item);
+  });
+  // Close on background click
+  bg.addEventListener('click', (e) => { if (e.target === bg) { Sound.click(); cleanup(); } });
+}
+
+function showLegendaryCelebration(item) {
+  const bg = document.createElement('div');
+  bg.className = 'celebrate-bg';
+  // Add sparkle particles
+  let sparkles = '';
+  const symbols = ['✨', '⭐', '🌟', '💫'];
+  for (let i = 0; i < 14; i++) {
+    const dx = (Math.random() - 0.5) * 400;
+    const dy = -100 - Math.random() * 300;
+    sparkles += `<span class="sparkle" style="left:${20 + Math.random()*60}%;top:${30 + Math.random()*40}%;--dx:${dx}px;--dy:${dy}px;animation-delay:${Math.random()*0.3}s">${symbols[i % symbols.length]}</span>`;
+  }
+  bg.innerHTML = `
+    <div class="celebrate-card" style="position:relative;">
+      ${sparkles}
+      <div class="celebrate-emoji">🌟</div>
+      <h2 class="celebrate-title">BARANG LEGENDARY!</h2>
+      <p class="celebrate-name">${item.name}</p>
+      <div class="celebrate-thumb">${item.svg}</div>
+      <button class="modal-btn buy" id="celebrate-ok" style="min-width:140px;">OK! 💖</button>
+    </div>`;
+  document.body.appendChild(bg);
+  Sound.end();
+  bg.querySelector('#celebrate-ok').addEventListener('click', () => { Sound.click(); bg.remove(); });
+  // Auto-close after 5s
+  setTimeout(() => { if (bg.parentNode) bg.remove(); }, 5000);
+}
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2200);
+}
+
+el('shop-hero-btn').addEventListener('click', openShop);
+el('shop-back-btn').addEventListener('click', closeShop);
 
 document.querySelectorAll('.grade-btn').forEach(btn => {
   btn.addEventListener('click', () => {
