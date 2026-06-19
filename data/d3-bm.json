@@ -1,0 +1,22 @@
+{
+  "subject": "bm",
+  "subject_name": "Bahasa Melayu",
+  "grade": 3,
+  "questions": [
+    { "text": "Apakah jenis ayat berikut: 'Tolong tutup pintu itu.'", "options": ["Ayat penyata", "Ayat tanya", "Ayat suruhan", "Ayat pemeri"], "answer": "Ayat suruhan" },
+    { "text": "Apakah jenis ayat berikut: 'Kamu sudah makan?'", "options": ["Ayat penyata", "Ayat tanya", "Ayat suruhan", "Ayat seruan"], "answer": "Ayat tanya" },
+    { "text": "Apakah jenis ayat berikut: 'Ali sedang bermain di taman.'", "options": ["Ayat tanya", "Ayat suruhan", "Ayat penyata", "Ayat seruan"], "answer": "Ayat penyata" },
+    { "text": "Apakah imbuhan bagi perkataan 'makanan'?", "options": ["mem- + an", "ma- + an", "makan + an", "mak + an"], "answer": "mem- + an" },
+    { "text": "Apakah kata dasar bagi perkataan 'penulis'?", "options": ["tulis", "ulis", "nulis", "penul"], "answer": "tulis" },
+    { "text": "Apakah imbuhan yang betul untuk perkataan '.... bola' (orang yang bermain bola)?", "options": ["Pemain", "Peniaga", "Petani", "Nelayan"], "answer": "Pemain" },
+    { "text": "Apakah maksud peribahasa 'bersatu teguh, bercerai roboh'?", "options": ["Hidup bersama lebih susah", "Bersatu hati menjadi kuat", "Bercerai menyebabkan kaya", "Hidup sendiri lebih baik"], "answer": "Bersatu hati menjadi kuat" },
+    { "text": "Apakah maksud peribahasa 'sehari selembar benang, lama-lama jadi kain'?", "options": ["Buat kerja cepat", "Sedikit-sedikit lama-lama jadi banyak", "Kain senang dibuat", "Benang kuat seperti kain"], "answer": "Sedikit-sedikit lama-lama jadi banyak" },
+    { "text": "Apakah maksud peribahasa 'bagai aur dengan tebing'?", "options": ["Saling tolong-menolong", "Saling bertengkar", "Bekerja sendiri", "Pergi bersama"], "answer": "Saling tolong-menolong" },
+    { "passage": "Rina pergi ke kedai buku dengan ibunya. Dia membeli dua buah buku cerita dan satu kotak pensil warna. Jumlah wang yang dibelanjakan ialah RM25.", "text": "Apakah yang Rina beli di kedai buku?", "options": ["Makanan", "Buku cerita dan pensil warna", "Pakaian", "Mainan"], "answer": "Buku cerita dan pensil warna" },
+    { "passage": "Rina pergi ke kedai buku dengan ibunya. Dia membeli dua buah buku cerita dan satu kotak pensil warna. Jumlah wang yang dibelanjakan ialah RM25.", "text": "Berapakah jumlah wang yang dibelanjakan oleh Rina?", "options": ["RM15", "RM20", "RM25", "RM30"], "answer": "RM25" },
+    { "text": "Apakah sinonim bagi perkataan 'bahagia'?", "options": ["Sedih", "Gembira", "Marah", "Takut"], "answer": "Gembira" },
+    { "text": "Apakah antonim bagi perkataan 'tinggi'?", "options": ["Besar", "Panjang", "Rendah", "Luas"], "answer": "Rendah" },
+    { "text": "Apakah sinonim bagi perkataan 'pandai'?", "options": ["Bodoh", "Malas", "Cerdik", "Lambat"], "answer": "Cerdik" },
+    { "text": "Apakah antonim bagi perkataan 'senang'?", "options": ["Mudah", "Sukar", "Cepat", "Lambat"], "answer": "Sukar" }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "subject": "math",
+  "subject_name": "Matematik",
+  "grade": 1,
+  "questions": [
+    { "text": "Berapakah bilangan objek di bawah?", "visual": "🍎🍎🍎🍎🍎🍎🍎", "options": [6, 7, 8, 9], "answer": 7 },
+    { "text": "Berapakah bilangan objek di bawah?", "visual": "⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐", "options": [10, 11, 12, 13], "answer": 12 },
+    { "text": "Berapakah bilangan objek di bawah?", "visual": "🐟🐟🐟🐟🐟🐟🐟🐟🐟", "options": [8, 9, 10, 11], "answer": 9 },
+    { "text": "Antara berikut, nombor manakah yang paling besar?", "options": [25, 17, 32, 28], "answer": 32 },
+    { "text": "Antara berikut, nombor manakah yang paling kecil?", "options": [14, 9, 22, 17], "answer": 9 },
+    { "text": "Antara berikut, nombor manakah yang paling besar?", "options": [41, 38, 45, 40], "answer": 45 },
+    { "text": "Tuliskan 26 dalam perkataan.", "options": ["Dua puluh empat", "Dua puluh enam", "Dua puluh sembilan", "Dua puluh lapan"], "answer": "Dua puluh enam" },
+    { "text": "Tuliskan 35 dalam perkataan.", "options": ["Tiga puluh empat", "Tiga puluh lima", "Tiga puluh enam", "Tiga puluh tiga"], "answer": "Tiga puluh lima" },
+    { "text": "Cari hasil tambah.", "equation": "7 + 5 = ?", "options": [11, 12, 13, 14], "answer": 12 },
+    { "text": "Cari hasil tambah.", "equation": "9 + 8 = ?", "options": [15, 16, 17, 18], "answer": 17 },
+    { "text": "Cari hasil tambah.", "equation": "6 + 7 + 3 = ?", "options": [14, 15, 16, 17], "answer": 16 },
+    { "text": "Cari hasil tolak.", "equation": "15 − 7 = ?", "options": [7, 8, 9, 10], "answer": 8 },
+    { "text": "Cari hasil tolak.", "equation": "20 − 9 = ?", "options": [9, 10, 11, 12], "answer": 11 },
+    { "text": "Ali ada 8 biji guli. Abangnya memberi 5 biji lagi. Berapakah jumlah guli Ali sekarang?", "options": [12, 13, 14, 15], "answer": 13 },
+    { "text": "Yana ada 10 biji rambutan. Dia makan 4 biji. Berapa biji rambutan yang tinggal?", "options": [5, 6, 7, 8], "answer": 6 }
+  ]
+}

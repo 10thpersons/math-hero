@@ -1,0 +1,22 @@
+{
+  "subject": "bi",
+  "subject_name": "English",
+  "grade": 3,
+  "questions": [
+    { "text": "Which is the past tense of 'eat'?", "options": ["eated", "ate", "eaten", "eating"], "answer": "ate" },
+    { "text": "Which is the past tense of 'run'?", "options": ["runned", "ran", "runs", "running"], "answer": "ran" },
+    { "text": "Which is the present tense of 'went'?", "options": ["go", "goes", "gone", "going"], "answer": "go" },
+    { "text": "Choose the correct word: 'She ___ to school every day.'", "options": ["go", "goes", "going", "went"], "answer": "goes" },
+    { "text": "Choose the correct word: 'Yesterday, we ___ to the park.'", "options": ["go", "goes", "went", "going"], "answer": "went" },
+    { "text": "Choose the correct word: 'I ___ my homework now.'", "options": ["do", "does", "did", "done"], "answer": "am doing" },
+    { "text": "What does 'enormous' mean?", "options": ["Very small", "Very big", "Very fast", "Very slow"], "answer": "Very big" },
+    { "text": "What does 'tiny' mean?", "options": ["Very big", "Very small", "Very tall", "Very wide"], "answer": "Very small" },
+    { "text": "What does 'brave' mean?", "options": ["Scared", "Strong and not afraid", "Sleepy", "Angry"], "answer": "Strong and not afraid" },
+    { "passage": "Tom went to the market with his mother. He saw many fruits. He bought apples, oranges and bananas. Then they went home.", "text": "Where did Tom go with his mother?", "options": ["School", "Park", "Market", "Beach"], "answer": "Market" },
+    { "passage": "Tom went to the market with his mother. He saw many fruits. He bought apples, oranges and bananas. Then they went home.", "text": "What did Tom buy?", "options": ["Vegetables only", "Apples, oranges and bananas", "Just apples", "Just oranges"], "answer": "Apples, oranges and bananas" },
+    { "text": "Choose the correct sentence.", "options": ["He don't like milk.", "He doesn't likes milk.", "He doesn't like milk.", "He not like milk."], "answer": "He doesn't like milk." },
+    { "text": "Choose the correct sentence.", "options": ["I am a student.", "I is a student.", "I are a student.", "I be a student."], "answer": "I am a student." },
+    { "text": "Arrange: 'every day / I / breakfast / have'", "options": ["I have breakfast every day", "Have I breakfast every day", "I breakfast have every day", "Every day have I breakfast"], "answer": "I have breakfast every day" },
+    { "text": "What is the opposite of 'happy'?", "options": ["Glad", "Joyful", "Sad", "Excited"], "answer": "Sad" }
+  ]
+}

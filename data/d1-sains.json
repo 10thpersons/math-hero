@@ -1,0 +1,22 @@
+{
+  "subject": "sains",
+  "subject_name": "Sains",
+  "grade": 1,
+  "questions": [
+    { "text": "Antara berikut, yang manakah bahagian badan?", "visual": "👃", "options": ["Hidung", "Buku", "Kerusi", "Meja"], "answer": "Hidung" },
+    { "text": "Antara berikut, yang manakah bahagian badan?", "visual": "👂", "options": ["Mata", "Telinga", "Mulut", "Tangan"], "answer": "Telinga" },
+    { "text": "Antara berikut, yang manakah bahagian badan?", "visual": "👁️", "options": ["Telinga", "Hidung", "Mata", "Mulut"], "answer": "Mata" },
+    { "text": "Apakah haiwan ini?", "visual": "🐘", "options": ["Gajah", "Singa", "Kucing", "Tikus"], "answer": "Gajah" },
+    { "text": "Apakah haiwan ini?", "visual": "🐔", "options": ["Itik", "Ayam", "Burung", "Ikan"], "answer": "Ayam" },
+    { "text": "Apakah haiwan ini?", "visual": "🐠", "options": ["Burung", "Ikan", "Ular", "Kucing"], "answer": "Ikan" },
+    { "text": "Apakah bahagian pokok yang berwarna hijau?", "options": ["Akar", "Batang", "Daun", "Bunga"], "answer": "Daun" },
+    { "text": "Apakah bahagian pokok yang berada di dalam tanah?", "options": ["Daun", "Bunga", "Akar", "Buah"], "answer": "Akar" },
+    { "text": "Apakah yang dihasilkan oleh pokok bunga?", "options": ["Akar", "Daun", "Bunga", "Batang"], "answer": "Bunga" },
+    { "text": "Alat deria yang manakah digunakan untuk melihat?", "options": ["Mata", "Telinga", "Hidung", "Lidah"], "answer": "Mata" },
+    { "text": "Alat deria yang manakah digunakan untuk mendengar?", "options": ["Mata", "Telinga", "Mulut", "Tangan"], "answer": "Telinga" },
+    { "text": "Alat deria yang manakah digunakan untuk merasa?", "options": ["Mata", "Telinga", "Lidah", "Hidung"], "answer": "Lidah" },
+    { "text": "Cuaca manakah yang panas dan terang?", "options": ["Hujan", "Mendung", "Cerah", "Ribut"], "answer": "Cerah" },
+    { "text": "Apakah yang turun dari langit apabila hujan?", "options": ["Salji", "Air", "Daun", "Pasir"], "answer": "Air" },
+    { "text": "Apakah warna langit pada waktu siang yang cerah?", "options": ["Hitam", "Merah", "Biru", "Hijau"], "answer": "Biru" }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "subject": "bi",
+  "subject_name": "English",
+  "grade": 1,
+  "questions": [
+    { "text": "What is this?", "visual": "🐶", "options": ["Cat", "Dog", "Bird", "Fish"], "answer": "Dog" },
+    { "text": "What is this?", "visual": "🌞", "options": ["Moon", "Star", "Sun", "Cloud"], "answer": "Sun" },
+    { "text": "What is this?", "visual": "🍌", "options": ["Apple", "Banana", "Grape", "Orange"], "answer": "Banana" },
+    { "text": "Which letter comes after 'b'?", "options": ["a", "c", "d", "e"], "answer": "c" },
+    { "text": "Which letter comes after 'm'?", "options": ["k", "l", "n", "o"], "answer": "n" },
+    { "text": "How many letters are in the word 'cat'?", "options": [2, 3, 4, 5], "answer": 3 },
+    { "text": "Choose the correct article: 'This is ___ apple.'", "options": ["a", "an", "the", "no article"], "answer": "an" },
+    { "text": "Choose the correct article: 'I have ___ book.'", "options": ["an", "the", "a", "no article"], "answer": "a" },
+    { "text": "Choose the correct article: 'She is ___ teacher.'", "options": ["a", "an", "the", "no article"], "answer": "a" },
+    { "text": "What is the plural of 'cat'?", "options": ["cats", "cat", "cates", "caties"], "answer": "cats" },
+    { "text": "What is the plural of 'book'?", "options": ["books", "book", "bookes", "bookies"], "answer": "books" },
+    { "text": "What is the plural of 'child'?", "options": ["childs", "childes", "children", "child"], "answer": "children" },
+    { "text": "Choose the correct sentence.", "options": ["She am happy.", "She is happy.", "She are happy.", "She be happy."], "answer": "She is happy." },
+    { "text": "Choose the correct sentence.", "options": ["They is my friends.", "They am my friends.", "They are my friends.", "They be my friends."], "answer": "They are my friends." },
+    { "text": "Arrange the words: 'like / I / ice cream'", "options": ["I like ice cream", "Like I ice cream", "Ice cream like I", "I ice cream like"], "answer": "I like ice cream" }
+  ]
+}

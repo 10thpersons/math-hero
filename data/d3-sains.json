@@ -1,0 +1,22 @@
+{
+  "subject": "sains",
+  "subject_name": "Sains",
+  "grade": 3,
+  "questions": [
+    { "text": "Sistem badan yang manakah berfungsi untuk mencerna makanan?", "options": ["Sistem pernafasan", "Sistem pencernaan", "Sistem saraf", "Sistem darah"], "answer": "Sistem pencernaan" },
+    { "text": "Sistem badan yang manakah berfungsi untuk bernafas?", "options": ["Sistem pencernaan", "Sistem pernafasan", "Sistem darah", "Sistem saraf"], "answer": "Sistem pernafasan" },
+    { "text": "Organ yang manakah mengepam darah ke seluruh badan?", "options": ["Paru-paru", "Hati", "Jantung", "Otak"], "answer": "Jantung" },
+    { "text": "Bahan yang manakah boleh tenggelam di dalam air?", "options": ["Kayu", "Besi", "Getah", "Plastik"], "answer": "Besi" },
+    { "text": "Bahan yang manakah terapung di atas air?", "options": ["Batu", "Besi", "Kayu", "Paku"], "answer": "Kayu" },
+    { "text": "Apakah sifat magnet?", "options": ["Menarik logam", "Menarik kayu", "Menarik plastik", "Menarik kain"], "answer": "Menarik logam" },
+    { "text": "Dalam rantaian makanan, apakah yang dimakan oleh arnab?", "options": ["Daging", "Rumput", "Ikan", "Ayam"], "answer": "Rumput" },
+    { "text": "Apakah yang memakan arnab dalam rantaian makanan?", "options": ["Rumput", "Ayam", "Musang", "Pokok"], "answer": "Musang" },
+    { "text": "Apakah yang dimakan oleh harimau?", "options": ["Rumput", "Daging haiwan lain", "Buah", "Sayur"], "answer": "Daging haiwan lain" },
+    { "text": "Apakah proses kitaran air yang betul?", "options": ["Penyejatan → Pemeluwapan → Hujan", "Hujan → Penyejatan → Pemeluwapan", "Pemeluwapan → Hujan → Penyejatan", "Hujan → Pemeluwapan → Penyejatan"], "answer": "Penyejatan → Pemeluwapan → Hujan" },
+    { "text": "Apakah proses air bertukar menjadi wap?", "options": ["Pemeluwapan", "Penyejatan", "Pembekuan", "Peleburan"], "answer": "Penyejatan" },
+    { "text": "Apakah proses wap air bertukar menjadi titisan air?", "options": ["Penyejatan", "Pemeluwapan", "Hujan", "Pembekuan"], "answer": "Pemeluwapan" },
+    { "text": "Apakah sumber tenaga yang boleh diperbaharui?", "options": ["Minyak", "Gas asli", "Matahari", "Arang batu"], "answer": "Matahari" },
+    { "text": "Apakah sumber tenaga daripada cahaya?", "options": ["Angin", "Air", "Matahari", "Api"], "answer": "Matahari" },
+    { "text": "Apakah yang menggerakkan kincir angin?", "options": ["Air", "Angin", "Api", "Matahari"], "answer": "Angin" }
+  ]
+}

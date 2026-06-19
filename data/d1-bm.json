@@ -1,0 +1,22 @@
+{
+  "subject": "bm",
+  "subject_name": "Bahasa Melayu",
+  "grade": 1,
+  "questions": [
+    { "text": "Apakah perkataan bagi gambar di bawah?", "visual": "🐱", "options": ["Kucing", "Anjing", "Burung", "Ikan"], "answer": "Kucing" },
+    { "text": "Apakah perkataan bagi gambar di bawah?", "visual": "🌳", "options": ["Bunga", "Pokok", "Rumput", "Daun"], "answer": "Pokok" },
+    { "text": "Apakah perkataan bagi gambar di bawah?", "visual": "📖", "options": ["Buku", "Meja", "Kerusi", "Pensel"], "answer": "Buku" },
+    { "text": "Huruf apakah yang pertama dalam perkataan 'ayam'?", "options": ["a", "y", "m", "e"], "answer": "a" },
+    { "text": "Huruf apakah yang pertama dalam perkataan 'bola'?", "options": ["b", "o", "l", "a"], "answer": "b" },
+    { "text": "Berapakah bilangan huruf dalam perkataan 'sekolah'?", "options": [5, 6, 7, 8], "answer": 7 },
+    { "text": "Pilih ejaan yang betul.", "options": ["sekolah", "sekola", "sekola h", "sekol ah"], "answer": "sekolah" },
+    { "text": "Pilih ejaan yang betul.", "options": ["buku", "bukuu", "buko", "biku"], "answer": "buku" },
+    { "text": "Pilih ejaan yang betul.", "options": ["meja", "mejah", "me ja", "mejs"], "answer": "meja" },
+    { "text": "Susun perkataan menjadi ayat yang betul: 'saya / makan / nasi'", "options": ["Saya makan nasi", "Makan saya nasi", "Nasi saya makan", "Saya nasi makan"], "answer": "Saya makan nasi" },
+    { "text": "Susun perkataan menjadi ayat yang betul: 'adik / minum / susu'", "options": ["Adik minum susu", "Minum adik susu", "Susu adik minum", "Adik susu minum"], "answer": "Adik minum susu" },
+    { "text": "Susun perkataan menjadi ayat yang betul: 'ibu / masak / di / dapur'", "options": ["Ibu masak di dapur", "Masak ibu di dapur", "Ibu di masak dapur", "Dapur ibu masak di"], "answer": "Ibu masak di dapur" },
+    { "text": "Apakah perkataan yang sama maksud dengan 'cantik'?", "options": ["Indah", "Kotor", "Besar", "Kecil"], "answer": "Indah" },
+    { "text": "Apakah perkataan yang sama maksud dengan 'gembira'?", "options": ["Sedih", "Marah", "Suka", "Takut"], "answer": "Suka" },
+    { "text": "Apakah perkataan yang sama maksud dengan 'besar'?", "options": ["Kecil", "Tinggi", "Panjang", "Besar sekali"], "answer": "Besar sekali" }
+  ]
+}

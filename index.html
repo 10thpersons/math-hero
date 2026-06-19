@@ -149,6 +149,45 @@
   }
   .grade-btn .grade-name { font-size: 22px; font-weight: 800; }
   .grade-btn .grade-desc { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .subject-btn {
+    flex: 1;
+    min-width: 130px;
+    background: #fff;
+    border: 3px solid #f0f0f5;
+    border-radius: 18px;
+    padding: 14px 8px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    color: var(--text);
+    box-shadow: 0 4px 0 rgba(31,31,61,0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .subject-btn .subject-emoji { font-size: 32px; line-height: 1; }
+  .subject-btn .subject-name { font-size: 14px; }
+  .subject-btn.selected {
+    border-color: var(--secondary);
+    background: linear-gradient(135deg, #e6f6ff 0%, #d0eaff 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 rgba(78,197,255,0.25);
+  }
+  .q-passage {
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--text);
+    background: #fff;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border-left: 4px solid var(--secondary);
+    margin-bottom: 4px;
+    font-style: italic;
+    max-width: 100%;
+  }
   .start-btn {
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     color: white;
@@ -465,7 +504,29 @@
       </div>
     </div>
 
-    <button class="start-btn" id="start-btn" disabled>Mula Main!</button>
+    <div id="subject-section" style="display: none;">
+      <p class="label">Pilih subjek:</p>
+      <div class="row" id="subject-grid">
+        <button class="subject-btn" data-subject="math">
+          <span class="subject-emoji">🔢</span>
+          <span class="subject-name">Matematik</span>
+        </button>
+        <button class="subject-btn" data-subject="bm">
+          <span class="subject-emoji">🇲🇾</span>
+          <span class="subject-name">Bahasa Melayu</span>
+        </button>
+        <button class="subject-btn" data-subject="bi">
+          <span class="subject-emoji">🇬🇧</span>
+          <span class="subject-name">English</span>
+        </button>
+        <button class="subject-btn" data-subject="sains">
+          <span class="subject-emoji">🔬</span>
+          <span class="subject-name">Sains</span>
+        </button>
+      </div>
+    </div>
+
+    <button class="start-btn" id="start-btn" disabled>Pilih semua dulu ✨</button>
     <p class="footer-credit">Buat cikgu Adeen & anak-anak ❤️</p>
   </section>
 
@@ -482,6 +543,7 @@
 
     <div class="question-box">
       <div class="q-num" id="q-num">Soalan 1 / 15</div>
+      <div class="q-passage" id="q-passage"></div>
       <div class="q-text" id="q-text"></div>
       <div class="q-visual" id="q-visual"></div>
       <div class="q-equation" id="q-equation"></div>
@@ -593,214 +655,19 @@ const AVATARS = [
 ];
 
 /* ===========================
-   QUESTION BANKS — KSSR FORMAT
+   QUESTION LOADER — fetches JSON from /data/
    =========================== */
-const QUESTIONS = {
-
-  // ============ DARJAH 1 ============
-  1: [
-    {
-      type: 'count',
-      text: 'Berapakah bilangan objek di bawah?',
-      visual: '🍎🍎🍎🍎🍎🍎🍎',
-      options: [6, 7, 8, 9],
-      answer: 7,
-    },
-    {
-      type: 'count',
-      text: 'Berapakah bilangan objek di bawah?',
-      visual: '⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐',
-      options: [10, 11, 12, 13],
-      answer: 12,
-    },
-    {
-      type: 'count',
-      text: 'Berapakah bilangan objek di bawah?',
-      visual: '🐟🐟🐟🐟🐟🐟🐟🐟🐟',
-      options: [8, 9, 10, 11],
-      answer: 9,
-    },
-    {
-      type: 'compare',
-      text: 'Antara berikut, nombor manakah yang paling besar?',
-      options: [25, 17, 32, 28],
-      answer: 32,
-    },
-    {
-      type: 'compare',
-      text: 'Antara berikut, nombor manakah yang paling kecil?',
-      options: [14, 9, 22, 17],
-      answer: 9,
-    },
-    {
-      type: 'compare',
-      text: 'Antara berikut, nombor manakah yang paling besar?',
-      options: [41, 38, 45, 40],
-      answer: 45,
-    },
-    {
-      type: 'word',
-      text: 'Tuliskan 26 dalam perkataan.',
-      options: ['Dua puluh empat', 'Dua puluh enam', 'Dua puluh sembilan', 'Dua puluh lapan'],
-      answer: 'Dua puluh enam',
-    },
-    {
-      type: 'word',
-      text: 'Tuliskan 35 dalam perkataan.',
-      options: ['Tiga puluh empat', 'Tiga puluh lima', 'Tiga puluh enam', 'Tiga puluh tiga'],
-      answer: 'Tiga puluh lima',
-    },
-    {
-      type: 'add',
-      text: 'Cari hasil tambah.',
-      equation: '7 + 5 = ?',
-      options: [11, 12, 13, 14],
-      answer: 12,
-    },
-    {
-      type: 'add',
-      text: 'Cari hasil tambah.',
-      equation: '9 + 8 = ?',
-      options: [15, 16, 17, 18],
-      answer: 17,
-    },
-    {
-      type: 'add',
-      text: 'Cari hasil tambah.',
-      equation: '6 + 7 + 3 = ?',
-      options: [14, 15, 16, 17],
-      answer: 16,
-    },
-    {
-      type: 'subtract',
-      text: 'Cari hasil tolak.',
-      equation: '15 − 7 = ?',
-      options: [7, 8, 9, 10],
-      answer: 8,
-    },
-    {
-      type: 'subtract',
-      text: 'Cari hasil tolak.',
-      equation: '20 − 9 = ?',
-      options: [9, 10, 11, 12],
-      answer: 11,
-    },
-    {
-      type: 'story',
-      text: 'Ali ada 8 biji guli. Abangnya memberi 5 biji lagi. Berapakah jumlah guli Ali sekarang?',
-      options: [12, 13, 14, 15],
-      answer: 13,
-    },
-    {
-      type: 'story',
-      text: 'Yana ada 10 biji rambutan. Dia makan 4 biji. Berapa biji rambutan yang tinggal?',
-      options: [5, 6, 7, 8],
-      answer: 6,
-    },
-  ],
-
-  // ============ DARJAH 3 ============
-  3: [
-    {
-      type: 'count',
-      text: 'Berapakah jumlah nilai wang syiling 50 sen, 20 sen dan 10 sen?',
-      equation: '50 sen + 20 sen + 10 sen = ?',
-      options: [60, 70, 80, 90],
-      answer: 80,
-    },
-    {
-      type: 'place',
-      text: 'Dalam nombor 347, digit 4 berada di nilai tempat apakah?',
-      options: ['Ratus', 'Puluh', 'Sa', 'Ribu'],
-      answer: 'Puluh',
-    },
-    {
-      type: 'place',
-      text: 'Apakah nilai tempat bagi digit 6 dalam nombor 562?',
-      options: ['Ratus', 'Puluh', 'Sa', 'Ribu'],
-      answer: 'Ratus',
-    },
-    {
-      type: 'multiply',
-      text: 'Cari hasil darab.',
-      equation: '4 × 5 = ?',
-      options: [15, 18, 20, 25],
-      answer: 20,
-    },
-    {
-      type: 'multiply',
-      text: 'Cari hasil darab.',
-      equation: '7 × 3 = ?',
-      options: [18, 21, 24, 27],
-      answer: 21,
-    },
-    {
-      type: 'multiply',
-      text: 'Cari hasil darab.',
-      equation: '6 × 8 = ?',
-      options: [42, 45, 48, 54],
-      answer: 48,
-    },
-    {
-      type: 'add2',
-      text: 'Cari hasil tambah.',
-      equation: '46 + 27 = ?',
-      options: [63, 71, 73, 77],
-      answer: 73,
-    },
-    {
-      type: 'add2',
-      text: 'Cari hasil tambah.',
-      equation: '58 + 34 = ?',
-      options: [82, 86, 92, 96],
-      answer: 92,
-    },
-    {
-      type: 'sub2',
-      text: 'Cari hasil tolak.',
-      equation: '83 − 47 = ?',
-      options: [34, 36, 38, 42],
-      answer: 36,
-    },
-    {
-      type: 'sub2',
-      text: 'Cari hasil tolak.',
-      equation: '91 − 56 = ?',
-      options: [33, 35, 37, 39],
-      answer: 35,
-    },
-    {
-      type: 'story',
-      text: 'Siti ada 24 biji oren. Dia berikan 9 biji kepada adiknya. Berapa biji oren Siti sekarang?',
-      options: [13, 14, 15, 16],
-      answer: 15,
-    },
-    {
-      type: 'story',
-      text: 'Ada 5 kotak. Setiap kotak ada 6 biji epal. Berapa jumlah epal semuanya?',
-      options: [26, 28, 30, 32],
-      answer: 30,
-    },
-    {
-      type: 'story2',
-      text: 'Ahmad ada RM25. Dia beli buku RM8 dan pensel RM3. Berapakah baki wangnya?',
-      options: [12, 13, 14, 15],
-      answer: 14,
-    },
-    {
-      type: 'time',
-      text: 'Jarum panjang menunjukkan 6, jarum pendek menunjukkan 3. Apakah waktunya?',
-      options: ['3:00', '6:00', '3:30', '6:30'],
-      answer: '3:30',
-    },
-    {
-      type: 'time',
-      text: 'Satu jam selepas pukul 2:00 ialah pukul berapa?',
-      options: ['1:00', '2:00', '3:00', '4:00'],
-      answer: '3:00',
-    },
-  ],
-};
+const BANKS = {};
+async function loadBank(grade, subject) {
+  const key = `${grade}-${subject}`;
+  if (BANKS[key]) return BANKS[key];
+  const url = `data/d${grade}-${subject}.json`;
+  const r = await fetch(url, { cache: 'force-cache' });
+  if (!r.ok) throw new Error(`Failed to load ${url}: ${r.status}`);
+  const data = await r.json();
+  BANKS[key] = data;
+  return data;
+}
 
 /* ===========================
    GAME STATE
@@ -808,6 +675,8 @@ const QUESTIONS = {
 const state = {
   avatar: null,
   grade: null,
+  subject: null,
+  subjectName: null,
   questions: [],
   index: 0,
   lives: 3,
@@ -855,15 +724,32 @@ function renderAvatars() {
 document.querySelectorAll('.grade-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     state.grade = parseInt(btn.dataset.grade, 10);
+    state.subject = null;
+    state.subjectName = null;
     Sound.click();
     document.querySelectorAll('.grade-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    document.getElementById('subject-section').style.display = 'block';
+    document.querySelectorAll('.subject-btn').forEach(b => b.classList.remove('selected'));
+    updateStartBtn();
+  });
+});
+
+document.querySelectorAll('.subject-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    state.subject = btn.dataset.subject;
+    state.subjectName = btn.querySelector('.subject-name').textContent;
+    Sound.click();
+    document.querySelectorAll('.subject-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
     updateStartBtn();
   });
 });
 
 function updateStartBtn() {
-  el('start-btn').disabled = !(state.avatar && state.grade);
+  const ok = state.avatar && state.grade && state.subject;
+  el('start-btn').disabled = !ok;
+  el('start-btn').textContent = ok ? 'Mula Main! 🚀' : 'Pilih semua dulu ✨';
 }
 
 el('start-btn').addEventListener('click', startGame);
@@ -871,18 +757,28 @@ el('start-btn').addEventListener('click', startGame);
 /* ===========================
    GAME FLOW
    =========================== */
-function startGame() {
-  if (!state.avatar || !state.grade) return;
+async function startGame() {
+  if (!state.avatar || !state.grade || !state.subject) return;
   Sound.click();
-  state.questions = shuffle([...QUESTIONS[state.grade]]);
-  state.index = 0;
-  state.lives = 3;
-  state.stars = 0;
-  state.streak = 0;
-  state.bestStreak = 0;
-  state.correct = 0;
-  showScreen('game');
-  renderQuestion();
+  const btn = el('start-btn');
+  btn.disabled = true;
+  btn.textContent = 'Memuat soalan... ⏳';
+  try {
+    const bank = await loadBank(state.grade, state.subject);
+    state.questions = shuffle([...bank.questions]);
+    state.index = 0;
+    state.lives = 3;
+    state.stars = 0;
+    state.streak = 0;
+    state.bestStreak = 0;
+    state.correct = 0;
+    showScreen('game');
+    renderQuestion();
+  } catch (e) {
+    alert('Maaf, soalan tidak dapat dimuatkan. Cuba lagi ya!\n\n' + e.message);
+    btn.disabled = false;
+    updateStartBtn();
+  }
 }
 
 function showScreen(name) {
@@ -903,12 +799,14 @@ function renderQuestion() {
   state.qStartTime = Date.now();
   const q = state.questions[state.index];
 
-  el('q-num').textContent = `Soalan ${state.index + 1} / ${state.questions.length}`;
+  el('q-num').textContent = `Soalan ${state.index + 1} / ${state.questions.length} · ${state.subjectName || ''}`;
   el('q-text').textContent = q.text;
   el('q-visual').innerHTML = q.visual ? q.visual : '';
   el('q-visual').style.display = q.visual ? 'block' : 'none';
   el('q-equation').textContent = q.equation ? q.equation : '';
   el('q-equation').style.display = q.equation ? 'block' : 'none';
+  el('q-passage').textContent = q.passage || '';
+  el('q-passage').style.display = q.passage ? 'block' : 'none';
 
   const optsEl = el('options');
   optsEl.innerHTML = '';
@@ -1057,8 +955,12 @@ el('home-btn').addEventListener('click', () => {
   Sound.click();
   state.avatar = null;
   state.grade = null;
+  state.subject = null;
+  state.subjectName = null;
   document.querySelectorAll('.avatar-btn').forEach(b => b.classList.remove('selected'));
   document.querySelectorAll('.grade-btn').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('.subject-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('subject-section').style.display = 'none';
   updateStartBtn();
   showScreen('start');
 });
