@@ -64,7 +64,7 @@ const BODIES_DATA = {
 
 // Helper: get body by id (with full info)
 function getBody(id) {
-  return BODIES[id] || null;
+  return BODIES_DATA[id] || null;
 }
 
 // Helper: render an equipped avatar (body + items layered)
