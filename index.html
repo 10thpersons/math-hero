@@ -125,6 +125,12 @@
     border: 3px solid #f0f0f5;
     border-radius: 18px;
     padding: 12px 6px;
+    min-height: 130px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
     font-family: inherit;
     font-weight: 700;
     font-size: 14px;
@@ -149,13 +155,24 @@
     border-radius: 8px;
     margin-top: 2px;
   }
-  .body-btn .body-new {
-    font-size: 10px;
+  .body-btn .body-new-badge {
+    display: inline-block;
+    font-size: 9px;
     color: white;
     background: var(--accent);
-    padding: 1px 6px;
-    border-radius: 8px;
+    padding: 1px 5px;
+    border-radius: 6px;
     font-weight: 800;
+    margin-left: 3px;
+    vertical-align: middle;
+  }
+  .body-btn .body-stack {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-top: 2px;
   }
   .body-btn.selected, .grade-btn.selected {
     border-color: var(--primary);
@@ -803,6 +820,7 @@ const BODIES = [
   { id: 'panda', emoji: '🐼', name: 'Panda Monk', cls: 'Monk',     icon: '☯️', color: '#10b981' },
   { id: 'tiger', emoji: '🐯', name: 'Tiger Warrior', cls: 'Berserker', icon: '🗡️', color: '#f59e0b' },
   { id: 'dragon', emoji: '🐉', name: 'Dragon Child', cls: 'Mystic', icon: '🔥', color: '#dc2626' },
+  { id: 'unicorn', emoji: '🦄', name: 'Unicorn Sage', cls: 'Healer', icon: '💖', color: '#ec4899' },
 ];
 
 /* ===========================
@@ -959,8 +977,8 @@ function renderBodies() {
       <span class="body-name">${b.name}</span>
       <span class="body-class" style="color:${b.color}">${b.icon} ${b.cls}</span>
       ${existing
-        ? `<span class="body-coins">${existing.coins} 🪙 · ${existing.gems} 💎</span>`
-        : `<span class="body-new">BARU</span>`}
+        ? `<div class="body-stack"><span class="body-coins">${existing.coins} 🪙 · ${existing.gems} 💎</span></div>`
+        : `<div class="body-stack"><span class="body-coins">0 🪙 · 0 💎</span><span class="body-new-badge">BARU</span></div>`}
     `;
     btn.addEventListener('click', () => selectBody(b.id));
     grid.appendChild(btn);
