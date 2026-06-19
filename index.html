@@ -73,11 +73,13 @@
     display: none;
     flex-direction: column;
     gap: 14px;
-    animation: pop-in 0.4s ease;
   }
   .screen.active { display: flex; }
-  @keyframes pop-in {
-    0% { opacity: 0; transform: scale(0.95) translateY(8px); }
+  .screen.screen-enter {
+    animation: screen-in 0.35s cubic-bezier(0.34, 1.3, 0.64, 1);
+  }
+  @keyframes screen-in {
+    0% { opacity: 0; transform: scale(0.96) translateY(12px); }
     100% { opacity: 1; transform: scale(1) translateY(0); }
   }
   .title {
@@ -92,6 +94,24 @@
     color: transparent;
     letter-spacing: -0.5px;
   }
+  .sound-toggle {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #e0eaff;
+    background: white;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.15s ease;
+    box-shadow: 0 2px 0 #c4d4f0;
+  }
+  .sound-toggle:hover { transform: scale(1.08); }
+  .sound-toggle:active { transform: scale(0.95); box-shadow: 0 1px 0 #c4d4f0; }
+  .sound-toggle.muted { opacity: 0.5; background: #f3f4f6; }
   .subtitle {
     text-align: center;
     color: var(--muted);
@@ -331,6 +351,19 @@
     font-family: 'Fredoka', sans-serif;
     font-size: 22px;
   }
+  .daily-bonus-milestone {
+    font-size: 12px;
+    font-weight: 800;
+    color: #92400e;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px dashed rgba(146, 64, 14, 0.3);
+    animation: milestone-pulse 0.8s ease infinite alternate;
+  }
+  @keyframes milestone-pulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.05); }
+  }
   .first-quiz-banner {
     position: fixed;
     top: 50%;
@@ -356,6 +389,54 @@
     font-weight: 600;
     opacity: 0.9;
     margin-top: 4px;
+  }
+  .achievement-toast {
+    position: fixed;
+    top: 90px;
+    right: 12px;
+    left: 12px;
+    margin: 0 auto;
+    max-width: 320px;
+    background: linear-gradient(135deg, #fef9c3 0%, #fde68a 100%);
+    border: 3px solid #facc15;
+    border-radius: 16px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 8px 0 #ca8a04, 0 12px 24px rgba(202, 138, 4, 0.3);
+    z-index: 150;
+    animation: achievement-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .achievement-toast-out {
+    animation: achievement-out 0.4s ease forwards;
+  }
+  @keyframes achievement-in {
+    from { transform: translateX(120%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  @keyframes achievement-out {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(120%); opacity: 0; }
+  }
+  .achievement-emoji {
+    font-size: 36px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .achievement-text { flex: 1; min-width: 0; }
+  .achievement-title {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+    color: #78350f;
+    line-height: 1.2;
+  }
+  .achievement-desc {
+    font-size: 12px;
+    color: #92400e;
+    font-weight: 600;
+    margin-top: 2px;
   }
   @keyframes fadeOut {
     to { opacity: 0; transform: translateX(-50%) translateY(-20px); }
@@ -842,6 +923,84 @@
   }
   @keyframes toastIn { from { transform: translate(-50%, 30px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
 
+  /* Reset confirmation overlay (3-tap body card) */
+  .reset-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fade-in 0.2s ease;
+    padding: 20px;
+  }
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  .reset-card {
+    background: white;
+    border-radius: 22px;
+    padding: 24px 22px;
+    max-width: 340px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    animation: bounce-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes bounce-in {
+    from { transform: scale(0.7); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .reset-emoji { font-size: 56px; margin-bottom: 8px; }
+  .reset-title {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: #dc2626;
+    margin-bottom: 6px;
+  }
+  .reset-msg {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+  .reset-actions {
+    display: flex;
+    gap: 10px;
+  }
+  .reset-cancel, .reset-confirm {
+    flex: 1;
+    padding: 12px;
+    border-radius: 12px;
+    font-family: inherit;
+    font-weight: 800;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+  }
+  .reset-cancel {
+    background: #f3f4f6;
+    color: #4b5563;
+    box-shadow: 0 3px 0 #d1d5db;
+  }
+  .reset-cancel:active { transform: translateY(2px); box-shadow: 0 1px 0 #d1d5db; }
+  .reset-confirm {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    box-shadow: 0 4px 0 #991b1b;
+  }
+  .reset-confirm:active { transform: translateY(2px); box-shadow: 0 2px 0 #991b1b; }
+
+  /* 3-tap reset hint: subtle wiggle on 2nd tap */
+  .body-btn.reset-hint {
+    animation: reset-wiggle 0.4s ease;
+  }
+  @keyframes reset-wiggle {
+    0%, 100% { transform: rotate(0); }
+    25% { transform: rotate(-3deg); }
+    75% { transform: rotate(3deg); }
+  }
+
   /* Celebration overlay for legendary purchases */
   .celebrate-bg {
     position: fixed;
@@ -1130,6 +1289,7 @@
 <div class="stage">
 
   <section id="screen-start" class="screen active">
+    <button class="sound-toggle" id="sound-toggle" aria-label="Toggle sound">🔊</button>
     <h1 class="title">Math Hero</h1>
     <p class="subtitle">KSSR Quest — Belajar Sambil Main!</p>
 
@@ -1337,6 +1497,7 @@ console.log('[scripts] items.js loaded:', typeof window.ITEMS, '| bodies.js load
    =========================== */
 const Sound = (() => {
   let ctx = null;
+  let enabled = (() => { try { return localStorage.getItem('math-hero-sound') !== 'off'; } catch (e) { return true; } })();
   const ensure = () => {
     if (!ctx) {
       try { ctx = new (window.AudioContext || window.webkitAudioContext)(); }
@@ -1346,6 +1507,7 @@ const Sound = (() => {
     return ctx;
   };
   const tone = (freq, dur, type = 'sine', vol = 0.15) => {
+    if (!enabled) return;
     const c = ensure();
     if (!c) return;
     const osc = c.createOscillator();
@@ -1360,6 +1522,12 @@ const Sound = (() => {
     osc.stop(c.currentTime + dur);
   };
   return {
+    enabled: () => enabled,
+    toggle: () => {
+      enabled = !enabled;
+      try { localStorage.setItem('math-hero-sound', enabled ? 'on' : 'off'); } catch (e) {}
+      return enabled;
+    },
     click: () => tone(800, 0.05, 'square', 0.05),
     correct: () => {
       tone(660, 0.1, 'sine', 0.18);
@@ -1433,6 +1601,8 @@ function createProfile(bodyId) {
     inventory,
     totalCorrect: 0, totalGames: 0, bestStreak: 0, perfectScores: 0,
     lastPlayDate: null, loginStreakDays: 0, firstQuizToday: true,
+    legendaryCount: 0,
+    achievements: [],
     createdAt: new Date().toISOString(),
   };
 }
@@ -1532,10 +1702,20 @@ function flyToHud(text, kind, sourceEl, targetEl) {
 function showDailyBonusBanner(bonus) {
   const b = document.createElement('div');
   b.className = 'daily-bonus-banner';
-  b.innerHTML = `🎁 Hari ke-<span class="streak-num">${bonus.streak}</span>! +${bonus.coins} 🪙${bonus.gems ? ` +${bonus.gems} 💎` : ''}`;
+  const gemStr = bonus.gems ? ` +${bonus.gems} 💎` : '';
+  // Show streak milestone indicator on 7/30 days
+  let milestoneExtra = '';
+  if (bonus.streak === 7) milestoneExtra = '<div class="daily-bonus-milestone">🌟 SEMINGGU STREAK!</div>';
+  else if (bonus.streak === 30) milestoneExtra = '<div class="daily-bonus-milestone">🏆 SEBULAN STREAK!</div>';
+  else if (bonus.streak > 1 && bonus.streak % 7 === 0) milestoneExtra = `<div class="daily-bonus-milestone">🔥 ${bonus.streak} hari berturut-turut!</div>`;
+  b.innerHTML = `🎁 Hari ke-<span class="streak-num">${bonus.streak}</span>! +${bonus.coins} 🪙${gemStr}${milestoneExtra}`;
   document.body.appendChild(b);
-  setTimeout(() => b.remove(), 3300);
+  setTimeout(() => b.remove(), 3800);
   Sound.streak();
+  // Confetti on major milestones
+  if (bonus.streak === 7 || bonus.streak === 30) {
+    setTimeout(fireConfetti, 600);
+  }
 }
 
 function showFirstQuizBanner() {
@@ -1545,6 +1725,62 @@ function showFirstQuizBanner() {
   document.body.appendChild(b);
   setTimeout(() => b.remove(), 2400);
   Sound.streak();
+}
+
+const ACHIEVEMENTS = [
+  // totalCorrect milestones
+  { id: 'first-correct', test: (p) => p.totalCorrect >= 1, emoji: '🎯', title: 'Mula Betul!', desc: 'Jawapan pertama yang betul' },
+  { id: 'ten-correct',   test: (p) => p.totalCorrect >= 10, emoji: '⭐', title: '10 Betul!', desc: '10 jawapan betul!' },
+  { id: 'fifty-correct',  test: (p) => p.totalCorrect >= 50, emoji: '🌟', title: '50 Betul!', desc: '50 jawapan betul! Power!' },
+  { id: 'hundred-correct',test: (p) => p.totalCorrect >= 100, emoji: '💯', title: '100 Betul!', desc: '100 jawapan! Master!' },
+  { id: 'five-hundred',   test: (p) => p.totalCorrect >= 500, emoji: '🏅', title: '500 Betul!', desc: 'Legend!' },
+  // totalGames milestones
+  { id: 'ten-games',  test: (p) => p.totalGames >= 10, emoji: '🎮', title: '10 Main!', desc: 'Telah main 10 kali' },
+  { id: 'fifty-games',test: (p) => p.totalGames >= 50, emoji: '🏆', title: '50 Main!', desc: 'Teguh gigih!' },
+  // perfectScores milestones
+  { id: 'perfect-1', test: (p) => p.perfectScores >= 1, emoji: '💎', title: 'Sempurna Pertama!', desc: 'Skor penuh pertama!' },
+  { id: 'perfect-5', test: (p) => p.perfectScores >= 5, emoji: '👑', title: '5 Sempurna!', desc: '5x skor penuh!' },
+  // bestStreak
+  { id: 'streak-10', test: (p) => p.bestStreak >= 10, emoji: '🔥', title: 'Streak 10!', desc: '10 betul berturut-turut!' },
+  { id: 'streak-20', test: (p) => p.bestStreak >= 20, emoji: '🌋', title: 'Streak 20!', desc: 'Panaskan!' },
+  // legendary items collected
+  { id: 'first-legendary', test: (p) => (p.legendaryCount || 0) >= 1, emoji: '🌟', title: 'Legend Pertama!', desc: 'Barang legendary pertama!' },
+  { id: 'legendary-5',     test: (p) => (p.legendaryCount || 0) >= 5, emoji: '✨', title: '5 Legendary!', desc: 'Koleksi 5 barang legendary!' },
+  // login streak
+  { id: 'login-7',  test: (p) => p.loginStreakDays >= 7,  emoji: '📅', title: '7 Hari Streak!', desc: 'Main setiap hari seminggu!' },
+  { id: 'login-30', test: (p) => p.loginStreakDays >= 30, emoji: '🗓️', title: '30 Hari Streak!', desc: 'Sebulan berturut-turut!' },
+];
+
+function checkAchievements(p) {
+  if (!p || !p.achievements) {
+    if (p) p.achievements = [];
+    return;
+  }
+  for (const a of ACHIEVEMENTS) {
+    if (p.achievements.includes(a.id)) continue;
+    if (a.test(p)) {
+      p.achievements.push(a.id);
+      // Queue the toast so multiple achievements appear sequentially
+      setTimeout(() => showAchievementToast(a), 300);
+    }
+  }
+}
+
+function showAchievementToast(a) {
+  const t = document.createElement('div');
+  t.className = 'achievement-toast';
+  t.innerHTML = `
+    <div class="achievement-emoji">${a.emoji}</div>
+    <div class="achievement-text">
+      <div class="achievement-title">${a.title}</div>
+      <div class="achievement-desc">${a.desc}</div>
+    </div>`;
+  document.body.appendChild(t);
+  Sound.streak();
+  setTimeout(() => {
+    t.classList.add('achievement-toast-out');
+    setTimeout(() => t.remove(), 400);
+  }, 3200);
 }
 
 function showPerfectBonusModal(coins, gems) {
@@ -1631,9 +1867,75 @@ function renderBodies() {
         ? `<div class="body-stack"><span class="body-coins">${existing.coins} 🪙 · ${existing.gems} 💎</span></div>`
         : `<div class="body-stack"><span class="body-coins">0 🪙 · 0 💎</span><span class="body-new-badge">BARU</span></div>`}
     `;
-    btn.addEventListener('click', () => selectBody(b.id));
+    btn.addEventListener('click', () => onBodyTap(b.id, btn));
     grid.appendChild(btn);
   });
+}
+
+// Track 3-tap reset per body: tap within 1.2s of previous tap
+const _bodyTapHistory = new Map();
+function onBodyTap(bodyId, btn) {
+  Sound.click();
+  const existing = loadProfile(bodyId);
+  // Only allow 3-tap reset on bodies that already have a profile
+  if (existing) {
+    const now = Date.now();
+    const last = _bodyTapHistory.get(bodyId) || 0;
+    if (now - last < 1200) {
+      // This is a follow-up tap (within window) — count it
+      const count = (_bodyTapHistory.get(bodyId + ':count') || 1) + 1;
+      _bodyTapHistory.set(bodyId + ':count', count);
+      if (count >= 3) {
+        _bodyTapHistory.delete(bodyId);
+        _bodyTapHistory.delete(bodyId + ':count');
+        showResetConfirm(bodyId);
+        return;
+      }
+    } else {
+      _bodyTapHistory.set(bodyId + ':count', 1);
+    }
+    _bodyTapHistory.set(bodyId, now);
+    // Show subtle hint after 2nd tap
+    if ((_bodyTapHistory.get(bodyId + ':count') || 1) >= 2) {
+      btn.classList.add('reset-hint');
+      setTimeout(() => btn.classList.remove('reset-hint'), 1200);
+    }
+  }
+  selectBody(bodyId);
+}
+
+function showResetConfirm(bodyId) {
+  const body = BODIES.find(b => b.id === bodyId);
+  const overlay = document.createElement('div');
+  overlay.className = 'reset-overlay';
+  overlay.innerHTML = `
+    <div class="reset-card">
+      <div class="reset-emoji">⚠️</div>
+      <div class="reset-title">Reset ${body.name}?</div>
+      <div class="reset-msg">Semua duit syiling, barang, dan rekod akan dipadam.</div>
+      <div class="reset-actions">
+        <button class="reset-cancel" id="reset-cancel-btn">Batal</button>
+        <button class="reset-confirm" id="reset-confirm-btn">Ya, Reset</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  el('reset-cancel-btn').addEventListener('click', () => {
+    overlay.remove();
+    Sound.click();
+  });
+  el('reset-confirm-btn').addEventListener('click', () => {
+    overlay.remove();
+    deleteProfile(bodyId);
+    state.profile = null;
+    document.querySelectorAll('.body-btn').forEach(b => b.classList.remove('selected'));
+    renderBodies();
+    el('welcome-card').style.display = 'none';
+    el('body-label').textContent = 'Pilih hero kamu:';
+    updateStartBtn();
+    showToast('Profil dipadam ✨');
+    Sound.end();
+  });
+  Sound.wrong();
 }
 
 function selectBody(bodyId) {
@@ -1931,6 +2233,10 @@ function openBuyConfirm(slot, itemId) {
     if (item.priceGems) state.profile.gems  -= item.priceGems;
     else                state.profile.coins -= item.priceCoins;
     state.profile.inventory[item.id] = true;
+    // Track legendary count
+    if (item.rarity === 'legendary') {
+      state.profile.legendaryCount = (state.profile.legendaryCount || 0) + 1;
+    }
     // Auto-equip on purchase
     equipItem(slot, item.id, /*silent=*/true);
     saveProfile();
@@ -1941,6 +2247,8 @@ function openBuyConfirm(slot, itemId) {
     refreshHud();
     // Legendary gets celebration overlay
     if (item.rarity === 'legendary') showLegendaryCelebration(item);
+    // Check achievements
+    checkAchievements(state.profile);
   });
   // Close on background click
   bg.addEventListener('click', (e) => { if (e.target === bg) { Sound.click(); cleanup(); } });
@@ -2017,6 +2325,27 @@ function updateStartBtn() {
 
 el('start-btn').addEventListener('click', startGame);
 
+// Sound toggle button
+(function initSoundToggle() {
+  const btn = el('sound-toggle');
+  if (!btn) return;
+  // Sync UI with stored state
+  if (!Sound.enabled()) {
+    btn.textContent = '🔇';
+    btn.classList.add('muted');
+  }
+  btn.addEventListener('click', () => {
+    const nowOn = Sound.toggle();
+    btn.textContent = nowOn ? '🔊' : '🔇';
+    btn.classList.toggle('muted', !nowOn);
+    if (nowOn) {
+      // Play a confirmation chirp so user knows sound is back
+      Sound.click();
+    }
+    showToast(nowOn ? 'Bunyi dihidupkan 🔊' : 'Bunyi dimatikan 🔇');
+  });
+})();
+
 /* ===========================
    GAME FLOW
    =========================== */
@@ -2050,7 +2379,12 @@ async function startGame() {
 
 function showScreen(name) {
   Object.values(screens).forEach(s => s.classList.remove('active'));
-  screens[name].classList.add('active');
+  const target = screens[name];
+  target.classList.add('active');
+  // Re-trigger pop-in animation by removing and re-adding the class on next frame
+  target.classList.remove('screen-enter');
+  void target.offsetWidth;
+  target.classList.add('screen-enter');
 }
 
 function shuffle(arr) {
@@ -2216,6 +2550,9 @@ function handleAnswer(btn, chosen) {
     }
     el('feedback').textContent = `✅ Betul! +${starsThisQ} ⭐ +1 🪙`;
     el('feedback').className = 'feedback correct';
+
+    // Check achievements on every correct answer (idempotent — only fires once)
+    checkAchievements(state.profile);
   }
 
   updateHud();
