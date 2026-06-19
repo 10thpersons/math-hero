@@ -228,6 +228,86 @@
     margin-top: 4px;
   }
   .change-hero-btn:hover { background: #fff5e0; border-style: solid; }
+  .edit-hero-btn {
+    background: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 100%);
+    border: none; color: white;
+    border-radius: 12px;
+    padding: 8px 12px;
+    font-family: inherit;
+    font-weight: 800;
+    font-size: 12px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 4px;
+    box-shadow: 0 3px 0 rgba(124,58,237,0.3);
+  }
+  .edit-hero-btn:hover { transform: translateY(-1px); }
+
+  /* ===========================
+     AVATAR EDITOR (Phase 4)
+     =========================== */
+  #screen-editor { padding: 16px 14px; max-width: 460px; margin: 0 auto; }
+  .editor-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .editor-header h2 { font-size: 20px; margin: 0; color: var(--text); }
+  .editor-back { background: #fff; border: 2px solid #e5e7eb; border-radius: 10px; padding: 6px 12px; font-weight: 700; font-size: 13px; cursor: pointer; color: var(--text); font-family: inherit; }
+  .editor-back:hover { background: #f9fafb; }
+  .editor-preview-box {
+    background: linear-gradient(135deg, #fafafa 0%, #f0f0f5 100%);
+    border: 3px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 8px;
+    display: flex; justify-content: center; align-items: center;
+    margin-bottom: 10px;
+  }
+  .editor-preview-box .preview-svg { width: 180px; height: 180px; }
+  .editor-coins {
+    display: flex; gap: 12px; justify-content: center;
+    margin-bottom: 12px;
+    font-weight: 800; font-size: 14px;
+  }
+  .editor-coins .ec-coin { color: #b45309; }
+  .editor-coins .ec-gem { color: #7c3aed; }
+  .slot-tabs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-bottom: 12px; }
+  .slot-tab {
+    background: #fff; border: 2px solid #e5e7eb; border-radius: 12px;
+    padding: 8px 2px; font-family: inherit; font-weight: 800; font-size: 11px;
+    cursor: pointer; color: var(--text); display: flex; flex-direction: column; align-items: center; gap: 2px;
+    min-height: 54px; position: relative;
+  }
+  .slot-tab .slot-icon { font-size: 22px; line-height: 1; }
+  .slot-tab .slot-label { font-size: 9px; line-height: 1.1; }
+  .slot-tab.active { border-color: var(--accent); background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); }
+  .slot-tab .slot-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); position: absolute; top: 4px; right: 4px; display: none; }
+  .slot-tab.has-equipped .slot-dot { display: block; }
+  .editor-items {
+    background: #fff; border: 2px solid #e5e7eb; border-radius: 14px;
+    padding: 10px; max-height: 280px; overflow-y: auto;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  }
+  .item-card {
+    background: #fafafa; border: 2px solid #e5e7eb; border-radius: 10px;
+    padding: 6px 4px; cursor: pointer; position: relative; font-family: inherit;
+    text-align: center; transition: transform 0.1s ease;
+  }
+  .item-card:hover:not(.locked) { transform: translateY(-2px); }
+  .item-card.locked { opacity: 0.45; cursor: not-allowed; }
+  .item-card.selected { border-color: var(--accent); background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); }
+  .item-card .item-art { width: 56px; height: 56px; margin: 0 auto 4px; display: block; }
+  .item-card .item-art svg { width: 100%; height: 100%; }
+  .item-card .item-name { font-size: 11px; font-weight: 800; line-height: 1.1; margin-bottom: 2px; }
+  .item-card .item-price { font-size: 10px; font-weight: 700; }
+  .item-card .item-check {
+    position: absolute; top: -6px; right: -6px;
+    background: var(--accent); color: white; border-radius: 50%;
+    width: 20px; height: 20px; font-size: 12px; line-height: 20px; font-weight: 800;
+    display: none;
+  }
+  .item-card.selected .item-check { display: block; }
+  .item-card .item-lock { position: absolute; top: 2px; right: 4px; font-size: 11px; opacity: 0.7; }
+  .item-card.rarity-rare { box-shadow: 0 0 0 2px rgba(59,130,246,0.18); }
+  .item-card.rarity-legendary { box-shadow: 0 0 0 2px rgba(245,158,11,0.32); animation: legend-pulse 2.4s ease-in-out infinite; }
+  @keyframes legend-pulse { 0%,100% { box-shadow: 0 0 0 2px rgba(245,158,11,0.32); } 50% { box-shadow: 0 0 0 2px rgba(245,158,11,0.7), 0 0 14px rgba(245,158,11,0.4); } }
+  .item-empty { grid-column: 1 / -1; text-align: center; color: #9ca3af; padding: 20px; font-size: 13px; font-weight: 700; }
   .daily-bonus-banner {
     position: fixed;
     top: 30px;
@@ -681,7 +761,6 @@
 
 <div class="stage">
 
-  <!-- START SCREEN -->
   <section id="screen-start" class="screen active">
     <h1 class="title">Math Hero</h1>
     <p class="subtitle">KSSR Quest — Belajar Sambil Main!</p>
@@ -706,6 +785,7 @@
         </div>
       </div>
       <button class="change-hero-btn" id="change-hero-btn">🔄 Ganti Hero</button>
+      <button class="edit-hero-btn" id="edit-hero-btn">✨ Sunting Hero</button>
     </div>
 
     <div>
@@ -746,6 +826,30 @@
 
     <button class="start-btn" id="start-btn" disabled>Pilih semua dulu ✨</button>
     <p class="footer-credit">Buat cikgu Adeen & anak-anak ❤️</p>
+  </section>
+
+  <!-- AVATAR EDITOR SCREEN (Phase 4) -->
+  <section id="screen-editor" class="screen">
+    <div class="editor-header">
+      <button class="editor-back" id="editor-back-btn">← Kembali</button>
+      <h2>✨ Sunting Hero</h2>
+      <div style="width:80px"></div>
+    </div>
+
+    <div class="editor-preview-box">
+      <div class="preview-svg" id="editor-preview"></div>
+    </div>
+
+    <div class="editor-coins">
+      <span class="ec-coin"><span id="editor-coins">0</span> 🪙</span>
+      <span class="ec-gem"><span id="editor-gems">0</span> 💎</span>
+    </div>
+
+    <div class="slot-tabs" id="slot-tabs"></div>
+    <div class="editor-items" id="editor-items"></div>
+    <p style="text-align:center;color:#9ca3af;font-size:11px;margin-top:8px;">
+      💡 Item berkunci boleh dibeli di Kedai (Phase 5)
+    </p>
   </section>
 
   <!-- GAME SCREEN -->
@@ -897,12 +1001,25 @@ const PROFILE_KEY = (bodyId) => `math-hero-profile-${bodyId}`;
 
 function createProfile(bodyId) {
   const b = BODIES.find(x => x.id === bodyId);
+  // Starter pack: 1 common item per slot so the editor has something to show
+  const inventory = {};
+  const equipped = { background: null, headgear: null, top: null, cape: null, hand: null, pet: null };
+  if (window.ITEMS) {
+    for (const slot of ITEMS.meta.slots) {
+      const list = ITEMS[slot] || [];
+      const common = list.find(i => i.rarity === 'common') || list[0];
+      if (common) {
+        inventory[common.id] = true;
+        equipped[slot] = common.id;
+      }
+    }
+  }
   return {
     body: bodyId,
     bodyName: b.name, bodyEmoji: b.emoji, bodyClass: b.cls, classIcon: b.icon, classColor: b.color,
     coins: 0, gems: 0,
-    equipped: { background: null, headgear: null, top: null, cape: null, hand: null, pet: null },
-    inventory: {},
+    equipped,
+    inventory,
     totalCorrect: 0, totalGames: 0, bestStreak: 0, perfectScores: 0,
     lastPlayDate: null, loginStreakDays: 0,
     createdAt: new Date().toISOString(),
@@ -1023,6 +1140,7 @@ const state = {
 const el = (id) => document.getElementById(id);
 const screens = {
   start: el('screen-start'),
+  editor: el('screen-editor'),
   game: el('screen-game'),
   end: el('screen-end'),
 };
@@ -1101,6 +1219,102 @@ el('change-hero-btn').addEventListener('click', () => {
   el('body-label').textContent = 'Pilih hero kamu:';
   updateStartBtn();
 });
+
+/* ===========================
+   AVATAR EDITOR — Phase 4
+   =========================== */
+const SLOT_META = {
+  background: { icon: '🌄', label: 'Latar',     singular: 'latar' },
+  headgear:   { icon: '🎩', label: 'Topi',      singular: 'topi' },
+  top:        { icon: '👕', label: 'Baju',      singular: 'baju' },
+  cape:       { icon: '🧣', label: 'Cape',      singular: 'cape' },
+  hand:       { icon: '⚔️', label: 'Tangan',    singular: 'tangan' },
+  pet:        { icon: '🐾', label: 'Haiwan',    singular: 'haiwan' },
+};
+let editorSlot = 'background'; // active slot tab
+
+function openEditor() {
+  if (!state.profile) return;
+  Sound.click();
+  showScreen('editor');
+  renderEditorPreview();
+  renderEditorSlots();
+  switchEditorSlot('background');
+  el('editor-coins').textContent = state.profile.coins;
+  el('editor-gems').textContent = state.profile.gems;
+}
+function closeEditor() {
+  Sound.click();
+  saveProfile(state.profile);
+  showScreen('start');
+}
+function renderEditorPreview() {
+  el('editor-preview').innerHTML = renderAvatar(state.profile.body, state.profile.equipped || {});
+}
+function renderEditorSlots() {
+  const tabs = el('slot-tabs');
+  tabs.innerHTML = '';
+  for (const slot of ITEMS.meta.slots) {
+    const meta = SLOT_META[slot];
+    const equipped = state.profile.equipped[slot];
+    const tab = document.createElement('button');
+    tab.className = 'slot-tab' + (editorSlot === slot ? ' active' : '') + (equipped ? ' has-equipped' : '');
+    tab.dataset.slot = slot;
+    tab.innerHTML = `<span class="slot-icon">${meta.icon}</span><span class="slot-label">${meta.label}</span><span class="slot-dot"></span>`;
+    tab.addEventListener('click', () => switchEditorSlot(slot));
+    tabs.appendChild(tab);
+  }
+}
+function switchEditorSlot(slot) {
+  Sound.click();
+  editorSlot = slot;
+  document.querySelectorAll('.slot-tab').forEach(t => t.classList.toggle('active', t.dataset.slot === slot));
+  renderEditorItems();
+}
+function renderEditorItems() {
+  const grid = el('editor-items');
+  grid.innerHTML = '';
+  const equippedId = state.profile.equipped[editorSlot];
+  const items = ITEMS[editorSlot] || [];
+  if (items.length === 0) {
+    grid.innerHTML = `<div class="item-empty">Tiada item untuk slot ini lagi ✨</div>`;
+    return;
+  }
+  // Unequip option (only if something is equipped)
+  if (equippedId) {
+    const off = document.createElement('button');
+    off.className = 'item-card';
+    off.style.background = 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)';
+    off.innerHTML = `<div class="item-art" style="display:flex;align-items:center;justify-content:center;font-size:32px;color:#dc2626">✕</div><div class="item-name">Buang</div><div class="item-price">Tiada</div>`;
+    off.addEventListener('click', () => { Sound.click(); equipItem(editorSlot, null); });
+    grid.appendChild(off);
+  }
+  for (const item of items) {
+    const owned = !!state.profile.inventory[item.id];
+    const card = document.createElement('button');
+    card.className = 'item-card rarity-' + item.rarity + (owned ? '' : ' locked') + (equippedId === item.id ? ' selected' : '');
+    card.innerHTML = `
+      <div class="item-art">${item.svg || ''}</div>
+      <div class="item-name">${item.name}</div>
+      <div class="item-price">${owned ? '✓ Ada' : priceLabel(item)}</div>
+      ${equippedId === item.id ? '<div class="item-check">✓</div>' : (owned ? '' : '<div class="item-lock">🔒</div>')}
+    `;
+    if (owned) {
+      card.addEventListener('click', () => { Sound.click(); equipItem(editorSlot, item.id); });
+    }
+    grid.appendChild(card);
+  }
+}
+function equipItem(slot, itemId) {
+  state.profile.equipped[slot] = itemId;
+  saveProfile(state.profile);
+  renderEditorPreview();
+  renderEditorSlots();
+  renderEditorItems();
+}
+
+el('edit-hero-btn').addEventListener('click', openEditor);
+el('editor-back-btn').addEventListener('click', closeEditor);
 
 document.querySelectorAll('.grade-btn').forEach(btn => {
   btn.addEventListener('click', () => {
