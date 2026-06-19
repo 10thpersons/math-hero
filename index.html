@@ -2592,7 +2592,10 @@ function finishLogin(p) {
   // Re-render bodies so the new profile gets a coin count badge
   renderBodies();
   // Pop the welcome card on start screen
-  showWelcome(p);
+  updateWelcomeCard();
+  el('welcome-card').style.display = 'flex';
+  el('welcome-card').style.flexDirection = 'column';
+  el('body-label').textContent = 'Hero kamu:';
   // Switch back to start
   showScreen('start');
   state.grade = null;
