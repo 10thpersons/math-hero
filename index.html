@@ -1442,6 +1442,7 @@ function selectBody(bodyId) {
   if (btn) btn.classList.add('selected');
   updateWelcomeCard();
   el('welcome-card').style.display = 'flex';
+  el('welcome-card').style.flexDirection = 'column';
   el('body-label').textContent = 'Hero kamu:';
   updateStartBtn();
 }
