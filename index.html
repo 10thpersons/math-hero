@@ -808,6 +808,7 @@
 <div class="confetti-container" id="confetti"></div>
 
 <script src="data/items.js"></script>
+<script src="data/bodies.js"></script>
 
 <script>
 /* ===========================
@@ -859,15 +860,24 @@ const Sound = (() => {
 
 /* ===========================
    BODIES (RPG hero creatures — each is a profile)
+   Synced from /data/bodies.js (Phase 3)
    =========================== */
-const BODIES = [
-  { id: 'fox', emoji: '🦊', name: 'Fox Knight',  cls: 'Warrior',  icon: '⚔️', color: '#ef4444' },
-  { id: 'cat', emoji: '🐱', name: 'Cat Mage',    cls: 'Mage',     icon: '🪄', color: '#8b5cf6' },
-  { id: 'panda', emoji: '🐼', name: 'Panda Monk', cls: 'Monk',     icon: '☯️', color: '#10b981' },
-  { id: 'tiger', emoji: '🐯', name: 'Tiger Warrior', cls: 'Berserker', icon: '🗡️', color: '#f59e0b' },
-  { id: 'dragon', emoji: '🐉', name: 'Dragon Child', cls: 'Mystic', icon: '🔥', color: '#dc2626' },
-  { id: 'unicorn', emoji: '🦄', name: 'Unicorn Sage', cls: 'Healer', icon: '💖', color: '#ec4899' },
-];
+const BODIES = window.BODIES_DATA
+  ? ['fox','cat','panda','tiger','dragon','unicorn'].map(id => {
+      const b = window.BODIES_DATA[id];
+      return {
+        id, emoji: b.emoji, name: b.name, cls: b.cls,
+        icon: b.icon, color: b.primaryColor
+      };
+    })
+  : [
+      { id: 'fox', emoji: '🦊', name: 'Rubah Knight',       cls: 'Kesatria',     icon: '⚔️', color: '#f97316' },
+      { id: 'cat', emoji: '🐱', name: 'Kucing Mage',        cls: 'Ahli Sihir',   icon: '🪄', color: '#fb923c' },
+      { id: 'panda', emoji: '🐼', name: 'Panda Biksu',       cls: 'Biksu',        icon: '☯️', color: '#1f2937' },
+      { id: 'tiger', emoji: '🐯', name: 'Harimau Pejuang',   cls: 'Pejuang',      icon: '🗡️', color: '#fb923c' },
+      { id: 'dragon', emoji: '🐉', name: 'Naga Kecil',        cls: 'Mistik',       icon: '🔥', color: '#10b981' },
+      { id: 'unicorn', emoji: '🦄', name: 'Unicorn Penyembuh',cls: 'Penyembuh',    icon: '💖', color: '#ec4899' }
+    ];
 
 /* ===========================
    PROFILE MODULE — LocalStorage per body
@@ -1425,11 +1435,6 @@ if (window.ITEMS) {
     }
   }
   console.log('[Phase 2] Items loaded:', { total, counts, rarity });
-  const hud = document.createElement('div');
-  hud.className = 'phase2-hud';
-  hud.innerHTML = `Phase 2: ${total} items · ${rarity.common}C · ${rarity.rare}R · ${rarity.legendary}L`;
-  document.body.appendChild(hud);
-  // Verify each item has non-empty svg
   let broken = 0;
   for (const slot of ITEMS.meta.slots) {
     for (const item of (ITEMS[slot] || [])) {
@@ -1437,11 +1442,32 @@ if (window.ITEMS) {
     }
   }
   if (broken > 0) console.warn(`[Phase 2] ${broken} items with empty SVG`);
-  // Expose for Phase 4 avatar editor
   window.__itemsReady = true;
 } else {
   console.error('[Phase 2] ITEMS not loaded!');
 }
+
+// Phase 3: validate bodies load
+if (window.BODIES_DATA) {
+  const bodyIds = ['fox','cat','panda','tiger','dragon','unicorn'];
+  let bodyBroken = 0;
+  for (const id of bodyIds) {
+    const b = BODIES_DATA[id];
+    if (!b || !b.svg || b.svg.length < 50) { console.warn('Broken body:', id); bodyBroken++; }
+  }
+  console.log(`[Phase 3] Bodies loaded: ${bodyIds.length} creatures`);
+  window.__bodiesReady = true;
+} else {
+  console.error('[Phase 3] BODIES_DATA not loaded!');
+}
+
+// Combined HUD
+const hud = document.createElement('div');
+hud.className = 'phase2-hud';
+const itemStatus = window.__itemsReady ? '✓' : '✗';
+const bodyStatus = window.__bodiesReady ? '✓' : '✗';
+hud.innerHTML = `P2: ${itemStatus} items · P3: ${bodyStatus} bodies`;
+document.body.appendChild(hud);
 
 // Disable double-tap zoom on iOS
 let lastTouchEnd = 0;
