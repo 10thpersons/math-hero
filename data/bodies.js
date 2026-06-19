@@ -182,89 +182,95 @@ function bodyCat() {
 
 function bodyPanda() {
   return `
-    <!-- legs -->
+    <!-- legs (black) -->
     <ellipse cx="80" cy="180" rx="10" ry="7" fill="#1f2937"/>
     <ellipse cx="120" cy="180" rx="10" ry="7" fill="#1f2937"/>
-    <!-- body -->
-    <ellipse cx="100" cy="140" rx="32" ry="30" fill="#fff"/>
-    <!-- arms (black) -->
-    <ellipse cx="68" cy="135" rx="10" ry="20" fill="#1f2937" transform="rotate(-15 68 135)"/>
-    <ellipse cx="132" cy="135" rx="10" ry="20" fill="#1f2937" transform="rotate(15 132 135)"/>
-    <!-- shoulders -->
-    <ellipse cx="75" cy="115" rx="12" ry="10" fill="#1f2937"/>
-    <ellipse cx="125" cy="115" rx="12" ry="10" fill="#1f2937"/>
-    <!-- head -->
-    <circle cx="100" cy="80" r="32" fill="#fff"/>
-    <!-- ears (black) -->
-    <ellipse cx="75" cy="48" rx="8" ry="10" fill="#1f2937"/>
-    <ellipse cx="125" cy="48" rx="8" ry="10" fill="#1f2937"/>
+    <!-- body (white) -->
+    <ellipse cx="100" cy="140" rx="32" ry="30" fill="#fff" stroke="#1f2937" stroke-width="0.5"/>
+    <!-- arms (black, smaller) -->
+    <ellipse cx="68" cy="140" rx="9" ry="16" fill="#1f2937" transform="rotate(-15 68 140)"/>
+    <ellipse cx="132" cy="140" rx="9" ry="16" fill="#1f2937" transform="rotate(15 132 140)"/>
+    <!-- head (white) — drawn BIG so the white dominates -->
+    <circle cx="100" cy="80" r="36" fill="#fff" stroke="#1f2937" stroke-width="0.5"/>
+    <!-- ears (black, on top of head) -->
+    <ellipse cx="74" cy="50" rx="10" ry="13" fill="#1f2937"/>
+    <ellipse cx="126" cy="50" rx="10" ry="13" fill="#1f2937"/>
+    <!-- ear inner pink -->
+    <ellipse cx="74" cy="52" rx="5" ry="7" fill="#f9a8d4"/>
+    <ellipse cx="126" cy="52" rx="5" ry="7" fill="#f9a8d4"/>
     <!-- eye patches (signature panda look) -->
-    <ellipse cx="88" cy="80" rx="7" ry="9" fill="#1f2937" transform="rotate(-15 88 80)"/>
-    <ellipse cx="112" cy="80" rx="7" ry="9" fill="#1f2937" transform="rotate(15 112 80)"/>
-    <!-- eyes -->
-    <circle cx="88" cy="80" r="2.5" fill="#fff"/>
-    <circle cx="112" cy="80" r="2.5" fill="#fff"/>
-    <circle cx="88" cy="80" r="1.5" fill="#1f2937"/>
-    <circle cx="112" cy="80" r="1.5" fill="#1f2937"/>
+    <ellipse cx="86" cy="82" rx="8" ry="11" fill="#1f2937" transform="rotate(-20 86 82)"/>
+    <ellipse cx="114" cy="82" rx="8" ry="11" fill="#1f2937" transform="rotate(20 114 82)"/>
+    <!-- eyes (white sparkle + black pupil) -->
+    <circle cx="86" cy="82" r="3" fill="#fff"/>
+    <circle cx="114" cy="82" r="3" fill="#fff"/>
+    <circle cx="86" cy="83" r="1.8" fill="#1f2937"/>
+    <circle cx="114" cy="83" r="1.8" fill="#1f2937"/>
     <!-- nose -->
-    <ellipse cx="100" cy="92" rx="3" ry="2" fill="#1f2937"/>
+    <ellipse cx="100" cy="95" rx="3.5" ry="2.5" fill="#1f2937"/>
     <!-- mouth -->
-    <path d="M97,97 Q100,100 103,97" stroke="#1f2937" stroke-width="1.2" fill="none"/>
+    <path d="M97,100 Q100,103 103,100" stroke="#1f2937" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <!-- tiny tail -->
+    <circle cx="58" cy="155" r="5" fill="#1f2937"/>
   `;
 }
 
 function bodyTiger() {
   return `
-    <!-- tail -->
-    <path d="M55,140 Q25,150 25,170 Q35,165 45,160 Q40,170 50,170" fill="none" stroke="#fb923c" stroke-width="10" stroke-linecap="round"/>
-    <path d="M40,150 L52,147" stroke="#1f2937" stroke-width="3" stroke-linecap="round"/>
-    <path d="M30,160 L46,156" stroke="#1f2937" stroke-width="3" stroke-linecap="round"/>
-    <path d="M27,170 L44,166" stroke="#1f2937" stroke-width="3" stroke-linecap="round"/>
+    <!-- tail (orange + bold black bands) -->
+    <path d="M55,140 Q25,150 25,170 Q35,165 45,160 Q40,170 50,170" fill="none" stroke="#fb923c" stroke-width="12" stroke-linecap="round"/>
+    <path d="M44,150 L56,144" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
+    <path d="M32,160 L50,154" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
+    <path d="M28,170 L48,164" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
     <!-- legs -->
-    <ellipse cx="80" cy="180" rx="8" ry="6" fill="#fb923c"/>
-    <ellipse cx="120" cy="180" rx="8" ry="6" fill="#fb923c"/>
+    <ellipse cx="80" cy="180" rx="9" ry="7" fill="#fb923c"/>
+    <ellipse cx="120" cy="180" rx="9" ry="7" fill="#fb923c"/>
     <!-- leg stripes -->
-    <path d="M74,176 L78,182 M80,174 L84,180" stroke="#1f2937" stroke-width="2.5"/>
-    <path d="M114,176 L118,182 M120,174 L124,180" stroke="#1f2937" stroke-width="2.5"/>
-    <!-- body -->
+    <path d="M72,174 L84,178" stroke="#0f172a" stroke-width="4" stroke-linecap="round"/>
+    <path d="M116,174 L128,178" stroke="#0f172a" stroke-width="4" stroke-linecap="round"/>
+    <!-- body (orange) -->
     <ellipse cx="100" cy="140" rx="32" ry="30" fill="#fb923c"/>
     <!-- arms -->
-    <ellipse cx="68" cy="135" rx="10" ry="18" fill="#fb923c" transform="rotate(-15 68 135)"/>
-    <ellipse cx="132" cy="135" rx="10" ry="18" fill="#fb923c" transform="rotate(15 132 135)"/>
-    <!-- arm stripes -->
-    <path d="M62,124 L68,128 M60,135 L66,139 M64,144 L70,148" stroke="#1f2937" stroke-width="2.5"/>
-    <path d="M138,124 L132,128 M140,135 L134,139 M136,144 L130,148" stroke="#1f2937" stroke-width="2.5"/>
+    <ellipse cx="68" cy="138" rx="10" ry="18" fill="#fb923c" transform="rotate(-15 68 138)"/>
+    <ellipse cx="132" cy="138" rx="10" ry="18" fill="#fb923c" transform="rotate(15 132 138)"/>
+    <!-- arm stripes (3 thick bands per arm) -->
+    <path d="M60,126 L72,130" stroke="#0f172a" stroke-width="4" stroke-linecap="round"/>
+    <path d="M58,138 L70,142" stroke="#0f172a" stroke-width="4" stroke-linecap="round"/>
+    <path d="M62,150 L74,154" stroke="#0f172a" stroke-width="4" stroke-linecap="round"/>
+    <path d="M140,126 L128,130" stroke="#0f172a" stroke-width="4" stroke-linecap="round"/>
+    <path d="M142,138 L130,142" stroke="#0f172a" stroke-width="4" stroke-linecap="round"/>
+    <path d="M138,150 L126,154" stroke="#0f172a" stroke-width="4" stroke-linecap="round"/>
     <!-- belly (lighter) -->
     <ellipse cx="100" cy="148" rx="18" ry="16" fill="#fed7aa"/>
-    <!-- body stripes (bold) -->
-    <path d="M72,118 Q70,130 73,142" stroke="#1f2937" stroke-width="4" fill="none" stroke-linecap="round"/>
-    <path d="M84,115 Q83,128 86,140" stroke="#1f2937" stroke-width="4" fill="none" stroke-linecap="round"/>
-    <path d="M128,118 Q130,130 127,142" stroke="#1f2937" stroke-width="4" fill="none" stroke-linecap="round"/>
-    <path d="M116,115 Q117,128 114,140" stroke="#1f2937" stroke-width="4" fill="none" stroke-linecap="round"/>
-    <!-- head -->
-    <circle cx="100" cy="80" r="32" fill="#fb923c"/>
+    <!-- body stripes (4 bold curving bands — very visible) -->
+    <path d="M70,116 Q66,130 70,148" stroke="#0f172a" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M85,114 Q82,128 86,146" stroke="#0f172a" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M115,114 Q118,128 114,146" stroke="#0f172a" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M130,116 Q134,130 130,148" stroke="#0f172a" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <!-- head (orange) -->
+    <circle cx="100" cy="80" r="33" fill="#fb923c"/>
     <!-- ears -->
     <polygon points="72,55 78,28 90,52" fill="#fb923c"/>
     <polygon points="74,52 78,38 86,50" fill="#fce7f3"/>
     <polygon points="128,55 122,28 110,52" fill="#fb923c"/>
     <polygon points="126,52 122,38 114,50" fill="#fce7f3"/>
-    <!-- forehead stripes (the classic tiger "wang" / 王 mark) -->
-    <path d="M100,55 L100,72" stroke="#1f2937" stroke-width="3" stroke-linecap="round"/>
-    <path d="M93,58 Q92,65 95,72" stroke="#1f2937" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-    <path d="M107,58 Q108,65 105,72" stroke="#1f2937" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-    <!-- cheek stripes (longer, bolder) -->
-    <path d="M70,78 Q78,82 84,86" stroke="#1f2937" stroke-width="3" fill="none" stroke-linecap="round"/>
-    <path d="M130,78 Q122,82 116,86" stroke="#1f2937" stroke-width="3" fill="none" stroke-linecap="round"/>
-    <path d="M72,90 L84,92" stroke="#1f2937" stroke-width="2.5" stroke-linecap="round"/>
-    <path d="M128,90 L116,92" stroke="#1f2937" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- eyes -->
-    <ellipse cx="88" cy="83" rx="3" ry="3.5" fill="#fbbf24"/>
-    <ellipse cx="112" cy="83" rx="3" ry="3.5" fill="#fbbf24"/>
-    <circle cx="88" cy="83" r="1.5" fill="#1f2937"/>
-    <circle cx="112" cy="83" r="1.5" fill="#1f2937"/>
-    <!-- nose -->
-    <ellipse cx="100" cy="93" rx="3" ry="2" fill="#1f2937"/>
-    <path d="M97,98 Q100,101 103,98" stroke="#1f2937" stroke-width="1.2" fill="none"/>
+    <!-- forehead stripes — the classic tiger "王" mark -->
+    <path d="M100,54 L100,74" stroke="#0f172a" stroke-width="4" stroke-linecap="round"/>
+    <path d="M92,58 Q90,66 93,74" stroke="#0f172a" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <path d="M108,58 Q110,66 107,74" stroke="#0f172a" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <!-- cheek stripes (bold, sweeping) -->
+    <path d="M68,76 Q78,82 86,88" stroke="#0f172a" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M132,76 Q122,82 114,88" stroke="#0f172a" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M70,92 L86,94" stroke="#0f172a" stroke-width="3" stroke-linecap="round"/>
+    <path d="M130,92 L114,94" stroke="#0f172a" stroke-width="3" stroke-linecap="round"/>
+    <!-- eyes (yellow with black slit pupils — tiger eyes) -->
+    <ellipse cx="88" cy="84" rx="3.5" ry="4" fill="#fde047"/>
+    <ellipse cx="112" cy="84" rx="3.5" ry="4" fill="#fde047"/>
+    <ellipse cx="88" cy="84" rx="0.8" ry="3" fill="#0f172a"/>
+    <ellipse cx="112" cy="84" rx="0.8" ry="3" fill="#0f172a"/>
+    <!-- nose (pink) -->
+    <ellipse cx="100" cy="94" rx="3" ry="2" fill="#1f2937"/>
+    <path d="M97,99 Q100,102 103,99" stroke="#1f2937" stroke-width="1.3" fill="none" stroke-linecap="round"/>
   `;
 }
 
