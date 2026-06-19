@@ -1,2 +1,62 @@
+# OS
 .DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+
+# Logs
 *.log
+logs/
+
+# Secrets — NEVER commit these
+.env
+.env.*
+*.env
+!.env.example
+*.pem
+*.key
+*.crt
+secrets/
+credentials/
+
+# Node (if we add a build step later)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist/
+build/
+out/
+*.min.js
+*.min.css
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+venv/
+.venv/
+
+# OS-specific
+.Trashes
+.Spotlight-V100
+.fseventsd
+
+# Misc
+*.bak
+*.tmp
+*.orig
+.cache/
+coverage/
