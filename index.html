@@ -2765,36 +2765,36 @@ document.addEventListener('click', (e) => {
       const n = Math.max(0, parseInt(el('admin-coins-input').value, 10) || 0);
       p.coins += n;
       saveProfile(p);
-      adminStatus(`+${n} 🪙 ditambah. Sekarang ${p.coins} 🪙`, 'success');
       renderAdminProfileList();
       renderAdminDetail(p);
+      adminStatus(`+${n} 🪙 ditambah. Sekarang ${p.coins} 🪙`, 'success');
       break;
     }
     case 'set-coins': {
       const n = Math.max(0, parseInt(el('admin-coins-input').value, 10) || 0);
       p.coins = n;
       saveProfile(p);
-      adminStatus(`Syiling diset kepada ${n} 🪙`, 'success');
       renderAdminProfileList();
       renderAdminDetail(p);
+      adminStatus(`Syiling diset kepada ${n} 🪙`, 'success');
       break;
     }
     case 'add-gems': {
       const n = Math.max(0, parseInt(el('admin-gems-input').value, 10) || 0);
       p.gems += n;
       saveProfile(p);
-      adminStatus(`+${n} 💎 ditambah. Sekarang ${p.gems} 💎`, 'success');
       renderAdminProfileList();
       renderAdminDetail(p);
+      adminStatus(`+${n} 💎 ditambah. Sekarang ${p.gems} 💎`, 'success');
       break;
     }
     case 'set-gems': {
       const n = Math.max(0, parseInt(el('admin-gems-input').value, 10) || 0);
       p.gems = n;
       saveProfile(p);
-      adminStatus(`Permata diset kepada ${n} 💎`, 'success');
       renderAdminProfileList();
       renderAdminDetail(p);
+      adminStatus(`Permata diset kepada ${n} 💎`, 'success');
       break;
     }
     case 'grant-all-items': {
@@ -2809,11 +2809,11 @@ document.addEventListener('click', (e) => {
           }
         }
         saveProfile(p);
+        renderAdminDetail(p);
         adminStatus(`+${count} barang ditambah ke inventori ✨`, 'success');
       } else {
         adminStatus('Item data belum dimuatkan ❌', 'error');
       }
-      renderAdminDetail(p);
       break;
     }
     case 'unlock-achievements': {
@@ -2832,8 +2832,8 @@ document.addEventListener('click', (e) => {
         }
       }
       saveProfile(p);
-      adminStatus(`+${count} achievement dibuka 🏆`, 'success');
       renderAdminDetail(p);
+      adminStatus(`+${count} achievement dibuka 🏆`, 'success');
       break;
     }
     case 'reset-profile': {
@@ -2841,11 +2841,11 @@ document.addEventListener('click', (e) => {
         return;
       }
       deleteProfile(p.body);
-      adminStatus(`Profil ${p.name || p.bodyName} dipadam ❌`, 'success');
       adminState.selectedBodyId = null;
       el('admin-detail').style.display = 'none';
       renderAdminProfileList();
       renderBodies();
+      adminStatus(`Profil ${p.name || p.bodyName} dipadam ❌`, 'success');
       // If this was the active profile, clear it
       if (state.profile && state.profile.body === p.body) {
         state.profile = null;
