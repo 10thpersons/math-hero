@@ -68,6 +68,7 @@ function getBody(id) {
 }
 
 // Helper: render an equipped avatar (body + items layered)
+// Items are now PNG <image> tags inside the SVG, so they composite with the body SVG.
 function renderAvatar(bodyId, equipped) {
   const body = getBody(bodyId);
   if (!body) return '';
@@ -75,28 +76,28 @@ function renderAvatar(bodyId, equipped) {
   const parts = [];
   if (equipped && equipped.background) {
     const it = getItem('background', equipped.background);
-    if (it) parts.push(it.svg);
+    if (it && it.img) parts.push(`<image href="${it.img}" x="0" y="0" width="200" height="200" preserveAspectRatio="xMidYMid slice"/>`);
   }
   if (equipped && equipped.cape) {
     const it = getItem('cape', equipped.cape);
-    if (it) parts.push(it.svg);
+    if (it && it.img) parts.push(`<image href="${it.img}" x="20" y="60" width="160" height="120"/>`);
   }
   parts.push(body.svg);
   if (equipped && equipped.top) {
     const it = getItem('top', equipped.top);
-    if (it) parts.push(it.svg);
+    if (it && it.img) parts.push(`<image href="${it.img}" x="40" y="95" width="120" height="80"/>`);
   }
   if (equipped && equipped.pet) {
     const it = getItem('pet', equipped.pet);
-    if (it) parts.push(it.svg);
+    if (it && it.img) parts.push(`<image href="${it.img}" x="0" y="130" width="60" height="60"/>`);
   }
   if (equipped && equipped.headgear) {
     const it = getItem('headgear', equipped.headgear);
-    if (it) parts.push(it.svg);
+    if (it && it.img) parts.push(`<image href="${it.img}" x="50" y="20" width="100" height="60"/>`);
   }
   if (equipped && equipped.hand) {
     const it = getItem('hand', equipped.hand);
-    if (it) parts.push(it.svg);
+    if (it && it.img) parts.push(`<image href="${it.img}" x="135" y="100" width="50" height="60"/>`);
   }
   return `<svg viewBox="0 0 200 200" class="avatar-svg">${parts.join('')}</svg>`;
 }

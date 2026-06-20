@@ -314,8 +314,8 @@
   .item-card:hover:not(.locked) { transform: translateY(-2px); }
   .item-card.locked { opacity: 0.45; cursor: not-allowed; }
   .item-card.selected { border-color: var(--accent); background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); }
-  .item-card .item-art { width: 56px; height: 56px; margin: 0 auto 4px; display: block; }
-  .item-card .item-art svg { width: 100%; height: 100%; }
+  .item-card .item-art { width: 56px; height: 56px; margin: 0 auto 4px; display: flex; align-items: center; justify-content: center; }
+  .item-card .item-art svg, .item-card .item-art img.item-img { width: 100%; height: 100%; object-fit: contain; }
   .item-card .item-name { font-size: 11px; font-weight: 800; line-height: 1.1; margin-bottom: 2px; }
   .item-card .item-price { font-size: 10px; font-weight: 700; }
   .item-card .item-check {
@@ -851,7 +851,7 @@
     justify-content: center;
     overflow: hidden;
   }
-  .shop-thumb svg { width: 56px; height: 56px; }
+  .shop-thumb svg, .shop-thumb img.item-img { width: 56px; height: 56px; object-fit: contain; }
   .shop-name {
     font-family: 'Fredoka', sans-serif;
     font-weight: 700;
@@ -924,7 +924,7 @@
     align-items: center;
     justify-content: center;
   }
-  .modal-thumb svg { width: 90px; height: 90px; }
+  .modal-thumb svg, .modal-thumb img.item-img { width: 90px; height: 90px; object-fit: contain; }
   .modal-desc { font-size: 14px; color: var(--muted); margin: 6px 0 14px; }
   .modal-actions { display: flex; gap: 10px; justify-content: center; }
   .modal-btn {
@@ -1387,7 +1387,7 @@
     justify-content: center;
     box-shadow: 0 4px 0 rgba(31,31,61,0.15);
   }
-  .celebrate-thumb svg { width: 110px; height: 110px; }
+  .celebrate-thumb svg, .celebrate-thumb img.item-img { width: 110px; height: 110px; object-fit: contain; }
 
   /* Sparkle particles */
   .sparkle {
@@ -1966,8 +1966,8 @@
 
 <div class="confetti-container" id="confetti"></div>
 
-<script src="data/items.js?cb=20260619c" onerror="console.error('items.js failed')"></script>
-<script src="data/bodies.js?cb=20260619c" onerror="console.error('bodies.js failed'); window.__bodiesLoadError = true"></script>
+<script src="data/items.js?cb=20260620a" onerror="console.error('items.js failed')"></script>
+<script src="data/bodies.js?cb=20260620a" onerror="console.error('bodies.js failed'); window.__bodiesLoadError = true"></script>
 <script>
 console.log('[scripts] items.js loaded:', typeof window.ITEMS, '| bodies.js loaded:', typeof window.BODIES_DATA);
 
@@ -2146,7 +2146,23 @@ function saveProfile(p) {
 function loadProfile(bodyId) {
   try {
     const raw = localStorage.getItem(PROFILE_KEY(bodyId));
-    return raw ? JSON.parse(raw) : null;
+    if (!raw) return null;
+    const p = JSON.parse(raw);
+    // Migration v3 → v4: rename inventory + equipped item IDs to PNG schema
+    if (p && p.inventory && typeof migrateItemId === 'function') {
+      const newInv = {};
+      for (const k of Object.keys(p.inventory)) {
+        const newK = migrateItemId(k);
+        if (newK) newInv[newK] = p.inventory[k];
+      }
+      p.inventory = newInv;
+    }
+    if (p && p.equipped && typeof migrateItemId === 'function') {
+      for (const slot of Object.keys(p.equipped)) {
+        p.equipped[slot] = migrateItemId(p.equipped[slot]);
+      }
+    }
+    return p;
   } catch (e) { return null; }
 }
 function deleteProfile(bodyId) {
@@ -2165,6 +2181,24 @@ function listAllProfiles() {
         const p = JSON.parse(localStorage.getItem(k));
         if (p && p.body) out.push(p);
       } catch (e) {}
+    }
+  }
+  // Migration v3 → v4: rename item IDs in inventory + equipped
+  if (typeof migrateItemId === 'function') {
+    for (const p of out) {
+      if (p.inventory) {
+        const newInv = {};
+        for (const k of Object.keys(p.inventory)) {
+          const newK = migrateItemId(k);
+          if (newK) newInv[newK] = p.inventory[k];
+        }
+        p.inventory = newInv;
+      }
+      if (p.equipped) {
+        for (const slot of Object.keys(p.equipped)) {
+          p.equipped[slot] = migrateItemId(p.equipped[slot]);
+        }
+      }
     }
   }
   return out;
@@ -3103,7 +3137,7 @@ function renderEditorItems() {
     const card = document.createElement('button');
     card.className = 'item-card rarity-' + item.rarity + (owned ? '' : ' locked') + (equippedId === item.id ? ' selected' : '');
     card.innerHTML = `
-      <div class="item-art">${item.svg || ''}</div>
+      <div class="item-art">${itemImg(item)}</div>
       <div class="item-name">${item.name}</div>
       <div class="item-price">${owned ? '✓ Ada' : priceLabel(item)}</div>
       ${equippedId === item.id ? '<div class="item-check">✓</div>' : (owned ? '' : '<div class="item-lock">🔒</div>')}
@@ -3213,7 +3247,7 @@ function renderShopItems() {
     return `
       <div class="shop-card ${cardClass}" data-item-id="${item.id}" data-action="${equipped ? 'noop' : (owned ? 'equip' : (canAfford ? 'buy' : 'toast'))}">
         <span class="shop-tag ${tagClass}">${tagText}</span>
-        <div class="shop-thumb">${item.svg}</div>
+        <div class="shop-thumb">${itemImg(item)}</div>
         <div class="shop-name">${item.name}</div>
         <div class="shop-price ${priceClass}">${priceText}</div>
       </div>`;
@@ -3247,7 +3281,7 @@ function openBuyConfirm(slot, itemId) {
   bg.innerHTML = `
     <div class="modal-card">
       <h3 class="modal-title">Beli ${item.name}?</h3>
-      <div class="modal-thumb">${item.svg}</div>
+      <div class="modal-thumb">${itemImg(item)}</div>
       <p class="modal-desc">${rarity}<br>Harga: <strong>${amount} ${currency}</strong></p>
       <div class="modal-actions">
         <button class="modal-btn cancel" id="modal-cancel">Batal</button>
@@ -3302,7 +3336,7 @@ function showLegendaryCelebration(item) {
       <div class="celebrate-emoji">🌟</div>
       <h2 class="celebrate-title">BARANG LEGENDARY!</h2>
       <p class="celebrate-name">${item.name}</p>
-      <div class="celebrate-thumb">${item.svg}</div>
+      <div class="celebrate-thumb">${itemImg(item)}</div>
       <button class="modal-btn buy" id="celebrate-ok" style="min-width:140px;">OK! 💖</button>
     </div>`;
   document.body.appendChild(bg);
@@ -3783,10 +3817,10 @@ if (window.ITEMS) {
   let broken = 0;
   for (const slot of ITEMS.meta.slots) {
     for (const item of (ITEMS[slot] || [])) {
-      if (!item.svg || item.svg.length < 5) { console.warn('Empty svg:', item.id); broken++; }
+      if (!item.img || item.img.length < 5) { console.warn('Empty img:', item.id); broken++; }
     }
   }
-  if (broken > 0) console.warn(`[Phase 2] ${broken} items with empty SVG`);
+  if (broken > 0) console.warn(`[Phase 2] ${broken} items with empty img path`);
   window.__itemsReady = true;
 } else {
   console.error('[Phase 2] ITEMS not loaded!');
