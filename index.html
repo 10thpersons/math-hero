@@ -289,7 +289,40 @@
   }
   .editor-coins .ec-coin { color: #b45309; }
   .editor-coins .ec-gem { color: #7c3aed; }
-  .slot-tabs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-bottom: 12px; }
+  .slot-tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
+  /* v2: loadout save/load + share action buttons */
+  .editor-actions { display: flex; gap: 6px; margin-bottom: 10px; justify-content: center; }
+  .editor-action-btn {
+    flex: 1; max-width: 140px;
+    background: linear-gradient(135deg, #fafafa 0%, #f3f4f6 100%);
+    border: 2px solid #e5e7eb; border-radius: 12px;
+    padding: 10px 8px; font-family: inherit; font-weight: 800; font-size: 12px;
+    color: var(--text); cursor: pointer;
+    transition: transform 0.1s ease;
+  }
+  .editor-action-btn:active { transform: translateY(1px); }
+  .editor-action-btn.share { background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-color: #f9a8d4; color: #9d174d; }
+  /* Loadout thumbnails in the load modal */
+  .loadout-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+  .loadout-card {
+    background: #fafafa; border: 2px solid #e5e7eb; border-radius: 10px;
+    padding: 6px 4px; cursor: pointer; font-family: inherit;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .loadout-card.empty { border-style: dashed; color: #9ca3af; background: #f9fafb; }
+  .loadout-card .loadout-thumb { width: 80px; height: 80px; }
+  .loadout-card .loadout-thumb svg { width: 100%; height: 100%; }
+  .loadout-card .loadout-name { font-size: 11px; font-weight: 800; }
+  .loadout-card .loadout-hint { font-size: 10px; color: #9ca3af; }
+  /* Share modal — 400×400 PNG preview */
+  .share-preview {
+    width: 400px; max-width: 100%; height: auto; aspect-ratio: 1 / 1;
+    background: #f9fafb; border-radius: 14px; padding: 10px;
+    margin: 10px auto; display: flex; align-items: center; justify-content: center;
+    image-rendering: pixelated;
+  }
+  .share-preview img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; }
+  .share-actions { display: flex; gap: 8px; justify-content: center; margin-top: 12px; flex-wrap: wrap; }
   .slot-tab {
     background: #fff; border: 2px solid #e5e7eb; border-radius: 12px;
     padding: 8px 2px; font-family: inherit; font-weight: 800; font-size: 11px;
@@ -1721,6 +1754,14 @@
     </div>
 
     <div class="slot-tabs" id="slot-tabs"></div>
+
+    <!-- v2: Loadout save/load + Share (Kongsi) -->
+    <div class="editor-actions">
+      <button class="editor-action-btn" id="loadout-save-btn">💾 Simpan</button>
+      <button class="editor-action-btn" id="loadout-load-btn">📂 Muat</button>
+      <button class="editor-action-btn share" id="share-btn">📤 Kongsi</button>
+    </div>
+
     <div class="editor-items" id="editor-items"></div>
     <p style="text-align:center;color:#9ca3af;font-size:11px;margin-top:8px;">
       💡 Item berkunci boleh dibeli di Kedai
@@ -2110,7 +2151,12 @@ function createProfile(bodyId, opts = {}) {
   const b = BODIES.find(x => x.id === bodyId);
   // Starter pack: 1 common item per slot so the editor has something to show
   const inventory = {};
-  const equipped = { background: null, headgear: null, top: null, cape: null, hand: null, pet: null };
+  const equipped = {
+    background: null, headgear: null, top: null, cape: null, hand: null, pet: null,
+    // v2 slots — null until Phase 2 packs ship
+    hair: null, face: null, glasses: null, pants: null, shoes: null, accessory: null,
+    hairColor: 'black',
+  };
   if (window.ITEMS) {
     for (const slot of ITEMS.meta.slots) {
       const list = ITEMS[slot] || [];
@@ -2129,11 +2175,13 @@ function createProfile(bodyId, opts = {}) {
     coins: 0, gems: 0,
     equipped,
     inventory,
+    loadouts: [],
     totalCorrect: 0, totalGames: 0, bestStreak: 0, perfectScores: 0,
     lastPlayDate: null, loginStreakDays: 0, firstQuizToday: true,
     legendaryCount: 0,
     achievements: [],
     createdAt: new Date().toISOString(),
+    migrated: 'v2',
   };
 }
 
@@ -2143,6 +2191,29 @@ function saveProfile(p) {
     if (p.name) indexAddProfile(p.name, p.body);
   } catch (e) { console.warn('Profile save failed:', e); }
 }
+
+/* ===========================
+   SCHEMA MIGRATION v1 → v2 (Phase 1 avatar customizer)
+   - Adds 6 new slots to `equipped` (hair, face, glasses, pants, shoes, accessory)
+   - Adds `hairColor` (default "black")
+   - Adds `loadouts: []` (3-loadout save/load system)
+   - Sets `migrated: 'v2'` flag (idempotent)
+   - Runs in BOTH loadProfile() and listAllProfiles() per brief §6
+   =========================== */
+const NEW_V2_SLOTS = ['hair', 'face', 'glasses', 'pants', 'shoes', 'accessory'];
+function migrateProfileV2(p) {
+  if (!p || typeof p !== 'object') return p;
+  if (p.migrated === 'v2') return p;
+  p.equipped = p.equipped || {};
+  for (const slot of NEW_V2_SLOTS) {
+    if (!(slot in p.equipped)) p.equipped[slot] = null;
+  }
+  if (typeof p.equipped.hairColor !== 'string') p.equipped.hairColor = 'black';
+  if (!Array.isArray(p.loadouts)) p.loadouts = [];
+  p.migrated = 'v2';
+  return p;
+}
+
 function loadProfile(bodyId) {
   try {
     const raw = localStorage.getItem(PROFILE_KEY(bodyId));
@@ -2161,6 +2232,12 @@ function loadProfile(bodyId) {
       for (const slot of Object.keys(p.equipped)) {
         p.equipped[slot] = migrateItemId(p.equipped[slot]);
       }
+    }
+    // Migration v1 → v2: add new slots + loadouts
+    migrateProfileV2(p);
+    // Persist the migrated profile once so the flag sticks
+    if (p) {
+      try { localStorage.setItem(PROFILE_KEY(bodyId), JSON.stringify(p)); } catch (e) {}
     }
     return p;
   } catch (e) { return null; }
@@ -2200,6 +2277,10 @@ function listAllProfiles() {
         }
       }
     }
+  }
+  // Migration v1 → v2 (admin path — same logic as loadProfile)
+  for (const p of out) {
+    migrateProfileV2(p);
   }
   return out;
 }
@@ -3067,12 +3148,19 @@ el('change-hero-btn').addEventListener('click', () => {
    AVATAR EDITOR — Phase 4
    =========================== */
 const SLOT_META = {
-  background: { icon: '🌄', label: 'Latar',     singular: 'latar' },
-  headgear:   { icon: '🎩', label: 'Topi',      singular: 'topi' },
-  top:        { icon: '👕', label: 'Baju',      singular: 'baju' },
-  cape:       { icon: '🧣', label: 'Cape',      singular: 'cape' },
-  hand:       { icon: '⚔️', label: 'Tangan',    singular: 'tangan' },
-  pet:        { icon: '🐾', label: 'Haiwan',    singular: 'haiwan' },
+  background: { icon: '🌄', label: 'Latar',         singular: 'latar' },
+  headgear:   { icon: '🎩', label: 'Topi',          singular: 'topi' },
+  top:        { icon: '👕', label: 'Baju',          singular: 'baju' },
+  cape:       { icon: '🧣', label: 'Cape',          singular: 'cape' },
+  hand:       { icon: '⚔️', label: 'Tangan',        singular: 'tangan' },
+  pet:        { icon: '🐾', label: 'Haiwan',        singular: 'haiwan' },
+  // v2 slots (Phase 1 UI wired, packs land in Phase 2)
+  hair:       { icon: '💇', label: 'Rambut',        singular: 'rambut' },
+  face:       { icon: '😀', label: 'Muka',          singular: 'muka' },
+  glasses:    { icon: '👓', label: 'Cermin Mata',   singular: 'cermin mata' },
+  pants:      { icon: '👖', label: 'Seluar',        singular: 'seluar' },
+  shoes:      { icon: '👟', label: 'Kasut',         singular: 'kasut' },
+  accessory:  { icon: '🎀', label: 'Aksesori',      singular: 'aksesori' },
 };
 let editorSlot = 'background'; // active slot tab
 
@@ -3161,6 +3249,265 @@ function equipItem(slot, itemId, silent = false) {
 el('edit-hero-btn').addEventListener('click', openEditor);
 el('editor-back-btn').addEventListener('click', closeEditor);
 
+/* ============================================================
+   v2 — LOADOUT SAVE / LOAD (3 slots per profile)
+   State: state.profile.loadouts = [{name, equipped}, ...]   max 3
+   ============================================================ */
+const MAX_LOADOUTS = 3;
+const DEFAULT_LOADOUT_NAMES = ['Slot 1', 'Slot 2', 'Slot 3'];
+
+function getLoadouts() {
+  if (!state.profile) return [];
+  if (!Array.isArray(state.profile.loadouts)) state.profile.loadouts = [];
+  return state.profile.loadouts;
+}
+function deepCloneEquipped(equipped) {
+  // JSON round-trip — equipped is a flat string->string|null map, safe to clone
+  return JSON.parse(JSON.stringify(equipped || {}));
+}
+function openSaveLoadoutModal() {
+  if (!state.profile) return;
+  Sound.click();
+  const loadouts = getLoadouts();
+  const bg = document.createElement('div');
+  bg.className = 'modal-bg';
+  const nameVal = (loadouts.length < MAX_LOADOUTS && state.profile.name)
+    ? `${state.profile.name} ${loadouts.length + 1}`
+    : '';
+  bg.innerHTML = `
+    <div class="modal-card">
+      <h3 class="modal-title">💾 Simpan Look</h3>
+      <p class="modal-desc">Nama untuk look ini:</p>
+      <input type="text" id="loadout-name-input" maxlength="20"
+             style="width:100%;padding:10px;border:2px solid #e5e7eb;border-radius:10px;font-size:14px;font-family:inherit;margin-bottom:10px;"
+             placeholder="cth: Sekolah, Sukan, Malam"
+             value="${nameVal.replace(/"/g, '&quot;')}">
+      <div class="modal-actions">
+        <button class="modal-btn cancel" id="loadout-save-cancel">Batal</button>
+        <button class="modal-btn buy" id="loadout-save-confirm">💾 Simpan</button>
+      </div>
+      ${loadouts.length >= MAX_LOADOUTS ? '<p class="modal-desc" style="color:#dc2626;margin-top:8px;">Slot penuh — padam satu dulu</p>' : ''}
+    </div>`;
+  document.body.appendChild(bg);
+  setTimeout(() => bg.querySelector('#loadout-name-input').focus(), 50);
+  const cleanup = () => bg.remove();
+  bg.querySelector('#loadout-save-cancel').addEventListener('click', () => { Sound.click(); cleanup(); });
+  bg.querySelector('#loadout-save-confirm').addEventListener('click', () => {
+    Sound.correct();
+    const raw = (bg.querySelector('#loadout-name-input').value || '').trim();
+    const name = raw || `Look ${loadouts.length + 1}`;
+    const existing = getLoadouts();
+    if (existing.length >= MAX_LOADOUTS) {
+      showToast('Slot penuh — padam satu dulu ✨');
+      cleanup();
+      return;
+    }
+    existing.push({ name, equipped: deepCloneEquipped(state.profile.equipped) });
+    state.profile.loadouts = existing;
+    saveProfile(state.profile);
+    showToast(`Disimpan: ${name} 💾`);
+    cleanup();
+  });
+  // Enter to confirm
+  bg.querySelector('#loadout-name-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') bg.querySelector('#loadout-save-confirm').click();
+  });
+}
+function openLoadLoadoutModal() {
+  if (!state.profile) return;
+  Sound.click();
+  const loadouts = getLoadouts();
+  const bg = document.createElement('div');
+  bg.className = 'modal-bg';
+  const cards = [];
+  for (let i = 0; i < MAX_LOADOUTS; i++) {
+    const lo = loadouts[i];
+    if (lo) {
+      cards.push(`
+        <button class="loadout-card" data-loadout-idx="${i}">
+          <div class="loadout-thumb">${renderAvatar(state.profile.body, lo.equipped || {})}</div>
+          <div class="loadout-name">${escapeHtml(lo.name)}</div>
+          <div class="loadout-hint">Tukar ↻</div>
+        </button>`);
+    } else {
+      cards.push(`
+        <div class="loadout-card empty" data-loadout-idx="${i}">
+          <div class="loadout-thumb" style="display:flex;align-items:center;justify-content:center;font-size:32px;color:#d1d5db;">＋</div>
+          <div class="loadout-name">${DEFAULT_LOADOUT_NAMES[i]}</div>
+          <div class="loadout-hint">Kosong</div>
+        </div>`);
+    }
+  }
+  bg.innerHTML = `
+    <div class="modal-card" style="max-width:440px;">
+      <h3 class="modal-title">📂 Muat Look</h3>
+      <p class="modal-desc">Pilih 1 daripada 3 slot look kamu</p>
+      <div class="loadout-grid">${cards.join('')}</div>
+      <div class="modal-actions" style="margin-top:14px;">
+        <button class="modal-btn cancel" id="loadout-load-close">Tutup</button>
+      </div>
+    </div>`;
+  document.body.appendChild(bg);
+  const cleanup = () => bg.remove();
+  bg.querySelector('#loadout-load-close').addEventListener('click', () => { Sound.click(); cleanup(); });
+  bg.querySelectorAll('.loadout-card[data-loadout-idx]').forEach(card => {
+    const idx = parseInt(card.dataset.loadoutIdx, 10);
+    const lo = getLoadouts()[idx];
+    if (!lo) return; // empty slot — not clickable
+    card.addEventListener('click', () => {
+      Sound.correct();
+      state.profile.equipped = deepCloneEquipped(lo.equipped);
+      saveProfile(state.profile);
+      renderEditorPreview();
+      renderEditorSlots();
+      renderEditorItems();
+      showToast(`Dimuat: ${lo.name} ✨`);
+      cleanup();
+    });
+    // Long-press to delete (via contextmenu is too hidden — use a small delete button)
+    const del = document.createElement('div');
+    del.className = 'loadout-hint';
+    del.style.color = '#dc2626';
+    del.style.cursor = 'pointer';
+    del.textContent = '🗑 Padam';
+    del.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      Sound.click();
+      if (confirm(`Padam look "${lo.name}"?`)) {
+        state.profile.loadouts.splice(idx, 1);
+        saveProfile(state.profile);
+        cleanup();
+        openLoadLoadoutModal();
+      }
+    });
+    card.appendChild(del);
+  });
+}
+function escapeHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+/* ============================================================
+   v2 — KONGSI (Share) — render avatar to 400×400 PNG via SVG → canvas
+   ============================================================ */
+function buildShareSvg() {
+  // Inline the avatar SVG with explicit xmlns so it renders as an Image source
+  const inner = renderAvatar(state.profile.body, state.profile.equipped || {});
+  return inner
+    .replace('<svg viewBox', '<svg xmlns="http://www.w3.org/2000/svg" viewBox')
+    .replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ');
+}
+function shareRenderPng() {
+  return new Promise((resolve, reject) => {
+    if (!state.profile) return reject(new Error('No profile'));
+    const svgString = buildShareSvg();
+    const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = 400; canvas.height = 400;
+        const ctx = canvas.getContext('2d');
+        // Solid background so transparent SVGs don't render as black
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, 400, 400);
+        ctx.drawImage(img, 0, 0, 400, 400);
+        URL.revokeObjectURL(url);
+        canvas.toBlob((pngBlob) => {
+          if (!pngBlob) return reject(new Error('Canvas toBlob failed'));
+          resolve({ pngBlob, dataUrl: canvas.toDataURL('image/png') });
+        }, 'image/png');
+      } catch (e) { reject(e); }
+    };
+    img.onerror = (e) => { URL.revokeObjectURL(url); reject(new Error('SVG image load failed')); };
+    img.src = url;
+  });
+}
+async function openShareModal() {
+  if (!state.profile) return;
+  Sound.click();
+  let pngBlob, dataUrl;
+  try {
+    ({ pngBlob, dataUrl } = await shareRenderPng());
+  } catch (e) {
+    console.error('Share render failed:', e);
+    showToast('Gagal jana imej — cuba lagi ✨');
+    return;
+  }
+  const safeName = (state.profile.name || 'hero').replace(/[^a-z0-9_-]/gi, '_');
+  const bg = document.createElement('div');
+  bg.className = 'modal-bg';
+  bg.innerHTML = `
+    <div class="modal-card" style="max-width:460px;">
+      <h3 class="modal-title">📤 Kongsi Hero</h3>
+      <div class="share-preview"><img id="share-img" alt="hero"></div>
+      <div class="share-actions">
+        <button class="modal-btn buy" id="share-download">⬇️ Muat turun</button>
+        <button class="modal-btn" id="share-copy" style="background:#f3f4f6;color:#1f2937;">📋 Salin</button>
+        <button class="modal-btn cancel" id="share-close">Tutup</button>
+      </div>
+      <p class="modal-desc" id="share-status" style="margin-top:8px;font-size:11px;"></p>
+    </div>`;
+  document.body.appendChild(bg);
+  bg.querySelector('#share-img').src = dataUrl;
+
+  const cleanup = () => { bg.remove(); URL.revokeObjectURL(dataUrl); };
+
+  bg.querySelector('#share-close').addEventListener('click', () => { Sound.click(); cleanup(); });
+
+  // Download
+  bg.querySelector('#share-download').addEventListener('click', () => {
+    Sound.correct();
+    const a = document.createElement('a');
+    a.href = dataUrl;
+    a.download = `math-hero-${safeName}.png`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    bg.querySelector('#share-status').textContent = '✅ Disimpan sebagai math-hero-' + safeName + '.png';
+  });
+
+  // Copy to clipboard (with graceful fallback)
+  bg.querySelector('#share-copy').addEventListener('click', async () => {
+    const statusEl = bg.querySelector('#share-status');
+    try {
+      if (navigator.clipboard && typeof ClipboardItem !== 'undefined') {
+        await navigator.clipboard.write([new ClipboardItem({ 'image/png': pngBlob })]);
+        statusEl.textContent = '✅ Disalin ke clipboard!';
+        Sound.correct();
+      } else if (navigator.clipboard && navigator.clipboard.writeText) {
+        // Fallback: copy the data URL as text
+        await navigator.clipboard.writeText(dataUrl);
+        statusEl.textContent = '✅ URL PNG disalin (tiada sokongan salin gambar)';
+        Sound.correct();
+      } else {
+        throw new Error('Clipboard API unavailable');
+      }
+    } catch (e) {
+      console.warn('Clipboard copy failed, falling back to download:', e);
+      statusEl.textContent = '⚠️ Salin tidak disokong — muat turun sebaliknya';
+      const a = document.createElement('a');
+      a.href = dataUrl; a.download = `math-hero-${safeName}.png`;
+      document.body.appendChild(a); a.click(); a.remove();
+    }
+  });
+}
+
+// Wire the three new action buttons (guarded in case the editor isn't open)
+function wireEditorActions() {
+  const sb = el('loadout-save-btn');
+  const lb = el('loadout-load-btn');
+  const kb = el('share-btn');
+  if (sb) sb.addEventListener('click', openSaveLoadoutModal);
+  if (lb) lb.addEventListener('click', openLoadLoadoutModal);
+  if (kb) kb.addEventListener('click', openShareModal);
+}
+wireEditorActions();
+
 // ============================================================
 // SHOP (Phase 5) — buy locked items, auto-equip on purchase
 // ============================================================
@@ -3199,7 +3546,14 @@ function renderShopSlots() {
     top:        '👕 Baju',
     cape:       '🧣 Cape',
     hand:       '📦 Tangan',
-    pet:        '🐾 Haiwan'
+    pet:        '🐾 Haiwan',
+    // v2 slots (Bahasa Malaysia labels)
+    hair:       '💇 Rambut',
+    face:       '😀 Muka',
+    glasses:    '👓 Cermin',
+    pants:      '👖 Seluar',
+    shoes:      '👟 Kasut',
+    accessory:  '🎀 Aksesori',
   };
   const tabs = slots.map(slot => {
     const ownedCount = (ITEMS[slot] || []).filter(i => state.profile.inventory[i.id]).length;

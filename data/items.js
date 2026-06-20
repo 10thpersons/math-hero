@@ -5,7 +5,9 @@
 const ITEMS = {
   meta: {
     version: 4,
-    slots: ["background", "headgear", "top", "cape", "hand", "pet"],
+    // 12 slots: 6 existing (with v4 PNG packs) + 6 new (empty in Phase 1, packs in Phase 2).
+    // renderAvatar() falls back gracefully when a slot has no equipped item.
+    slots: ["background", "headgear", "top", "cape", "hand", "pet", "hair", "face", "glasses", "pants", "shoes", "accessory"],
     generatedAt: "2026-06-20",
     artSource: "NanoBanana 10x10 sprite sheet (1024x1024)"
   },
@@ -126,7 +128,19 @@ const ITEMS = {
     { id: "pet-monkey",    name: "Monyet",             rarity: "common",    priceCoins: 30,  img: "assets/items/pet-monkey.png" },
     { id: "pet-mouse",     name: "Tikus",              rarity: "common",    priceCoins: 30,  img: "assets/items/pet-mouse.png" },
     { id: "pet-trex",      name: "T-Rex",              rarity: "rare",      priceCoins: 150, img: "assets/items/pet-trex.png" },
-  ]
+  ],
+
+  // ============================================================
+  // NEW SLOTS (Phase 1 placeholder packs — Phase 2 will fill these
+  // with Gemini Pro output under assets/items-{slot}/).
+  // Editor UI + Z-order are wired now so Phase 2 just drops in PNGs.
+  // ============================================================
+  hair: [],
+  face: [],
+  glasses: [],
+  pants: [],
+  shoes: [],
+  accessory: []
 };
 
 // ============================================================

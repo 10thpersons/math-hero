@@ -68,37 +68,86 @@ function getBody(id) {
 }
 
 // Helper: render an equipped avatar (body + items layered)
-// Items are now PNG <image> tags inside the SVG, so they composite with the body SVG.
+// Items are PNG <image> tags inside the SVG, so they composite with the body SVG.
+//
+// Z-order (back → front, 14 layers) per ZCODE-BRIEF-AVATAR-CUSTOMIZER.md §5:
+//   1.  background   (full 200×200)
+//   2.  cape         (x=20, y=60, 160×120, BEHIND body)
+//   3.  pet          (x=0, y=130, 60×60, bottom-left)
+//   4.  body         (inline SVG)
+//   5.  pants        (x=40, y=130, 120×60, over body legs)
+//   6.  top/shirt    (x=40, y=95, 120×80, over body torso)
+//   7.  accessory    (varies — bowtie/scarf over shirt)
+//   8.  shoes        (x=50, y=165, 100×35, bottom)
+//   9.  hand         (x=135, y=100, 50×60, right hand)
+//   10. face         (x=65, y=50, 70×40, over body head)
+//   11. hair (back)  (x=50, y=20, 100×60, behind hat)
+//   12. headgear     (x=50, y=20, 100×60, on top of head)
+//   13. glasses      (x=70, y=60, 60×25, over face)
+//   14. hair (front) (x=55, y=75, 90×35, bangs over forehead)
+//
+// All slots are optional. Phase 1 ships with the 6 existing slots fully stocked;
+// hair/face/glasses/pants/shoes/accessory fall back to "no layer drawn" when
+// the profile has no item equipped there yet.
 function renderAvatar(bodyId, equipped) {
   const body = getBody(bodyId);
   if (!body) return '';
-  // Layer order: bg → cape → body → top → pet → headgear → hand
   const parts = [];
+
+  // Helper: push an SVG <image> if slot is equipped and the item resolves.
+  const push = (slot, x, y, w, h) => {
+    const id = equipped && equipped[slot];
+    if (!id) return;
+    const it = getItem(slot, id);
+    if (!it || !it.img) return;
+    parts.push(`<image href="${it.img}" x="${x}" y="${y}" width="${w}" height="${h}"/>`);
+  };
+
+  // 1. background — full canvas, sliced to preserve aspect
   if (equipped && equipped.background) {
     const it = getItem('background', equipped.background);
     if (it && it.img) parts.push(`<image href="${it.img}" x="0" y="0" width="200" height="200" preserveAspectRatio="xMidYMid slice"/>`);
   }
-  if (equipped && equipped.cape) {
-    const it = getItem('cape', equipped.cape);
-    if (it && it.img) parts.push(`<image href="${it.img}" x="20" y="60" width="160" height="120"/>`);
-  }
+
+  // 2. cape — BEHIND body
+  push('cape', 20, 60, 160, 120);
+
+  // 3. pet — bottom-left
+  push('pet', 0, 130, 60, 60);
+
+  // 4. body (inline SVG)
   parts.push(body.svg);
-  if (equipped && equipped.top) {
-    const it = getItem('top', equipped.top);
-    if (it && it.img) parts.push(`<image href="${it.img}" x="40" y="95" width="120" height="80"/>`);
-  }
-  if (equipped && equipped.pet) {
-    const it = getItem('pet', equipped.pet);
-    if (it && it.img) parts.push(`<image href="${it.img}" x="0" y="130" width="60" height="60"/>`);
-  }
-  if (equipped && equipped.headgear) {
-    const it = getItem('headgear', equipped.headgear);
-    if (it && it.img) parts.push(`<image href="${it.img}" x="50" y="20" width="100" height="60"/>`);
-  }
-  if (equipped && equipped.hand) {
-    const it = getItem('hand', equipped.hand);
-    if (it && it.img) parts.push(`<image href="${it.img}" x="135" y="100" width="50" height="60"/>`);
-  }
+
+  // 5. pants — over body legs
+  push('pants', 40, 130, 120, 60);
+
+  // 6. top / shirt — over body torso
+  push('top', 40, 95, 120, 80);
+
+  // 7. accessory — over shirt/skin (bowtie, scarf, necklace)
+  push('accessory', 60, 105, 80, 35);
+
+  // 8. shoes — bottom of canvas
+  push('shoes', 50, 165, 100, 35);
+
+  // 9. hand-held — right hand area
+  push('hand', 135, 100, 50, 60);
+
+  // 10. face — over body head
+  push('face', 65, 50, 70, 40);
+
+  // 11. hair (back layer) — behind hat
+  push('hair', 50, 20, 100, 60);
+
+  // 12. headgear / hat — top of head
+  push('headgear', 50, 20, 100, 60);
+
+  // 13. glasses — over face
+  push('glasses', 70, 60, 60, 25);
+
+  // 14. hair (front layer) — bangs over forehead
+  push('hair', 55, 75, 90, 35);
+
   return `<svg viewBox="0 0 200 200" class="avatar-svg">${parts.join('')}</svg>`;
 }
 
