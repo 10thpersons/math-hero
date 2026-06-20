@@ -1,0 +1,704 @@
+{
+  "items": [
+    {
+      "slug": "food-apple",
+      "rarity": "common",
+      "idx": 0,
+      "row": 0,
+      "col": 0
+    },
+    {
+      "slug": "food-banana",
+      "rarity": "common",
+      "idx": 1,
+      "row": 0,
+      "col": 1
+    },
+    {
+      "slug": "food-orange",
+      "rarity": "common",
+      "idx": 2,
+      "row": 0,
+      "col": 2
+    },
+    {
+      "slug": "food-sandwich",
+      "rarity": "common",
+      "idx": 3,
+      "row": 0,
+      "col": 3
+    },
+    {
+      "slug": "food-pizza",
+      "rarity": "common",
+      "idx": 4,
+      "row": 0,
+      "col": 4
+    },
+    {
+      "slug": "food-hamburger",
+      "rarity": "common",
+      "idx": 5,
+      "row": 0,
+      "col": 5
+    },
+    {
+      "slug": "food-french-fries",
+      "rarity": "common",
+      "idx": 6,
+      "row": 0,
+      "col": 6
+    },
+    {
+      "slug": "food-taco",
+      "rarity": "common",
+      "idx": 7,
+      "row": 0,
+      "col": 7
+    },
+    {
+      "slug": "food-ice-cream-cone",
+      "rarity": "common",
+      "idx": 8,
+      "row": 0,
+      "col": 8
+    },
+    {
+      "slug": "food-cupcake",
+      "rarity": "common",
+      "idx": 9,
+      "row": 0,
+      "col": 9
+    },
+    {
+      "slug": "food-water-bottle",
+      "rarity": "common",
+      "idx": 10,
+      "row": 1,
+      "col": 0
+    },
+    {
+      "slug": "food-juice-box",
+      "rarity": "common",
+      "idx": 11,
+      "row": 1,
+      "col": 1
+    },
+    {
+      "slug": "food-milk-carton",
+      "rarity": "common",
+      "idx": 12,
+      "row": 1,
+      "col": 2
+    },
+    {
+      "slug": "food-soda-can",
+      "rarity": "common",
+      "idx": 13,
+      "row": 1,
+      "col": 3
+    },
+    {
+      "slug": "food-cake-slice",
+      "rarity": "common",
+      "idx": 14,
+      "row": 1,
+      "col": 4
+    },
+    {
+      "slug": "food-cookie",
+      "rarity": "common",
+      "idx": 15,
+      "row": 1,
+      "col": 5
+    },
+    {
+      "slug": "food-donut",
+      "rarity": "common",
+      "idx": 16,
+      "row": 1,
+      "col": 6
+    },
+    {
+      "slug": "food-lollipop",
+      "rarity": "common",
+      "idx": 17,
+      "row": 1,
+      "col": 7
+    },
+    {
+      "slug": "food-popcorn",
+      "rarity": "common",
+      "idx": 18,
+      "row": 1,
+      "col": 8
+    },
+    {
+      "slug": "food-hot-dog",
+      "rarity": "common",
+      "idx": 19,
+      "row": 1,
+      "col": 9
+    },
+    {
+      "slug": "wear-baseball-cap",
+      "rarity": "common",
+      "idx": 20,
+      "row": 2,
+      "col": 0
+    },
+    {
+      "slug": "wear-beanie",
+      "rarity": "common",
+      "idx": 21,
+      "row": 2,
+      "col": 1
+    },
+    {
+      "slug": "wear-sun-hat",
+      "rarity": "rare",
+      "idx": 22,
+      "row": 2,
+      "col": 2
+    },
+    {
+      "slug": "wear-sunglasses",
+      "rarity": "rare",
+      "idx": 23,
+      "row": 2,
+      "col": 3
+    },
+    {
+      "slug": "wear-glasses",
+      "rarity": "rare",
+      "idx": 24,
+      "row": 2,
+      "col": 4
+    },
+    {
+      "slug": "wear-work-boots",
+      "rarity": "common",
+      "idx": 25,
+      "row": 2,
+      "col": 5
+    },
+    {
+      "slug": "wear-sneaker",
+      "rarity": "common",
+      "idx": 26,
+      "row": 2,
+      "col": 6
+    },
+    {
+      "slug": "wear-sandal",
+      "rarity": "common",
+      "idx": 27,
+      "row": 2,
+      "col": 7
+    },
+    {
+      "slug": "wear-backpack",
+      "rarity": "common",
+      "idx": 28,
+      "row": 2,
+      "col": 8
+    },
+    {
+      "slug": "wear-messenger-bag",
+      "rarity": "common",
+      "idx": 29,
+      "row": 2,
+      "col": 9
+    },
+    {
+      "slug": "wear-button-shirt",
+      "rarity": "common",
+      "idx": 30,
+      "row": 3,
+      "col": 0
+    },
+    {
+      "slug": "wear-hoodie",
+      "rarity": "common",
+      "idx": 31,
+      "row": 3,
+      "col": 1
+    },
+    {
+      "slug": "wear-denim-shorts",
+      "rarity": "common",
+      "idx": 32,
+      "row": 3,
+      "col": 2
+    },
+    {
+      "slug": "wear-jeans",
+      "rarity": "common",
+      "idx": 33,
+      "row": 3,
+      "col": 3
+    },
+    {
+      "slug": "wear-dress",
+      "rarity": "common",
+      "idx": 34,
+      "row": 3,
+      "col": 4
+    },
+    {
+      "slug": "wear-scarf",
+      "rarity": "common",
+      "idx": 35,
+      "row": 3,
+      "col": 5
+    },
+    {
+      "slug": "wear-gloves",
+      "rarity": "common",
+      "idx": 36,
+      "row": 3,
+      "col": 6
+    },
+    {
+      "slug": "wear-wristwatch",
+      "rarity": "legendary",
+      "idx": 37,
+      "row": 3,
+      "col": 7
+    },
+    {
+      "slug": "wear-compass",
+      "rarity": "rare",
+      "idx": 38,
+      "row": 3,
+      "col": 8
+    },
+    {
+      "slug": "wear-flashlight",
+      "rarity": "rare",
+      "idx": 39,
+      "row": 3,
+      "col": 9
+    },
+    {
+      "slug": "tool-wooden-sword",
+      "rarity": "common",
+      "idx": 40,
+      "row": 4,
+      "col": 0
+    },
+    {
+      "slug": "tool-metal-sword",
+      "rarity": "rare",
+      "idx": 41,
+      "row": 4,
+      "col": 1
+    },
+    {
+      "slug": "tool-bow-arrow",
+      "rarity": "rare",
+      "idx": 42,
+      "row": 4,
+      "col": 2
+    },
+    {
+      "slug": "tool-arrow",
+      "rarity": "common",
+      "idx": 43,
+      "row": 4,
+      "col": 3
+    },
+    {
+      "slug": "tool-wooden-shield",
+      "rarity": "common",
+      "idx": 44,
+      "row": 4,
+      "col": 4
+    },
+    {
+      "slug": "tool-slingshot",
+      "rarity": "common",
+      "idx": 45,
+      "row": 4,
+      "col": 5
+    },
+    {
+      "slug": "tool-battle-axe",
+      "rarity": "rare",
+      "idx": 46,
+      "row": 4,
+      "col": 6
+    },
+    {
+      "slug": "tool-pickaxe",
+      "rarity": "rare",
+      "idx": 47,
+      "row": 4,
+      "col": 7
+    },
+    {
+      "slug": "tool-wooden-mallet",
+      "rarity": "common",
+      "idx": 48,
+      "row": 4,
+      "col": 8
+    },
+    {
+      "slug": "tool-butterfly-net",
+      "rarity": "common",
+      "idx": 49,
+      "row": 4,
+      "col": 9
+    },
+    {
+      "slug": "mat-stone-block",
+      "rarity": "common",
+      "idx": 50,
+      "row": 5,
+      "col": 0
+    },
+    {
+      "slug": "mat-wood-block",
+      "rarity": "common",
+      "idx": 51,
+      "row": 5,
+      "col": 1
+    },
+    {
+      "slug": "mat-metal-ingot",
+      "rarity": "common",
+      "idx": 52,
+      "row": 5,
+      "col": 2
+    },
+    {
+      "slug": "mat-rock",
+      "rarity": "common",
+      "idx": 53,
+      "row": 5,
+      "col": 3
+    },
+    {
+      "slug": "mat-rope-coil",
+      "rarity": "common",
+      "idx": 54,
+      "row": 5,
+      "col": 4
+    },
+    {
+      "slug": "mat-rope",
+      "rarity": "common",
+      "idx": 55,
+      "row": 5,
+      "col": 5
+    },
+    {
+      "slug": "mat-glue-bottle",
+      "rarity": "common",
+      "idx": 56,
+      "row": 5,
+      "col": 6
+    },
+    {
+      "slug": "mat-paintbrush",
+      "rarity": "common",
+      "idx": 57,
+      "row": 5,
+      "col": 7
+    },
+    {
+      "slug": "mat-scroll",
+      "rarity": "common",
+      "idx": 58,
+      "row": 5,
+      "col": 8
+    },
+    {
+      "slug": "mat-gold-coin",
+      "rarity": "legendary",
+      "idx": 59,
+      "row": 5,
+      "col": 9
+    },
+    {
+      "slug": "toy-robot",
+      "rarity": "rare",
+      "idx": 60,
+      "row": 6,
+      "col": 0
+    },
+    {
+      "slug": "toy-t-rex",
+      "rarity": "rare",
+      "idx": 61,
+      "row": 6,
+      "col": 1
+    },
+    {
+      "slug": "toy-teddy-bear",
+      "rarity": "common",
+      "idx": 62,
+      "row": 6,
+      "col": 2
+    },
+    {
+      "slug": "toy-car",
+      "rarity": "common",
+      "idx": 63,
+      "row": 6,
+      "col": 3
+    },
+    {
+      "slug": "toy-beach-ball",
+      "rarity": "rare",
+      "idx": 64,
+      "row": 6,
+      "col": 4
+    },
+    {
+      "slug": "toy-yo-yo",
+      "rarity": "common",
+      "idx": 65,
+      "row": 6,
+      "col": 5
+    },
+    {
+      "slug": "toy-rubiks-cube",
+      "rarity": "rare",
+      "idx": 66,
+      "row": 6,
+      "col": 6
+    },
+    {
+      "slug": "toy-dice",
+      "rarity": "common",
+      "idx": 67,
+      "row": 6,
+      "col": 7
+    },
+    {
+      "slug": "toy-playing-cards",
+      "rarity": "rare",
+      "idx": 68,
+      "row": 6,
+      "col": 8
+    },
+    {
+      "slug": "toy-magic-wand",
+      "rarity": "legendary",
+      "idx": 69,
+      "row": 6,
+      "col": 9
+    },
+    {
+      "slug": "misc-orb",
+      "rarity": "common",
+      "idx": 70,
+      "row": 7,
+      "col": 0
+    },
+    {
+      "slug": "misc-pearl",
+      "rarity": "common",
+      "idx": 71,
+      "row": 7,
+      "col": 1
+    },
+    {
+      "slug": "misc-pink-pearl",
+      "rarity": "common",
+      "idx": 72,
+      "row": 7,
+      "col": 2
+    },
+    {
+      "slug": "misc-shell",
+      "rarity": "common",
+      "idx": 73,
+      "row": 7,
+      "col": 3
+    },
+    {
+      "slug": "misc-feathers",
+      "rarity": "common",
+      "idx": 74,
+      "row": 7,
+      "col": 4
+    },
+    {
+      "slug": "misc-golden-key",
+      "rarity": "legendary",
+      "idx": 75,
+      "row": 7,
+      "col": 5
+    },
+    {
+      "slug": "misc-treasure-chest",
+      "rarity": "legendary",
+      "idx": 76,
+      "row": 7,
+      "col": 6
+    },
+    {
+      "slug": "misc-telescope",
+      "rarity": "rare",
+      "idx": 77,
+      "row": 7,
+      "col": 7
+    },
+    {
+      "slug": "misc-magnifying-glass",
+      "rarity": "legendary",
+      "idx": 78,
+      "row": 7,
+      "col": 8
+    },
+    {
+      "slug": "misc-treasure-map",
+      "rarity": "legendary",
+      "idx": 79,
+      "row": 7,
+      "col": 9
+    },
+    {
+      "slug": "animal-fish",
+      "rarity": "common",
+      "idx": 80,
+      "row": 8,
+      "col": 0
+    },
+    {
+      "slug": "animal-starfish",
+      "rarity": "rare",
+      "idx": 81,
+      "row": 8,
+      "col": 1
+    },
+    {
+      "slug": "animal-crab",
+      "rarity": "common",
+      "idx": 82,
+      "row": 8,
+      "col": 2
+    },
+    {
+      "slug": "animal-turtle",
+      "rarity": "rare",
+      "idx": 83,
+      "row": 8,
+      "col": 3
+    },
+    {
+      "slug": "animal-bird",
+      "rarity": "rare",
+      "idx": 84,
+      "row": 8,
+      "col": 4
+    },
+    {
+      "slug": "animal-squirrel",
+      "rarity": "common",
+      "idx": 85,
+      "row": 8,
+      "col": 5
+    },
+    {
+      "slug": "animal-rabbit",
+      "rarity": "common",
+      "idx": 86,
+      "row": 8,
+      "col": 6
+    },
+    {
+      "slug": "animal-frog",
+      "rarity": "common",
+      "idx": 87,
+      "row": 8,
+      "col": 7
+    },
+    {
+      "slug": "animal-snail",
+      "rarity": "common",
+      "idx": 88,
+      "row": 8,
+      "col": 8
+    },
+    {
+      "slug": "animal-butterfly",
+      "rarity": "rare",
+      "idx": 89,
+      "row": 8,
+      "col": 9
+    },
+    {
+      "slug": "nature-sunflower",
+      "rarity": "common",
+      "idx": 90,
+      "row": 9,
+      "col": 0
+    },
+    {
+      "slug": "nature-autumn-leaf",
+      "rarity": "common",
+      "idx": 91,
+      "row": 9,
+      "col": 1
+    },
+    {
+      "slug": "nature-mushroom",
+      "rarity": "common",
+      "idx": 92,
+      "row": 9,
+      "col": 2
+    },
+    {
+      "slug": "nature-pinecone",
+      "rarity": "common",
+      "idx": 93,
+      "row": 9,
+      "col": 3
+    },
+    {
+      "slug": "nature-acorn",
+      "rarity": "common",
+      "idx": 94,
+      "row": 9,
+      "col": 4
+    },
+    {
+      "slug": "nature-clover",
+      "rarity": "legendary",
+      "idx": 95,
+      "row": 9,
+      "col": 5
+    },
+    {
+      "slug": "nature-firefly",
+      "rarity": "legendary",
+      "idx": 96,
+      "row": 9,
+      "col": 6
+    },
+    {
+      "slug": "nature-ladybug",
+      "rarity": "common",
+      "idx": 97,
+      "row": 9,
+      "col": 7
+    },
+    {
+      "slug": "nature-cloud",
+      "rarity": "common",
+      "idx": 98,
+      "row": 9,
+      "col": 8
+    },
+    {
+      "slug": "nature-rainbow",
+      "rarity": "legendary",
+      "idx": 99,
+      "row": 9,
+      "col": 9
+    }
+  ]
+}
