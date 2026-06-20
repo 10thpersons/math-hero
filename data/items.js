@@ -272,6 +272,16 @@ function migrateItemId(oldId) {
 }
 
 // ============================================================
+// PRICE LABEL HELPER (used by editor/shop)
+// ============================================================
+function priceLabel(item) {
+  if (!item) return '';
+  if (item.priceGems) return `${item.priceGems} 💎`;
+  if (item.priceCoins != null) return `${item.priceCoins} 🪙`;
+  return '';
+}
+
+// ============================================================
 // RENDER HELPERS
 // ============================================================
 // Item art: returns <img> tag for PNG items, or empty string if no art
@@ -296,4 +306,5 @@ window.findItemById = findItemById;
 window.migrateItemId = migrateItemId;
 window.itemImg = itemImg;
 window.itemArtHtml = itemArtHtml;
+window.priceLabel = priceLabel;
 window.ITEM_ID_MIGRATION = ITEM_ID_MIGRATION;
