@@ -58,6 +58,8 @@
     padding: 20px 18px;
     position: relative;
     overflow: hidden;
+    /* Phase 1 v2 polish: bound stage height so body justify-content: center works on small viewports; .screen inside handles internal scroll */
+    max-height: calc(100dvh - 24px);
   }
   .stage::before {
     content: "";
@@ -74,7 +76,15 @@
     flex-direction: column;
     gap: 14px;
   }
-  .screen.active { display: flex; }
+  .screen.active {
+    display: flex;
+    /* Phase 1 v2 polish: enable internal scrolling for tall screens (editor has 12 slot tabs + actions + items grid) on small viewports (iPhone SE 568dvh) */
+    max-height: calc(100dvh - 60px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
   .screen.screen-enter {
     animation: screen-in 0.35s cubic-bezier(0.34, 1.3, 0.64, 1);
   }
@@ -3201,6 +3211,11 @@ function switchEditorSlot(slot) {
   editorSlot = slot;
   document.querySelectorAll('.slot-tab').forEach(t => t.classList.toggle('active', t.dataset.slot === slot));
   renderEditorItems();
+  // Phase 1 v2 polish: scroll items grid into view if below the fold (12 slot tabs make this likely on small phones)
+  const itemsGrid = el('editor-items');
+  if (itemsGrid && typeof itemsGrid.scrollIntoView === 'function') {
+    itemsGrid.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
 }
 function renderEditorItems() {
   const grid = el('editor-items');
@@ -3208,7 +3223,15 @@ function renderEditorItems() {
   const equippedId = state.profile.equipped[editorSlot];
   const items = ITEMS[editorSlot] || [];
   if (items.length === 0) {
-    grid.innerHTML = `<div class="item-empty">Tiada item untuk slot ini lagi ✨</div>`;
+    // Phase 1 v2 polish: friendlier empty state with hint that Phase 2 will fill it
+    const slotLabel = (SLOT_META[editorSlot] && SLOT_META[editorSlot].label) || editorSlot;
+    const pluralLabel = slotLabel.toLowerCase();
+    grid.innerHTML = `
+      <div class="item-empty" style="padding:32px 16px;">
+        <div style="font-size:48px;margin-bottom:8px;">🎨</div>
+        <div style="font-weight:800;color:var(--text);margin-bottom:4px;">Slot ${slotLabel} kosong</div>
+        <div style="font-size:11px;color:#9ca3af;line-height:1.4;">Item ${pluralLabel} akan ditambah tidak lama lagi ✨<br>Tunggu kemas kini seterusnya!</div>
+      </div>`;
     return;
   }
   // Unequip option (only if something is equipped)
