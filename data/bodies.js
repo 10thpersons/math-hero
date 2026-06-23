@@ -3,13 +3,20 @@
 // Each body is a self-contained <svg viewBox="0 0 200 200">
 // Layer order (back → front): tail → legs → body → arms → head → ears/horns → face
 //
-// Anchor points for items (designed in items.js):
+// Anchor points for items (see renderAvatar() below + items.js):
 //   - Background: full 200x200
-//   - Cape:       y=110-180  (drapes from shoulders, behind body)
-//   - Top:        y=100-170  (covers body torso)
-//   - Hand:       (140, 110) (right hand)
-//   - Pet:        (50, 170)  (bottom-left, beside feet)
-//   - Headgear:   y=20-75    (on top of head)
+//   - Cape:       y=60-180    (drapes from shoulders, behind body)
+//   - Pet:        (0,130) 60x60 (bottom-left, beside feet)
+//   - Body:       SVG creature (center of stack)
+//   - Pants ★:    (60,140) 80x48 (hips/upper legs, under shirt hem)
+//   - Top/Shirt:  (40,95) 120x80 (torso)
+//   - Shoes ★:    (66,170) 68x30 (both feet)
+//   - Hand:       (135,100) 50x60 (right hand)
+//   - Face ★:     (72,70) 56x40 (expression over muzzle)
+//   - Hair-back ★:(38,28) 124x112 (behind head)
+//   - Headgear:   (50,20) 100x60 (on crown)
+//   - Glasses ★:  (76,76) 48x16 (over eyes)
+//   - Accessory ★:(0,0) 200x200 (full-canvas foreground overlay)
 
 const BODIES_DATA = {
   meta: {
@@ -70,83 +77,63 @@ function getBody(id) {
 // Helper: render an equipped avatar (body + items layered)
 // Items are PNG <image> tags inside the SVG, so they composite with the body SVG.
 //
-// Z-order (back → front, 14 layers) per ZCODE-BRIEF-AVATAR-CUSTOMIZER.md §5:
-//   1.  background   (full 200×200)
-//   2.  cape         (x=20, y=60, 160×120, BEHIND body)
-//   3.  pet          (x=0, y=130, 60×60, bottom-left)
-//   4.  body         (inline SVG)
-//   5.  pants        (x=40, y=130, 120×60, over body legs)
-//   6.  top/shirt    (x=40, y=95, 120×80, over body torso)
-//   7.  accessory    (varies — bowtie/scarf over shirt)
-//   8.  shoes        (x=50, y=165, 100×35, bottom)
-//   9.  hand         (x=135, y=100, 50×60, right hand)
-//   10. face         (x=65, y=50, 70×40, over body head)
-//   11. hair (back)  (x=50, y=20, 100×60, behind hat)
-//   12. headgear     (x=50, y=20, 100×60, on top of head)
-//   13. glasses      (x=70, y=60, 60×25, over face)
-//   14. hair (front) (x=55, y=75, 90×35, bangs over forehead)
-//
-// All slots are optional. Phase 1 ships with the 6 existing slots fully stocked;
-// hair/face/glasses/pants/shoes/accessory fall back to "no layer drawn" when
-// the profile has no item equipped there yet.
+// 13-layer Z-order (back → front) — Avatar Customizer v2:
+//   1. background   (0,0,200,200)
+//   2. cape         (20,60,160,120)
+//   3. pet          (0,130,60,60)
+//   4. body         (SVG creature)
+//   5. pants   ★NEW (60,140,80,48)
+//   6. top/shirt    (40,95,120,80)
+//   7. shoes   ★NEW (66,170,68,30)
+//   8. hand         (135,100,50,60)
+//   9. face    ★NEW (72,70,56,40)
+//  10. hair-back★NEW(38,28,124,112)   ← `hair` slot fans into this layer
+//  11. headgear    (50,20,100,60)
+//  12. glasses ★NEW (76,76,48,16)
+//  12.5 accessory★NEW(0,0,200,200)    ← full-canvas overlay, art only where flair is
+// (hair-front skipped — no front-bang pack; back-hair alone looks correct)
 function renderAvatar(bodyId, equipped) {
   const body = getBody(bodyId);
   if (!body) return '';
+  const eq = equipped || {};
   const parts = [];
 
-  // Helper: push an SVG <image> if slot is equipped and the item resolves.
-  const push = (slot, x, y, w, h) => {
-    const id = equipped && equipped[slot];
-    if (!id) return;
-    const it = getItem(slot, id);
-    if (!it || !it.img) return;
-    parts.push(`<image href="${it.img}" x="${x}" y="${y}" width="${w}" height="${h}"/>`);
+  // Helper: push a PNG layer if equipped & resolvable.
+  const layer = (slot, x, y, w, h, aspect) => {
+    if (!eq[slot]) return;
+    const it = getItem(slot, eq[slot]);
+    if (it && it.img) {
+      const par = aspect ? ` preserveAspectRatio="${aspect}"` : '';
+      parts.push(`<image href="${it.img}" x="${x}" y="${y}" width="${w}" height="${h}"${par}/>`);
+    }
   };
 
-  // 1. background — full canvas, sliced to preserve aspect
-  if (equipped && equipped.background) {
-    const it = getItem('background', equipped.background);
-    if (it && it.img) parts.push(`<image href="${it.img}" x="0" y="0" width="200" height="200" preserveAspectRatio="xMidYMid slice"/>`);
-  }
-
-  // 2. cape — BEHIND body
-  push('cape', 20, 60, 160, 120);
-
-  // 3. pet — bottom-left
-  push('pet', 0, 130, 60, 60);
-
-  // 4. body (inline SVG)
+  // 1. background (full bleed, slice to fill)
+  layer('background', 0, 0, 200, 200, 'xMidYMid slice');
+  // 2. cape (behind body)
+  layer('cape', 20, 60, 160, 120);
+  // 3. pet (bottom-left)
+  layer('pet', 0, 130, 60, 60);
+  // 4. body (SVG creature — drawn between back layers and front layers)
   parts.push(body.svg);
-
-  // 5. pants — over body legs
-  push('pants', 40, 130, 120, 60);
-
-  // 6. top / shirt — over body torso
-  push('top', 40, 95, 120, 80);
-
-  // 7. accessory — over shirt/skin (bowtie, scarf, necklace)
-  push('accessory', 60, 105, 80, 35);
-
-  // 8. shoes — bottom of canvas
-  push('shoes', 50, 165, 100, 35);
-
-  // 9. hand-held — right hand area
-  push('hand', 135, 100, 50, 60);
-
-  // 10. face — over body head
-  push('face', 65, 50, 70, 40);
-
-  // 11. hair (back layer) — behind hat
-  push('hair', 50, 20, 100, 60);
-
-  // 12. headgear / hat — top of head
-  push('headgear', 50, 20, 100, 60);
-
-  // 13. glasses — over face
-  push('glasses', 70, 60, 60, 25);
-
-  // 14. hair (front layer) — bangs over forehead
-  push('hair', 55, 75, 90, 35);
+  // 5. pants ★ (hips/upper legs, under shirt hem)
+  layer('pants', 60, 140, 80, 48, 'xMidYMid meet');
+  // 6. top/shirt (torso)
+  layer('top', 40, 95, 120, 80);
+  // 7. shoes ★ (both feet, over pants bottom)
+  layer('shoes', 66, 170, 68, 30, 'xMidYMid meet');
+  // 8. hand (right hand)
+  layer('hand', 135, 100, 50, 60);
+  // 9. face ★ (expression sticker over the muzzle)
+  layer('face', 72, 70, 56, 40, 'xMidYMid meet');
+  // 10. hair-back ★ (behind head; the `hair` slot feeds this layer)
+  layer('hair', 38, 28, 124, 112, 'xMidYMid meet');
+  // 11. headgear (on crown)
+  layer('headgear', 50, 20, 100, 60);
+  // 12. glasses ★ (over the eyes)
+  layer('glasses', 76, 76, 48, 16, 'xMidYMid meet');
+  // 12.5 accessory ★ (full-canvas foreground overlay)
+  layer('accessory', 0, 0, 200, 200, 'xMinYMin meet');
 
   return `<svg viewBox="0 0 200 200" class="avatar-svg">${parts.join('')}</svg>`;
 }

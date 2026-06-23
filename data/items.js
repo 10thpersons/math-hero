@@ -4,12 +4,11 @@
 
 const ITEMS = {
   meta: {
-    version: 4,
-    // 12 slots: 6 existing (with v4 PNG packs) + 6 new (empty in Phase 1, packs in Phase 2).
-    // renderAvatar() falls back gracefully when a slot has no equipped item.
-    slots: ["background", "headgear", "top", "cape", "hand", "pet", "hair", "face", "glasses", "pants", "shoes", "accessory"],
+    version: 5,
+    slots: ["background", "headgear", "top", "cape", "hand", "pet",
+            "hair", "face", "pants", "shoes", "glasses", "accessory"],
     generatedAt: "2026-06-20",
-    artSource: "NanoBanana 10x10 sprite sheet (1024x1024)"
+    artSource: "NanoBanana v4 items + customizer v2 packs (hair/face/pants/shoes/glasses/accessory)"
   },
 
   background: [
@@ -131,16 +130,104 @@ const ITEMS = {
   ],
 
   // ============================================================
-  // NEW SLOTS (Phase 1 placeholder packs — Phase 2 will fill these
-  // with Gemini Pro output under assets/items-{slot}/).
-  // Editor UI + Z-order are wired now so Phase 2 just drops in PNGs.
+  // CUSTOMIZER v2 PACKS — 6 new slots (70 PNGs total)
+  // Generated via NanoBanana sprite sheets, extracted & alpha-cleaned.
+  // Anchors + Z-order live in data/bodies.js renderAvatar().
   // ============================================================
-  hair: [],
-  face: [],
-  glasses: [],
-  pants: [],
-  shoes: [],
-  accessory: []
+
+  // HAIR (30) — renders behind head as hair-back layer.
+  hair: [
+    { id: "hair-bowl-cut-brown",   name: "Bowl Cut Coklat",      rarity: "common",    priceCoins: 30,  img: "assets/items/hair-bowl-cut-brown.png" },
+    { id: "hair-bowl-cut-black",   name: "Bowl Cut Hitam",       rarity: "common",    priceCoins: 30,  img: "assets/items/hair-bowl-cut-black.png" },
+    { id: "hair-bowl-cut-blonde",  name: "Bowl Cut Perang",      rarity: "common",    priceCoins: 30,  img: "assets/items/hair-bowl-cut-blonde.png" },
+    { id: "hair-long-straight-brown", name: "Lurus Panjang Coklat", rarity: "common",  priceCoins: 30,  img: "assets/items/hair-long-straight-brown.png" },
+    { id: "hair-long-straight-black", name: "Lurus Panjang Hitam",  rarity: "common",  priceCoins: 30,  img: "assets/items/hair-long-straight-black.png" },
+    { id: "hair-long-straight-blonde", name: "Lurus Panjang Perang", rarity: "common", priceCoins: 30,  img: "assets/items/hair-long-straight-blonde.png" },
+    { id: "hair-braids-red",       name: "Kepang Merah",         rarity: "rare",      priceCoins: 100, img: "assets/items/hair-braids-red.png" },
+    { id: "hair-braids-black",     name: "Kepang Hitam",         rarity: "rare",      priceCoins: 100, img: "assets/items/hair-braids-black.png" },
+    { id: "hair-ponytail-brown",   name: "Kuncir Coklat",        rarity: "common",    priceCoins: 30,  img: "assets/items/hair-ponytail-brown.png" },
+    { id: "hair-ponytail-blonde",  name: "Kuncir Perang",        rarity: "common",    priceCoins: 30,  img: "assets/items/hair-ponytail-blonde.png" },
+    { id: "hair-pigtails-ginger",  name: "Tokok Jinjang",        rarity: "rare",      priceCoins: 100, img: "assets/items/hair-pigtails-ginger.png" },
+    { id: "hair-afro-black",       name: "Afro Hitam",           rarity: "common",    priceCoins: 30,  img: "assets/items/hair-afro-black.png" },
+    { id: "hair-afro-brown",       name: "Afro Coklat",          rarity: "common",    priceCoins: 30,  img: "assets/items/hair-afro-brown.png" },
+    { id: "hair-mohawk-black-red", name: "Mohawk Hitam-Merah",   rarity: "rare",      priceCoins: 100, img: "assets/items/hair-mohawk-black-red.png" },
+    { id: "hair-spiky-blue",       name: "Berduri Biru",         rarity: "rare",      priceCoins: 100, img: "assets/items/hair-spiky-blue.png" },
+    { id: "hair-spiky-green",      name: "Berduri Hijau",        rarity: "rare",      priceCoins: 100, img: "assets/items/hair-spiky-green.png" },
+    { id: "hair-buzz-black",       name: "Cepak Hitam",          rarity: "common",    priceCoins: 30,  img: "assets/items/hair-buzz-black.png" },
+    { id: "hair-bun-black",        name: "Sanggul Hitam",        rarity: "common",    priceCoins: 30,  img: "assets/items/hair-bun-black.png" },
+    { id: "hair-space-buns-purple",name: "Sanggul Angkasa",      rarity: "rare",      priceCoins: 100, img: "assets/items/hair-space-buns-purple.png" },
+    { id: "hair-beach-blonde",     name: "Gaya Pantai Perang",   rarity: "common",    priceCoins: 30,  img: "assets/items/hair-beach-blonde.png" },
+    { id: "hair-beach-brown",      name: "Gaya Pantai Coklat",   rarity: "common",    priceCoins: 30,  img: "assets/items/hair-beach-brown.png" },
+    { id: "hair-pixie-silver",     name: "Pixie Perak",          rarity: "rare",      priceCoins: 100, img: "assets/items/hair-pixie-silver.png" },
+    { id: "hair-bangs-brown",      name: "Poni Coklat",          rarity: "common",    priceCoins: 30,  img: "assets/items/hair-bangs-brown.png" },
+    { id: "hair-bangs-black",      name: "Poni Hitam",           rarity: "common",    priceCoins: 30,  img: "assets/items/hair-bangs-black.png" },
+    { id: "hair-viking-blonde",    name: "Viking Perang",        rarity: "legendary", priceGems:  25, img: "assets/items/hair-viking-blonde.png" },
+    { id: "hair-regal-white",      name: "Diraja Putih",         rarity: "legendary", priceGems:  25, img: "assets/items/hair-regal-white.png" },
+    { id: "hair-rainbow",          name: "Pelangi",              rarity: "legendary", priceGems:  25, img: "assets/items/hair-rainbow.png" },
+    { id: "hair-mermaid-teal",     name: "Puteri Duyung",        rarity: "legendary", priceGems:  25, img: "assets/items/hair-mermaid-teal.png" },
+    { id: "hair-fire-orange",      name: "Api Bergaya",          rarity: "legendary", priceGems:  25, img: "assets/items/hair-fire-orange.png" },
+    { id: "hair-messy-brown",      name: "Bergelak Coklat",      rarity: "common",    priceCoins: 30,  img: "assets/items/hair-messy-brown.png" },
+  ],
+
+  // FACE (8) — expression overlay on the muzzle.
+  face: [
+    { id: "face-smile",      name: "Senyum",        rarity: "common",    priceCoins: 20,  img: "assets/items/face-smile.png" },
+    { id: "face-grin",       name: "Ketawa Lebar",  rarity: "common",    priceCoins: 20,  img: "assets/items/face-grin.png" },
+    { id: "face-wink",       name: "Kenyit",        rarity: "common",    priceCoins: 20,  img: "assets/items/face-wink.png" },
+    { id: "face-surprised",  name: "Terkejut",      rarity: "common",    priceCoins: 20,  img: "assets/items/face-surprised.png" },
+    { id: "face-angry",      name: "Marah",         rarity: "common",    priceCoins: 20,  img: "assets/items/face-angry.png" },
+    { id: "face-tongue",     name: "Julur Lidah",   rarity: "common",    priceCoins: 20,  img: "assets/items/face-tongue.png" },
+    { id: "face-cute",       name: "Comel",         rarity: "common",    priceCoins: 20,  img: "assets/items/face-cute.png" },
+    { id: "face-cool",       name: "Gaya",          rarity: "rare",      priceCoins: 100, img: "assets/items/face-cool.png" },
+  ],
+
+  // PANTS (8) — hips + upper legs, under shirt hem.
+  pants: [
+    { id: "pants-jeans-blue",      name: "Seluar Jeans Biru",   rarity: "common",    priceCoins: 40,  img: "assets/items/pants-jeans-blue.png" },
+    { id: "pants-jeans-black",     name: "Seluar Jeans Hitam",  rarity: "common",    priceCoins: 40,  img: "assets/items/pants-jeans-black.png" },
+    { id: "pants-cargo-brown",     name: "Seluar Cargo Coklat", rarity: "common",    priceCoins: 40,  img: "assets/items/pants-cargo-brown.png" },
+    { id: "pants-chino-khaki",     name: "Seluar Chino",        rarity: "common",    priceCoins: 40,  img: "assets/items/pants-chino-khaki.png" },
+    { id: "pants-denim-shorts",    name: "Seluar Pendek Jeans", rarity: "common",    priceCoins: 40,  img: "assets/items/pants-denim-shorts.png" },
+    { id: "pants-sweatpants-grey", name: "Seluar Tracksuit",    rarity: "common",    priceCoins: 40,  img: "assets/items/pants-sweatpants-grey.png" },
+    { id: "pants-sport-shorts-red",name: "Seluar Sukan",        rarity: "common",    priceCoins: 40,  img: "assets/items/pants-sport-shorts-red.png" },
+    { id: "pants-camo",            name: "Seluar Camo",         rarity: "rare",      priceCoins: 100, img: "assets/items/pants-camo.png" },
+  ],
+
+  // SHOES (8) — both feet in one image, over pants bottom.
+  shoes: [
+    { id: "shoes-sneakers-red",   name: "Kasut Sukan Merah", rarity: "common",    priceCoins: 40,  img: "assets/items/shoes-sneakers-red.png" },
+    { id: "shoes-sneakers-blue",  name: "Kasut Sukan Biru",  rarity: "common",    priceCoins: 40,  img: "assets/items/shoes-sneakers-blue.png" },
+    { id: "shoes-boots-black",    name: "But Hitam",         rarity: "common",    priceCoins: 40,  img: "assets/items/shoes-boots-black.png" },
+    { id: "shoes-hiking-brown",   name: "But Hiking",        rarity: "common",    priceCoins: 40,  img: "assets/items/shoes-hiking-brown.png" },
+    { id: "shoes-rainboots-yellow",name:"But Hujan Kuning",  rarity: "common",    priceCoins: 40,  img: "assets/items/shoes-rainboots-yellow.png" },
+    { id: "shoes-sandals-brown",  name: "Sandal Coklat",     rarity: "common",    priceCoins: 40,  img: "assets/items/shoes-sandals-brown.png" },
+    { id: "shoes-hightops-white", name: "Kasut Tinggi",      rarity: "rare",      priceCoins: 100, img: "assets/items/shoes-hightops-white.png" },
+    { id: "shoes-flipflops-blue", name: "Selipar Biru",      rarity: "common",    priceCoins: 40,  img: "assets/items/shoes-flipflops-blue.png" },
+  ],
+
+  // GLASSES (8) — over the eyes.
+  glasses: [
+    { id: "glasses-round",          name: "Cermin Bulat",    rarity: "rare",      priceCoins: 100, img: "assets/items/glasses-round.png" },
+    { id: "glasses-square-black",   name: "Cermin Petak",    rarity: "rare",      priceCoins: 100, img: "assets/items/glasses-square-black.png" },
+    { id: "glasses-aviator-gold",   name: "Aviator Emas",    rarity: "rare",      priceCoins: 100, img: "assets/items/glasses-aviator-gold.png" },
+    { id: "glasses-wayfarer-black", name: "Wayfarer Hitam",  rarity: "rare",      priceCoins: 100, img: "assets/items/glasses-wayfarer-black.png" },
+    { id: "glasses-cateye-red",     name: "Mata Kucing",     rarity: "rare",      priceCoins: 100, img: "assets/items/glasses-cateye-red.png" },
+    { id: "glasses-3d-redblue",     name: "Cermin 3D",       rarity: "legendary", priceGems:  25, img: "assets/items/glasses-3d-redblue.png" },
+    { id: "glasses-heart-pink",     name: "Hati Merah Jambu",rarity: "legendary", priceGems:  25, img: "assets/items/glasses-heart-pink.png" },
+    { id: "glasses-star-purple",    name: "Bintang Ungu",    rarity: "legendary", priceGems:  25, img: "assets/items/glasses-star-purple.png" },
+  ],
+
+  // ACCESSORY (8) — small foreground flair over everything except bangs.
+  accessory: [
+    { id: "acc-earrings-hoop-gold", name: "Anting Emas",     rarity: "rare",      priceCoins: 100, img: "assets/items/acc-earrings-hoop-gold.png" },
+    { id: "acc-scarf-red",          name: "Syal Merah",      rarity: "common",    priceCoins: 40,  img: "assets/items/acc-scarf-red.png" },
+    { id: "acc-necklace-chain-gold",name: "Kalung Emas",     rarity: "rare",      priceCoins: 100, img: "assets/items/acc-necklace-chain-gold.png" },
+    { id: "acc-badge-star-gold",    name: "Lencana Bintang", rarity: "rare",      priceCoins: 100, img: "assets/items/acc-badge-star-gold.png" },
+    { id: "acc-bowtie-red",         name: "Papita Merah",    rarity: "common",    priceCoins: 40,  img: "assets/items/acc-bowtie-red.png" },
+    { id: "acc-crowns-flower",      name: "Mahkota Bunga",   rarity: "legendary", priceGems:  25, img: "assets/items/acc-crowns-flower.png" },
+    { id: "acc-medal-gold",         name: "Pingat Emas",     rarity: "legendary", priceGems:  25, img: "assets/items/acc-medal-gold.png" },
+    { id: "acc-halo-angel",         name: "Cahaya Malaikat", rarity: "legendary", priceGems:  25, img: "assets/items/acc-halo-angel.png" },
+  ]
 };
 
 // ============================================================
