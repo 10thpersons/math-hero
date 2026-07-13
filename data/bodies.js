@@ -3,20 +3,11 @@
 // Each body is a self-contained <svg viewBox="0 0 200 200">
 // Layer order (back → front): tail → legs → body → arms → head → ears/horns → face
 //
-// Anchor points for items (see renderAvatar() below + items.js) — 2026-07-13 seamless pass:
-//   - Background: full 200x200 (slice)
-//   - Cape:       (25,55) 150x125 behind body
-//   - Pet:        (2,128) 58x58 bottom-left
-//   - Body:       SVG creature (center of stack)
-//   - Pants:      (58,132) 84x52 hips/upper legs under shirt
-//   - Top/Shirt:  (48,88) 104x78 torso (tighter than old 40/95/120/80)
-//   - Shoes:      (62,168) 76x32 both feet
-//   - Hand:       (132,98) 52x58 right hand
-//   - Face:       (70,68) 60x42 muzzle sticker
-//   - Hair:       (36,18) 128x100 under hat, over head
-//   - Headgear:   (48,8) 104x72 crown/hat (higher + wider)
-//   - Glasses:    (72,74) 56x22 over eyes
-//   - Accessory:  (0,0) 200x200 foreground flair
+// Roblox-style attachment model (2026-07-13 v3):
+// Every clothing PNG is a full 200x200 canvas with the wearable PRE-POSITIONED
+// on the body silhouette (head ~100,80 r32; torso ~100,140). renderAvatar draws
+// every layer at x=0 y=0 w=200 h=200 so hats sit on the crown, not as floating cards.
+// Legacy crop rects live in assets/items-legacy-crop/ if we need to re-bake.
 
 const BODIES_DATA = {
   meta: {
@@ -77,22 +68,23 @@ function getBody(id) {
 // Helper: render an equipped avatar (body + items layered)
 // Items are PNG <image> tags inside the SVG, so they composite with the body SVG.
 //
-// 13-layer Z-order (back → front) — seamless pass 2026-07-13:
+// 13-layer Z-order (back → front) — full-canvas attachment pass:
 // bg → cape → pet → body → pants → top → shoes → hand → face → hair → headgear → glasses → accessory
-// Clothing PNGs use meet + tighter rects so transparent assets sit on anatomy, not as floating cards.
+// FULL_CANVAS: every wearable PNG is already positioned on the 200x200 body grid.
+const FULL_CANVAS = { x: 0, y: 0, w: 200, h: 200, aspect: 'none' };
 const AVATAR_LAYER_RECTS = {
-  background: { x: 0, y: 0, w: 200, h: 200, aspect: 'xMidYMid slice' },
-  cape:       { x: 25, y: 55, w: 150, h: 125, aspect: 'xMidYMid meet' },
-  pet:        { x: 2, y: 128, w: 58, h: 58, aspect: 'xMidYMid meet' },
-  pants:      { x: 58, y: 132, w: 84, h: 52, aspect: 'xMidYMid meet' },
-  top:        { x: 48, y: 88, w: 104, h: 78, aspect: 'xMidYMid meet' },
-  shoes:      { x: 62, y: 168, w: 76, h: 32, aspect: 'xMidYMid meet' },
-  hand:       { x: 132, y: 98, w: 52, h: 58, aspect: 'xMidYMid meet' },
-  face:       { x: 70, y: 68, w: 60, h: 42, aspect: 'xMidYMid meet' },
-  hair:       { x: 36, y: 18, w: 128, h: 100, aspect: 'xMidYMid meet' },
-  headgear:   { x: 48, y: 8, w: 104, h: 72, aspect: 'xMidYMid meet' },
-  glasses:    { x: 72, y: 74, w: 56, h: 22, aspect: 'xMidYMid meet' },
-  accessory:  { x: 0, y: 0, w: 200, h: 200, aspect: 'xMidYMid meet' }
+  background: { x: 0, y: 0, w: 200, h: 200, aspect: 'none' },
+  cape:       FULL_CANVAS,
+  pet:        FULL_CANVAS,
+  pants:      FULL_CANVAS,
+  top:        FULL_CANVAS,
+  shoes:      FULL_CANVAS,
+  hand:       FULL_CANVAS,
+  face:       FULL_CANVAS,
+  hair:       FULL_CANVAS,
+  headgear:   FULL_CANVAS,
+  glasses:    FULL_CANVAS,
+  accessory:  FULL_CANVAS
 };
 
 // Draw order (not object key order)
@@ -112,14 +104,14 @@ function renderAvatar(bodyId, equipped) {
     if (!eq[slot]) return;
     const it = (typeof getItem === 'function') ? getItem(slot, eq[slot]) : null;
     if (!it || !it.img) return;
-    const r = AVATAR_LAYER_RECTS[slot];
-    if (!r) return;
-    // Optional per-item override: it.rect = {x,y,w,h,aspect}
+    // Full-canvas attachment: PNGs are pre-positioned on 200x200.
+    // Optional it.rect still allowed for rare manual nudges only.
+    const r = AVATAR_LAYER_RECTS[slot] || FULL_CANVAS;
     const x = (it.rect && it.rect.x != null) ? it.rect.x : r.x;
     const y = (it.rect && it.rect.y != null) ? it.rect.y : r.y;
     const w = (it.rect && it.rect.w != null) ? it.rect.w : r.w;
     const h = (it.rect && it.rect.h != null) ? it.rect.h : r.h;
-    const aspect = (it.rect && it.rect.aspect) || r.aspect || 'xMidYMid meet';
+    const aspect = (it.rect && it.rect.aspect) || r.aspect || 'none';
     parts.push(
       `<image href="${it.img}" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="${aspect}"/>`
     );

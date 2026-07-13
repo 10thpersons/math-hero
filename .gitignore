@@ -60,3 +60,6 @@ venv/
 *.orig
 .cache/
 coverage/
+
+# intermediate bake
+assets/items-full/

@@ -1,6 +1,6 @@
 # Avatar QA Report
 
-Generated: 2026-07-13T12:10:54.696Z
+Generated: 2026-07-13T12:20:58.399Z
 
 **Overall OK:** true
 **Total items:** 170
@@ -29,12 +29,12 @@ Generated: 2026-07-13T12:10:54.696Z
 
 ## Render smoke (first-item full loadout)
 
-- fox: OK images=12 body=true bytes=3333
-- cat: OK images=12 body=true bytes=3548
-- panda: OK images=12 body=true bytes=3318
-- tiger: OK images=12 body=true bytes=5506
-- dragon: OK images=12 body=true bytes=4036
-- unicorn: OK images=12 body=true bytes=4286
+- fox: OK images=12 body=true bytes=3216
+- cat: OK images=12 body=true bytes=3431
+- panda: OK images=12 body=true bytes=3201
+- tiger: OK images=12 body=true bytes=5389
+- dragon: OK images=12 body=true bytes=3919
+- unicorn: OK images=12 body=true bytes=4169
 
 ## Sample loadout
 
