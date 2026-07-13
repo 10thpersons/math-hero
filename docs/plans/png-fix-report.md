@@ -140,3 +140,10 @@
 - `glasses-aviator-gold.png` 640KB→118KB
 - `glasses-cateye-red.png` 685KB→104KB
 - `glasses-heart-pink.png` 753KB→124KB
+
+
+## Pass 2 (2026-07-13)
+
+- Clothing transparent-corner OK: **150**
+- Still opaque-corner clothing: **0** []
+- Total assets size: **8.14 MB**
