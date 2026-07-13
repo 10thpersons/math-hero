@@ -87,7 +87,8 @@ def strip_bg(im: Image.Image, tol: int = 32):
 
 
 def main():
-    files = sorted(ITEMS_DIR.glob("*.png"))
+    SKIP_PREFIXES = ("bg-",)
+    files = [p for p in sorted(ITEMS_DIR.glob("*.png")) if not p.name.startswith(SKIP_PREFIXES)]
     if not files:
         raise SystemExit(f"No PNGs in {ITEMS_DIR}")
 
