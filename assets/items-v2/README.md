@@ -5,16 +5,16 @@ Source sprite sheet: 1024×1024, 10×10 grid, 102px cells, white background.
 
 ## Categories (100 total)
 
-| Prefix | Count | Examples |
-|---|---|---|
-| `food-` | 20 | apple, banana, hamburger, cupcake, donut |
-| `wear-` | 20 | baseball cap, hoodie, sneakers, backpack |
-| `tool-` | 10 | wooden sword, pickaxe, butterfly net |
-| `mat-` | 10 | stone block, wood block, rope, gold coin |
-| `toy-` | 10 | robot, T-rex, dice, magic wand |
-| `misc-` | 10 | orb, treasure chest, telescope, map |
-| `animal-` | 10 | fish, turtle, rabbit, butterfly |
-| `nature-` | 10 | sunflower, clover, firefly, rainbow |
+| Prefix    | Count | Examples                                 |
+| --------- | ----- | ---------------------------------------- |
+| `food-`   | 20    | apple, banana, hamburger, cupcake, donut |
+| `wear-`   | 20    | baseball cap, hoodie, sneakers, backpack |
+| `tool-`   | 10    | wooden sword, pickaxe, butterfly net     |
+| `mat-`    | 10    | stone block, wood block, rope, gold coin |
+| `toy-`    | 10    | robot, T-rex, dice, magic wand           |
+| `misc-`   | 10    | orb, treasure chest, telescope, map      |
+| `animal-` | 10    | fish, turtle, rabbit, butterfly          |
+| `nature-` | 10    | sunflower, clover, firefly, rainbow      |
 
 ## Schema
 
@@ -22,11 +22,11 @@ See `data/items-v2-schema.json` for the full slug → rarity mapping.
 
 Rarity distribution (visual-cue based):
 
-| Rarity | Count | Examples |
-|---|---|---|
-| common (grey) | 71 | food-apple, wear-baseball-cap, animal-fish |
-| rare (blue) | 19 | tool-pickaxe, toy-robot, animal-butterfly |
-| legendary (gold) | 10 | toy-magic-wand, mat-gold-coin, misc-treasure-chest |
+| Rarity           | Count | Examples                                           |
+| ---------------- | ----- | -------------------------------------------------- |
+| common (grey)    | 71    | food-apple, wear-baseball-cap, animal-fish         |
+| rare (blue)      | 19    | tool-pickaxe, toy-robot, animal-butterfly          |
+| legendary (gold) | 10    | toy-magic-wand, mat-gold-coin, misc-treasure-chest |
 
 ## Use cases for Math Hero
 

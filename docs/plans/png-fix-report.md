@@ -3,81 +3,53 @@
 **Before:** 27.2 MB  
 **After:** 8.59 MB  
 **Stripped backgrounds:** 100  
-**Compressed only:** 55  
+**Compressed only:** 55
 
 ## Sample after
+
 ```json
 [
   {
     "file": "shirt-jersey.png",
     "transparent_frac": 0.52,
-    "corners": [
-      0,
-      0,
-      0,
-      0
-    ],
+    "corners": [0, 0, 0, 0],
     "kb": 15
   },
   {
     "file": "shirt-ninja.png",
     "transparent_frac": 0.53,
-    "corners": [
-      0,
-      0,
-      0,
-      0
-    ],
+    "corners": [0, 0, 0, 0],
     "kb": 18
   },
   {
     "file": "hat-cowboy.png",
     "transparent_frac": 0.68,
-    "corners": [
-      0,
-      0,
-      0,
-      0
-    ],
+    "corners": [0, 0, 0, 0],
     "kb": 14
   },
   {
     "file": "cape-ice.png",
     "transparent_frac": 0.44,
-    "corners": [
-      0,
-      0,
-      0,
-      0
-    ],
+    "corners": [0, 0, 0, 0],
     "kb": 21
   },
   {
     "file": "hat-crown-gold.png",
     "transparent_frac": 0.65,
-    "corners": [
-      0,
-      0,
-      0,
-      0
-    ],
+    "corners": [0, 0, 0, 0],
     "kb": 19
   },
   {
     "file": "shirt-tshirt.png",
     "transparent_frac": 0.53,
-    "corners": [
-      0,
-      0,
-      0,
-      0
-    ],
+    "corners": [0, 0, 0, 0],
     "kb": 12
   }
 ]
 ```
 
 ## Stripped files (first 40)
+
 - `bg-brick-wall.png` changed_px=3166 14KB→15KB
 - `bg-candy-land.png` changed_px=5540 19KB→21KB
 - `bg-castle.png` changed_px=4957 17KB→18KB
@@ -120,6 +92,7 @@
 - `hand-umbrella.png` changed_px=6841 13KB→15KB
 
 ## Compressed only (first 20)
+
 - `acc-badge-star-gold.png` 695KB→124KB
 - `acc-bowtie-red.png` 790KB→136KB
 - `acc-crowns-flower.png` 651KB→113KB
@@ -140,7 +113,6 @@
 - `glasses-aviator-gold.png` 640KB→118KB
 - `glasses-cateye-red.png` 685KB→104KB
 - `glasses-heart-pink.png` 753KB→124KB
-
 
 ## Pass 2 (2026-07-13)
 

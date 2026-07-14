@@ -10,6 +10,7 @@ PNG sprite files for the **Hair** slot (Z-order layer 11/14 in
 ## Naming convention
 
 `hair-{style}-{color}.png` where:
+
 - `style` is one of: `long`, `short`, `bob`, `ponytail`, `braids`, `bun`,
   `curly`, `afro`, `pixie`, `side-swept`, `twin-tails`, `spiky`
 - `color` is one of: `black`, `brown`, `blonde`, `red`
@@ -23,6 +24,7 @@ Example: `hair-long-blonde.png`
 ## Canvas placement
 
 `renderAvatar()` in `data/bodies.js` draws this layer at:
+
 - Back layer: `x=50, y=20, w=100, h=60` (behind hat)
 - Front layer: `x=55, y=75, w=90, h=35` (bangs over forehead)
 

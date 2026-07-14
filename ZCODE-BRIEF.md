@@ -15,6 +15,7 @@
 - Vision-validated 100/100 cell match (no off-by-one, no dropped cells)
 
 **On disk:**
+
 - `assets/items-v2/*.png` — 100 PNGs (1.12 MB total)
 - `data/items-v2-schema.json` — slug, rarity, row, col
 - `assets/items-v2/README.md` — usage notes
@@ -25,16 +26,16 @@
 
 100 real-world object icons across 8 categories:
 
-| Prefix | Count | Examples |
-|---|---|---|
-| `food-` | 20 | apple, banana, hamburger, cupcake, donut |
-| `wear-` | 20 | baseball cap, hoodie, sneakers, backpack |
-| `tool-` | 10 | wooden sword, pickaxe, butterfly net |
-| `mat-` | 10 | stone block, wood block, rope, gold coin |
-| `toy-` | 10 | robot, T-rex, dice, magic wand |
-| `misc-` | 10 | orb, treasure chest, telescope, map |
-| `animal-` | 10 | fish, turtle, rabbit, butterfly |
-| `nature-` | 10 | sunflower, clover, firefly, rainbow |
+| Prefix    | Count | Examples                                 |
+| --------- | ----- | ---------------------------------------- |
+| `food-`   | 20    | apple, banana, hamburger, cupcake, donut |
+| `wear-`   | 20    | baseball cap, hoodie, sneakers, backpack |
+| `tool-`   | 10    | wooden sword, pickaxe, butterfly net     |
+| `mat-`    | 10    | stone block, wood block, rope, gold coin |
+| `toy-`    | 10    | robot, T-rex, dice, magic wand           |
+| `misc-`   | 10    | orb, treasure chest, telescope, map      |
+| `animal-` | 10    | fish, turtle, rabbit, butterfly          |
+| `nature-` | 10    | sunflower, clover, firefly, rainbow      |
 
 **NOT** for avatar items — those stay in `assets/items/` with `bg-/cape-/hand-/hat-/pet-/shirt-` prefixes.
 
@@ -45,11 +46,13 @@
 ### Tier 1 — Must do first
 
 **Step 1. Wire icons in**
+
 - Add `IconV2` registry: preload all 100 PNGs into `Image` objects on app start
 - Add `getIcon(slug)` helper with emoji fallback if slug not found
 - Confirm zero 404s
 
 **Step 2. Reward Catalog screen**
+
 - New screen accessible from home menu
 - Shows all 100 icons in a grid (10×10 desktop, 5×4 mobile)
 - Each icon labeled (Malay translations from existing `d1-bm.json` style)
@@ -58,6 +61,7 @@
 - Filter bar at top: All / Common / Rare / Legendary
 
 **Step 3. Math problem visuals** (replace emoji where possible)
+
 - "I have 3 apples, eat 1, how many left?" → render `food-apple` × 3
 - "How many fish do you see?" → render N × `animal-fish`
 - "Buy 2 swords at 5 gold each" → render `tool-metal-sword` × 2
@@ -69,11 +73,13 @@ D3 (harder): add `tool-`, `nature-`, `toy-`, `misc-`
 ### Tier 2 — Wishlist (do after Tier 1 works)
 
 **Step 4. Legendary mini-game "Find the Gold"**
+
 - Show 6-8 random icons, 3 legendary hidden among common/rare
 - Kid taps the gold ones; sound on correct tap
 - +1 gem per legendary found; 3 lives
 
 **Step 5. Daily bonus chest**
+
 - Daily login: open chest, get 3 random items
 - Rarity biased 70/25/5 (common/rare/legendary)
 - "New!" tag for first-time unlocks
@@ -91,22 +97,26 @@ D3 (harder): add `tool-`, `nature-`, `toy-`, `misc-`
 **Art style consistency:** matches v4 chunky cartoon avatar items (bold black outlines, flat fills, white backgrounds)
 
 **Sizing:**
+
 - Catalog grid: 60×60 px
 - Math problem visual: 48×48 px
 - Detail view: 200×200 px
 - Mini-game: 100×100 px
 
 **Rarity color cues:**
+
 - Common: grey border, no glow
 - Rare: blue border + soft blue glow
 - Legendary: gold border + sparkle particles + 1.0→1.1 scale pulse on appear
 
 **Animations:**
+
 - Icon tap → 1.0→1.2→1.0 scale bounce (200ms)
 - Legendary appear → scale pulse + sparkle fade-in
 - Catalog grid → staggered fade-in (30ms per cell)
 
 **Technical:**
+
 - Mobile-first, portrait, single column
 - Single-file HTML — no new dependencies, no build
 - Works offline — all assets local, no CDN

@@ -24,7 +24,7 @@ function loadScripts() {
       '\nthis.ITEMS = typeof ITEMS !== "undefined" ? ITEMS : this.ITEMS;' +
       '\nthis.getItem = typeof getItem === "function" ? getItem : null;' +
       '\nthis.itemImg = typeof itemImg === "function" ? itemImg : null;',
-    context
+    context,
   );
   vm.runInContext(
     bodiesSrc +
@@ -32,7 +32,7 @@ function loadScripts() {
       '\nthis.renderAvatar = typeof renderAvatar === "function" ? renderAvatar : null;' +
       '\nthis.AVATAR_LAYER_RECTS = typeof AVATAR_LAYER_RECTS !== "undefined" ? AVATAR_LAYER_RECTS : null;' +
       '\nthis.getBody = typeof getBody === "function" ? getBody : null;',
-    context
+    context,
   );
   return context;
 }
@@ -97,14 +97,18 @@ function sampleLoadout(ITEMS) {
 }
 
 function renderSmoke(context) {
-  const bodies = Object.keys(context.BODIES_DATA || {}).filter((k) => k !== 'meta');
+  const bodies = Object.keys(context.BODIES_DATA || {}).filter(
+    (k) => k !== 'meta',
+  );
   const loadout = sampleLoadout(context.ITEMS);
   const results = [];
   for (const bodyId of bodies) {
     const svg = context.renderAvatar(bodyId, loadout);
     const images = (svg.match(/<image /g) || []).length;
     const hasBody = /<(path|ellipse|circle|rect|g)\b/.test(svg);
-    const ok = Boolean(svg && images > 0 && hasBody && svg.includes('avatar-svg'));
+    const ok = Boolean(
+      svg && images > 0 && hasBody && svg.includes('avatar-svg'),
+    );
     results.push({
       bodyId,
       ok,
@@ -128,7 +132,10 @@ function main() {
   const smokeFail = smoke.results.filter((r) => !r.ok);
 
   const summary = {
-    ok: inv.missing.length === 0 && inv.slotsWithoutRects.length === 0 && smokeFail.length === 0,
+    ok:
+      inv.missing.length === 0 &&
+      inv.slotsWithoutRects.length === 0 &&
+      smokeFail.length === 0,
     totalItems: inv.total,
     slotCounts: inv.counts,
     missingAssets: inv.missing,
@@ -160,7 +167,7 @@ function main() {
     '',
     ...smoke.results.map(
       (r) =>
-        `- ${r.bodyId}: ${r.ok ? 'OK' : 'FAIL'} images=${r.images} body=${r.hasBody} bytes=${r.svgBytes}`
+        `- ${r.bodyId}: ${r.ok ? 'OK' : 'FAIL'} images=${r.images} body=${r.hasBody} bytes=${r.svgBytes}`,
     ),
     '',
     '## Sample loadout',

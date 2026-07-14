@@ -13,51 +13,81 @@ const BODIES_DATA = {
   meta: {
     version: 1,
     count: 6,
-    canvas: { w: 200, h: 200, centerX: 100, centerY: 100 }
+    canvas: { w: 200, h: 200, centerX: 100, centerY: 100 },
   },
 
   // Each body has: id, emoji, name (BM), name_en, cls (BM), icon, primaryColor, svg
   fox: {
-    id: 'fox', emoji: '🦊',
-    name: 'Rubah Knight', cls: 'Kesatria', icon: '⚔️',
-    primaryColor: '#f97316', secondaryColor: '#dc2626', accentColor: '#fff',
-    svg: bodyFox()
+    id: 'fox',
+    emoji: '🦊',
+    name: 'Rubah Knight',
+    cls: 'Kesatria',
+    icon: '⚔️',
+    primaryColor: '#f97316',
+    secondaryColor: '#dc2626',
+    accentColor: '#fff',
+    svg: bodyFox(),
   },
 
   cat: {
-    id: 'cat', emoji: '🐱',
-    name: 'Kucing Mage', cls: 'Ahli Sihir', icon: '🪄',
-    primaryColor: '#fb923c', secondaryColor: '#c2410c', accentColor: '#fff',
-    svg: bodyCat()
+    id: 'cat',
+    emoji: '🐱',
+    name: 'Kucing Mage',
+    cls: 'Ahli Sihir',
+    icon: '🪄',
+    primaryColor: '#fb923c',
+    secondaryColor: '#c2410c',
+    accentColor: '#fff',
+    svg: bodyCat(),
   },
 
   panda: {
-    id: 'panda', emoji: '🐼',
-    name: 'Panda Biksu', cls: 'Biksu', icon: '☯️',
-    primaryColor: '#1f2937', secondaryColor: '#000', accentColor: '#fff',
-    svg: bodyPanda()
+    id: 'panda',
+    emoji: '🐼',
+    name: 'Panda Biksu',
+    cls: 'Biksu',
+    icon: '☯️',
+    primaryColor: '#1f2937',
+    secondaryColor: '#000',
+    accentColor: '#fff',
+    svg: bodyPanda(),
   },
 
   tiger: {
-    id: 'tiger', emoji: '🐯',
-    name: 'Harimau Pejuang', cls: 'Pejuang', icon: '🗡️',
-    primaryColor: '#fb923c', secondaryColor: '#1f2937', accentColor: '#fff',
-    svg: bodyTiger()
+    id: 'tiger',
+    emoji: '🐯',
+    name: 'Harimau Pejuang',
+    cls: 'Pejuang',
+    icon: '🗡️',
+    primaryColor: '#fb923c',
+    secondaryColor: '#1f2937',
+    accentColor: '#fff',
+    svg: bodyTiger(),
   },
 
   dragon: {
-    id: 'dragon', emoji: '🐉',
-    name: 'Naga Kecil', cls: 'Mistik', icon: '🔥',
-    primaryColor: '#10b981', secondaryColor: '#047857', accentColor: '#fef3c7',
-    svg: bodyDragon()
+    id: 'dragon',
+    emoji: '🐉',
+    name: 'Naga Kecil',
+    cls: 'Mistik',
+    icon: '🔥',
+    primaryColor: '#10b981',
+    secondaryColor: '#047857',
+    accentColor: '#fef3c7',
+    svg: bodyDragon(),
   },
 
   unicorn: {
-    id: 'unicorn', emoji: '🦄',
-    name: 'Unicorn Penyembuh', cls: 'Penyembuh', icon: '💖',
-    primaryColor: '#fff', secondaryColor: '#fce7f3', accentColor: '#ec4899',
-    svg: bodyUnicorn()
-  }
+    id: 'unicorn',
+    emoji: '🦄',
+    name: 'Unicorn Penyembuh',
+    cls: 'Penyembuh',
+    icon: '💖',
+    primaryColor: '#fff',
+    secondaryColor: '#fce7f3',
+    accentColor: '#ec4899',
+    svg: bodyUnicorn(),
+  },
 };
 
 // Helper: get body by id (with full info)
@@ -74,24 +104,34 @@ function getBody(id) {
 const FULL_CANVAS = { x: 0, y: 0, w: 200, h: 200, aspect: 'none' };
 const AVATAR_LAYER_RECTS = {
   background: { x: 0, y: 0, w: 200, h: 200, aspect: 'none' },
-  cape:       FULL_CANVAS,
-  pet:        FULL_CANVAS,
-  pants:      FULL_CANVAS,
-  top:        FULL_CANVAS,
-  shoes:      FULL_CANVAS,
-  hand:       FULL_CANVAS,
-  face:       FULL_CANVAS,
-  hair:       FULL_CANVAS,
-  headgear:   FULL_CANVAS,
-  glasses:    FULL_CANVAS,
-  accessory:  FULL_CANVAS
+  cape: FULL_CANVAS,
+  pet: FULL_CANVAS,
+  pants: FULL_CANVAS,
+  top: FULL_CANVAS,
+  shoes: FULL_CANVAS,
+  hand: FULL_CANVAS,
+  face: FULL_CANVAS,
+  hair: FULL_CANVAS,
+  headgear: FULL_CANVAS,
+  glasses: FULL_CANVAS,
+  accessory: FULL_CANVAS,
 };
 
 // Draw order (not object key order)
 const AVATAR_LAYER_ORDER = [
-  'background', 'cape', 'pet',
+  'background',
+  'cape',
+  'pet',
   /* body inserted in renderAvatar */
-  'pants', 'top', 'shoes', 'hand', 'face', 'hair', 'headgear', 'glasses', 'accessory'
+  'pants',
+  'top',
+  'shoes',
+  'hand',
+  'face',
+  'hair',
+  'headgear',
+  'glasses',
+  'accessory',
 ];
 
 function renderAvatar(bodyId, equipped) {
@@ -102,18 +142,18 @@ function renderAvatar(bodyId, equipped) {
 
   const layer = (slot) => {
     if (!eq[slot]) return;
-    const it = (typeof getItem === 'function') ? getItem(slot, eq[slot]) : null;
+    const it = typeof getItem === 'function' ? getItem(slot, eq[slot]) : null;
     if (!it || !it.img) return;
     // Full-canvas attachment: PNGs are pre-positioned on 200x200.
     // Optional it.rect still allowed for rare manual nudges only.
     const r = AVATAR_LAYER_RECTS[slot] || FULL_CANVAS;
-    const x = (it.rect && it.rect.x != null) ? it.rect.x : r.x;
-    const y = (it.rect && it.rect.y != null) ? it.rect.y : r.y;
-    const w = (it.rect && it.rect.w != null) ? it.rect.w : r.w;
-    const h = (it.rect && it.rect.h != null) ? it.rect.h : r.h;
+    const x = it.rect && it.rect.x != null ? it.rect.x : r.x;
+    const y = it.rect && it.rect.y != null ? it.rect.y : r.y;
+    const w = it.rect && it.rect.w != null ? it.rect.w : r.w;
+    const h = it.rect && it.rect.h != null ? it.rect.h : r.h;
     const aspect = (it.rect && it.rect.aspect) || r.aspect || 'none';
     parts.push(
-      `<image href="${it.img}" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="${aspect}"/>`
+      `<image href="${it.img}" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="${aspect}"/>`,
     );
   };
 
