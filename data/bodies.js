@@ -112,9 +112,30 @@ const AVATAR_LAYER_RECTS = {
   hand: FULL_CANVAS,
   face: FULL_CANVAS,
   hair: FULL_CANVAS,
+  hair_front: FULL_CANVAS,
   headgear: FULL_CANVAS,
   glasses: FULL_CANVAS,
   accessory: FULL_CANVAS,
+};
+
+// Body-specific rect overrides for anatomy conflicts.
+// Dragon horns (y=35-55) and unicorn horn (y=15-52) collide with headgear.
+// Shift headgear down so hats sit below the horns instead of covering them.
+const AVATAR_LAYER_RECTS_BY_BODY = {
+  dragon: {
+    // Dragon horns peak at y=35. Shift headgear down 25px so hat brim clears horns.
+    headgear: { x: 0, y: 25, w: 200, h: 175, aspect: 'none' },
+    // Hair also needs shift to avoid horn overlap
+    hair: { x: 0, y: 15, w: 200, h: 185, aspect: 'none' },
+    hair_front: { x: 0, y: 15, w: 200, h: 185, aspect: 'none' },
+  },
+  unicorn: {
+    // Unicorn horn peaks at y=15. Shift headgear down 40px.
+    headgear: { x: 0, y: 40, w: 200, h: 160, aspect: 'none' },
+    // Hair shifted to clear the horn
+    hair: { x: 0, y: 25, w: 200, h: 175, aspect: 'none' },
+    hair_front: { x: 0, y: 25, w: 200, h: 175, aspect: 'none' },
+  },
 };
 
 // Draw order (not object key order)
@@ -122,15 +143,16 @@ const AVATAR_LAYER_ORDER = [
   'background',
   'cape',
   'pet',
-  /* body inserted in renderAvatar */
+  '__body__',     // body SVG inserted here in renderAvatar
   'pants',
   'top',
   'shoes',
   'hand',
   'face',
-  'hair',
+  'hair',        // hair-back: behind head
   'headgear',
   'glasses',
+  'hair_front',  // hair-front: bangs/fringe over face, under hat
   'accessory',
 ];
 
@@ -140,41 +162,55 @@ function renderAvatar(bodyId, equipped) {
   const eq = equipped || {};
   const parts = [];
 
+  // Define clipPaths for body silhouette clipping
+  // Torso clipPath: covers the main body area (head+torso+legs)
+  // This clips clothing to the body shape so they don't extend beyond
+  const clipId = `clip-${bodyId}-${Math.random().toString(36).slice(2, 8)}`;
+  const clipDefs = `
+    <defs>
+      <clipPath id="${clipId}-torso">
+        <ellipse cx="100" cy="140" rx="45" ry="50"/>
+        <ellipse cx="100" cy="80" rx="40" ry="40"/>
+        <rect x="55" y="80" width="90" height="110"/>
+      </clipPath>
+      <clipPath id="${clipId}-head">
+        <circle cx="100" cy="80" r="45"/>
+      </clipPath>
+    </defs>`;
+
+  const bodyRects = AVATAR_LAYER_RECTS_BY_BODY[bodyId] || {};
   const layer = (slot) => {
     if (!eq[slot]) return;
     const it = typeof getItem === 'function' ? getItem(slot, eq[slot]) : null;
     if (!it || !it.img) return;
     // Full-canvas attachment: PNGs are pre-positioned on 200x200.
-    // Optional it.rect still allowed for rare manual nudges only.
-    const r = AVATAR_LAYER_RECTS[slot] || FULL_CANVAS;
+    // Priority: item.rect > body-specific slot rect > global slot rect > FULL_CANVAS.
+    const bodyR = bodyRects[slot];
+    const globalR = AVATAR_LAYER_RECTS[slot] || FULL_CANVAS;
+    const r = bodyR || globalR;
     const x = it.rect && it.rect.x != null ? it.rect.x : r.x;
     const y = it.rect && it.rect.y != null ? it.rect.y : r.y;
     const w = it.rect && it.rect.w != null ? it.rect.w : r.w;
     const h = it.rect && it.rect.h != null ? it.rect.h : r.h;
     const aspect = (it.rect && it.rect.aspect) || r.aspect || 'none';
+    // Apply clipPath to clothing layers (top, pants) so they conform to body shape
+    const clipSlots = ['top', 'pants'];
+    const clipAttr = clipSlots.includes(slot) ? ` clip-path="url(#${clipId}-torso)"` : '';
     parts.push(
-      `<image href="${it.img}" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="${aspect}"/>`,
+      `<image href="${it.img}" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="${aspect}"${clipAttr}/>`,
     );
   };
 
-  // Back layers (before body)
-  layer('background');
-  layer('cape');
-  layer('pet');
-  // Body SVG creature
-  parts.push(body.svg);
-  // Front clothing / face layers
-  layer('pants');
-  layer('top');
-  layer('shoes');
-  layer('hand');
-  layer('face');
-  layer('hair');
-  layer('headgear');
-  layer('glasses');
-  layer('accessory');
+  // Layer using AVATAR_LAYER_ORDER with body SVG inserted at the right point
+  for (const slot of AVATAR_LAYER_ORDER) {
+    if (slot === '__body__') {
+      parts.push(body.svg);
+    } else {
+      layer(slot);
+    }
+  }
 
-  return `<svg viewBox="0 0 200 200" class="avatar-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">${parts.join('')}</svg>`;
+  return `<svg viewBox="0 0 200 200" class="avatar-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">${clipDefs}${parts.join('')}</svg>`;
 }
 
 // ============================================================

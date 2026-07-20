@@ -13,6 +13,7 @@ const ITEMS = {
       'hand',
       'pet',
       'hair',
+      'hair_front',
       'face',
       'pants',
       'shoes',
