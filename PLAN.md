@@ -11,6 +11,7 @@
 ### Question Bank (real KSSR format observed from tcer.my past papers)
 
 **Darjah 1 (15 questions, easier):**
+
 1. Counting objects (visual emoji count) — 3 Q
 2. Number comparison (which is bigger) — 3 Q
 3. Number → word (BM spelling: "Dua puluh enam") — 2 Q
@@ -19,6 +20,7 @@
 6. Word problem (story math) — 2 Q
 
 **Darjah 3 (15 questions, harder):**
+
 1. Counting (3-digit, group of 10s) — 2 Q
 2. Multiplication tables (2, 3, 4, 5, 10) — 3 Q
 3. Place value (ratus, puluh, sa) — 2 Q

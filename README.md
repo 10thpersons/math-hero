@@ -49,6 +49,7 @@ Edit any file in `data/`. Each file has this structure:
 ```
 
 Supported fields per question:
+
 - `text` (required) — the question
 - `visual` (optional) — emoji visual
 - `equation` (optional) — math equation display
@@ -60,8 +61,12 @@ Supported fields per question:
 
 1. Create 2 JSON files: `data/d1-<slug>.json` and `data/d3-<slug>.json`
 2. Add a button in `index.html`:
+
 ```html
-<button class="subject-btn" data-subject="<slug>">
+<button
+  class="subject-btn"
+  data-subject="<slug>"
+>
   <span class="subject-emoji">📚</span>
   <span class="subject-name">Subject Name</span>
 </button>

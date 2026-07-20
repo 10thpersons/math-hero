@@ -3,63 +3,91 @@
 // Each body is a self-contained <svg viewBox="0 0 200 200">
 // Layer order (back → front): tail → legs → body → arms → head → ears/horns → face
 //
-// Anchor points for items (designed in items.js):
-//   - Background: full 200x200
-//   - Cape:       y=110-180  (drapes from shoulders, behind body)
-//   - Top:        y=100-170  (covers body torso)
-//   - Hand:       (140, 110) (right hand)
-//   - Pet:        (50, 170)  (bottom-left, beside feet)
-//   - Headgear:   y=20-75    (on top of head)
+// Roblox-style attachment model (2026-07-13 v3):
+// Every clothing PNG is a full 200x200 canvas with the wearable PRE-POSITIONED
+// on the body silhouette (head ~100,80 r32; torso ~100,140). renderAvatar draws
+// every layer at x=0 y=0 w=200 h=200 so hats sit on the crown, not as floating cards.
+// Legacy crop rects live in assets/items-legacy-crop/ if we need to re-bake.
 
 const BODIES_DATA = {
   meta: {
     version: 1,
     count: 6,
-    canvas: { w: 200, h: 200, centerX: 100, centerY: 100 }
+    canvas: { w: 200, h: 200, centerX: 100, centerY: 100 },
   },
 
   // Each body has: id, emoji, name (BM), name_en, cls (BM), icon, primaryColor, svg
   fox: {
-    id: 'fox', emoji: '🦊',
-    name: 'Rubah Knight', cls: 'Kesatria', icon: '⚔️',
-    primaryColor: '#f97316', secondaryColor: '#dc2626', accentColor: '#fff',
-    svg: bodyFox()
+    id: 'fox',
+    emoji: '🦊',
+    name: 'Rubah Knight',
+    cls: 'Kesatria',
+    icon: '⚔️',
+    primaryColor: '#f97316',
+    secondaryColor: '#dc2626',
+    accentColor: '#fff',
+    svg: bodyFox(),
   },
 
   cat: {
-    id: 'cat', emoji: '🐱',
-    name: 'Kucing Mage', cls: 'Ahli Sihir', icon: '🪄',
-    primaryColor: '#fb923c', secondaryColor: '#c2410c', accentColor: '#fff',
-    svg: bodyCat()
+    id: 'cat',
+    emoji: '🐱',
+    name: 'Kucing Mage',
+    cls: 'Ahli Sihir',
+    icon: '🪄',
+    primaryColor: '#fb923c',
+    secondaryColor: '#c2410c',
+    accentColor: '#fff',
+    svg: bodyCat(),
   },
 
   panda: {
-    id: 'panda', emoji: '🐼',
-    name: 'Panda Biksu', cls: 'Biksu', icon: '☯️',
-    primaryColor: '#1f2937', secondaryColor: '#000', accentColor: '#fff',
-    svg: bodyPanda()
+    id: 'panda',
+    emoji: '🐼',
+    name: 'Panda Biksu',
+    cls: 'Biksu',
+    icon: '☯️',
+    primaryColor: '#1f2937',
+    secondaryColor: '#000',
+    accentColor: '#fff',
+    svg: bodyPanda(),
   },
 
   tiger: {
-    id: 'tiger', emoji: '🐯',
-    name: 'Harimau Pejuang', cls: 'Pejuang', icon: '🗡️',
-    primaryColor: '#fb923c', secondaryColor: '#1f2937', accentColor: '#fff',
-    svg: bodyTiger()
+    id: 'tiger',
+    emoji: '🐯',
+    name: 'Harimau Pejuang',
+    cls: 'Pejuang',
+    icon: '🗡️',
+    primaryColor: '#fb923c',
+    secondaryColor: '#1f2937',
+    accentColor: '#fff',
+    svg: bodyTiger(),
   },
 
   dragon: {
-    id: 'dragon', emoji: '🐉',
-    name: 'Naga Kecil', cls: 'Mistik', icon: '🔥',
-    primaryColor: '#10b981', secondaryColor: '#047857', accentColor: '#fef3c7',
-    svg: bodyDragon()
+    id: 'dragon',
+    emoji: '🐉',
+    name: 'Naga Kecil',
+    cls: 'Mistik',
+    icon: '🔥',
+    primaryColor: '#10b981',
+    secondaryColor: '#047857',
+    accentColor: '#fef3c7',
+    svg: bodyDragon(),
   },
 
   unicorn: {
-    id: 'unicorn', emoji: '🦄',
-    name: 'Unicorn Penyembuh', cls: 'Penyembuh', icon: '💖',
-    primaryColor: '#fff', secondaryColor: '#fce7f3', accentColor: '#ec4899',
-    svg: bodyUnicorn()
-  }
+    id: 'unicorn',
+    emoji: '🦄',
+    name: 'Unicorn Penyembuh',
+    cls: 'Penyembuh',
+    icon: '💖',
+    primaryColor: '#fff',
+    secondaryColor: '#fce7f3',
+    accentColor: '#ec4899',
+    svg: bodyUnicorn(),
+  },
 };
 
 // Helper: get body by id (with full info)
@@ -68,38 +96,121 @@ function getBody(id) {
 }
 
 // Helper: render an equipped avatar (body + items layered)
-// Items are now PNG <image> tags inside the SVG, so they composite with the body SVG.
+// Items are PNG <image> tags inside the SVG, so they composite with the body SVG.
+//
+// 13-layer Z-order (back → front) — full-canvas attachment pass:
+// bg → cape → pet → body → pants → top → shoes → hand → face → hair → headgear → glasses → accessory
+// FULL_CANVAS: every wearable PNG is already positioned on the 200x200 body grid.
+const FULL_CANVAS = { x: 0, y: 0, w: 200, h: 200, aspect: 'none' };
+const AVATAR_LAYER_RECTS = {
+  background: { x: 0, y: 0, w: 200, h: 200, aspect: 'none' },
+  cape: FULL_CANVAS,
+  pet: FULL_CANVAS,
+  pants: FULL_CANVAS,
+  top: FULL_CANVAS,
+  shoes: FULL_CANVAS,
+  hand: FULL_CANVAS,
+  face: FULL_CANVAS,
+  hair: FULL_CANVAS,
+  hair_front: FULL_CANVAS,
+  headgear: FULL_CANVAS,
+  glasses: FULL_CANVAS,
+  accessory: FULL_CANVAS,
+};
+
+// Body-specific rect overrides for anatomy conflicts.
+// Dragon horns (y=35-55) and unicorn horn (y=15-52) collide with headgear.
+// Shift headgear down so hats sit below the horns instead of covering them.
+const AVATAR_LAYER_RECTS_BY_BODY = {
+  dragon: {
+    // Dragon horns peak at y=35. Shift headgear down 25px so hat brim clears horns.
+    headgear: { x: 0, y: 25, w: 200, h: 175, aspect: 'none' },
+    // Hair also needs shift to avoid horn overlap
+    hair: { x: 0, y: 15, w: 200, h: 185, aspect: 'none' },
+    hair_front: { x: 0, y: 15, w: 200, h: 185, aspect: 'none' },
+  },
+  unicorn: {
+    // Unicorn horn peaks at y=15. Shift headgear down 40px.
+    headgear: { x: 0, y: 40, w: 200, h: 160, aspect: 'none' },
+    // Hair shifted to clear the horn
+    hair: { x: 0, y: 25, w: 200, h: 175, aspect: 'none' },
+    hair_front: { x: 0, y: 25, w: 200, h: 175, aspect: 'none' },
+  },
+};
+
+// Draw order (not object key order)
+const AVATAR_LAYER_ORDER = [
+  'background',
+  'cape',
+  'pet',
+  '__body__',     // body SVG inserted here in renderAvatar
+  'pants',
+  'top',
+  'shoes',
+  'hand',
+  'face',
+  'hair',        // hair-back: behind head
+  'headgear',
+  'glasses',
+  'hair_front',  // hair-front: bangs/fringe over face, under hat
+  'accessory',
+];
+
 function renderAvatar(bodyId, equipped) {
   const body = getBody(bodyId);
   if (!body) return '';
-  // Layer order: bg → cape → body → top → pet → headgear → hand
+  const eq = equipped || {};
   const parts = [];
-  if (equipped && equipped.background) {
-    const it = getItem('background', equipped.background);
-    if (it && it.img) parts.push(`<image href="${it.img}" x="0" y="0" width="200" height="200" preserveAspectRatio="xMidYMid slice"/>`);
+
+  // Define clipPaths for body silhouette clipping
+  // Torso clipPath: covers the main body area (head+torso+legs)
+  // This clips clothing to the body shape so they don't extend beyond
+  const clipId = `clip-${bodyId}-${Math.random().toString(36).slice(2, 8)}`;
+  const clipDefs = `
+    <defs>
+      <clipPath id="${clipId}-torso">
+        <ellipse cx="100" cy="140" rx="45" ry="50"/>
+        <ellipse cx="100" cy="80" rx="40" ry="40"/>
+        <rect x="55" y="80" width="90" height="110"/>
+      </clipPath>
+      <clipPath id="${clipId}-head">
+        <circle cx="100" cy="80" r="45"/>
+      </clipPath>
+    </defs>`;
+
+  const bodyRects = AVATAR_LAYER_RECTS_BY_BODY[bodyId] || {};
+  const layer = (slot) => {
+    if (!eq[slot]) return;
+    const it = typeof getItem === 'function' ? getItem(slot, eq[slot]) : null;
+    if (!it || !it.img) return;
+    // Full-canvas attachment: PNGs are pre-positioned on 200x200.
+    // Priority: item.rect > body-specific slot rect > global slot rect > FULL_CANVAS.
+    const bodyR = bodyRects[slot];
+    const globalR = AVATAR_LAYER_RECTS[slot] || FULL_CANVAS;
+    const r = bodyR || globalR;
+    const x = it.rect && it.rect.x != null ? it.rect.x : r.x;
+    const y = it.rect && it.rect.y != null ? it.rect.y : r.y;
+    const w = it.rect && it.rect.w != null ? it.rect.w : r.w;
+    const h = it.rect && it.rect.h != null ? it.rect.h : r.h;
+    const aspect = (it.rect && it.rect.aspect) || r.aspect || 'none';
+    // Apply clipPath to clothing layers (top, pants) so they conform to body shape
+    const clipSlots = ['top', 'pants'];
+    const clipAttr = clipSlots.includes(slot) ? ` clip-path="url(#${clipId}-torso)"` : '';
+    parts.push(
+      `<image href="${it.img}" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="${aspect}"${clipAttr}/>`,
+    );
+  };
+
+  // Layer using AVATAR_LAYER_ORDER with body SVG inserted at the right point
+  for (const slot of AVATAR_LAYER_ORDER) {
+    if (slot === '__body__') {
+      parts.push(body.svg);
+    } else {
+      layer(slot);
+    }
   }
-  if (equipped && equipped.cape) {
-    const it = getItem('cape', equipped.cape);
-    if (it && it.img) parts.push(`<image href="${it.img}" x="20" y="60" width="160" height="120"/>`);
-  }
-  parts.push(body.svg);
-  if (equipped && equipped.top) {
-    const it = getItem('top', equipped.top);
-    if (it && it.img) parts.push(`<image href="${it.img}" x="40" y="95" width="120" height="80"/>`);
-  }
-  if (equipped && equipped.pet) {
-    const it = getItem('pet', equipped.pet);
-    if (it && it.img) parts.push(`<image href="${it.img}" x="0" y="130" width="60" height="60"/>`);
-  }
-  if (equipped && equipped.headgear) {
-    const it = getItem('headgear', equipped.headgear);
-    if (it && it.img) parts.push(`<image href="${it.img}" x="50" y="20" width="100" height="60"/>`);
-  }
-  if (equipped && equipped.hand) {
-    const it = getItem('hand', equipped.hand);
-    if (it && it.img) parts.push(`<image href="${it.img}" x="135" y="100" width="50" height="60"/>`);
-  }
-  return `<svg viewBox="0 0 200 200" class="avatar-svg">${parts.join('')}</svg>`;
+
+  return `<svg viewBox="0 0 200 200" class="avatar-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">${clipDefs}${parts.join('')}</svg>`;
 }
 
 // ============================================================
