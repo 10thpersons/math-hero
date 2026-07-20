@@ -556,6 +556,7 @@
         width: 100%;
         height: 100%;
         object-fit: contain;
+        object-position: center;
       }
       .item-card .item-name {
         font-size: 11px;
@@ -1197,6 +1198,26 @@
         height: 100%;
         display: block;
       }
+      /* Idle bob animation — gentle float on all avatar containers */
+      @keyframes idle-bob {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-4px); }
+      }
+      .welcome-art svg,
+      .editor-preview-box .preview-svg svg,
+      .mascot-art svg,
+      .end-hero svg {
+        animation: idle-bob 2.5s ease-in-out infinite;
+      }
+      /* Equip flash — burst glow when item changes */
+      @keyframes equip-flash {
+        0% { filter: brightness(1) drop-shadow(0 0 0 transparent); }
+        30% { filter: brightness(1.5) drop-shadow(0 0 12px rgba(255,215,0,0.8)); }
+        100% { filter: brightness(1) drop-shadow(0 0 0 transparent); }
+      }
+      .equip-flash {
+        animation: equip-flash 0.5s ease-out;
+      }
       .mascot.happy {
         animation: bounce 0.5s ease;
       }
@@ -1474,6 +1495,7 @@
         width: 56px;
         height: 56px;
         object-fit: contain;
+        object-position: center;
       }
       .shop-name {
         font-family: 'Fredoka', sans-serif;
@@ -1581,6 +1603,7 @@
         width: 90px;
         height: 90px;
         object-fit: contain;
+        object-position: center;
       }
       .modal-desc {
         font-size: 14px;
@@ -2185,6 +2208,7 @@
         width: 110px;
         height: 110px;
         object-fit: contain;
+        object-position: center;
       }
 
       /* Sparkle particles */
@@ -5009,6 +5033,13 @@
           renderEditorSlots();
           renderEditorItems();
           renderLoadoutBar();
+          // Trigger equip flash animation on the preview
+          const preview = el('editor-preview');
+          if (preview) {
+            preview.classList.remove('equip-flash');
+            void preview.offsetWidth; // force reflow to restart animation
+            preview.classList.add('equip-flash');
+          }
         }
       }
 
@@ -6048,6 +6079,13 @@
         },
         { passive: false },
       );
+
+      // Service Worker — offline cache for game assets
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js').catch(() => {});
+        });
+      }
     </script>
   </body>
 </html>

@@ -122,12 +122,26 @@ const AVATAR_LAYER_RECTS = {
 // Dragon horns (y=35-55) and unicorn horn (y=15-52) collide with headgear.
 // Shift headgear down so hats sit below the horns instead of covering them.
 const AVATAR_LAYER_RECTS_BY_BODY = {
+  fox: {
+    // Fox tail at left side — shift pet right to avoid overlap
+    pet: { x: 10, y: 0, w: 190, h: 200, aspect: 'none' },
+  },
+  cat: {
+    // Cat tail at left side — shift pet right
+    pet: { x: 10, y: 0, w: 190, h: 200, aspect: 'none' },
+  },
+  tiger: {
+    // Tiger tail at left side — shift pet right
+    pet: { x: 10, y: 0, w: 190, h: 200, aspect: 'none' },
+  },
   dragon: {
     // Dragon horns peak at y=35. Shift headgear down 25px so hat brim clears horns.
     headgear: { x: 0, y: 25, w: 200, h: 175, aspect: 'none' },
     // Hair also needs shift to avoid horn overlap
     hair: { x: 0, y: 15, w: 200, h: 185, aspect: 'none' },
     hair_front: { x: 0, y: 15, w: 200, h: 185, aspect: 'none' },
+    // Dragon tail at left — shift pet right
+    pet: { x: 15, y: 0, w: 185, h: 200, aspect: 'none' },
   },
   unicorn: {
     // Unicorn horn peaks at y=15. Shift headgear down 40px.
@@ -135,6 +149,12 @@ const AVATAR_LAYER_RECTS_BY_BODY = {
     // Hair shifted to clear the horn
     hair: { x: 0, y: 25, w: 200, h: 175, aspect: 'none' },
     hair_front: { x: 0, y: 25, w: 200, h: 175, aspect: 'none' },
+    // Unicorn tail at left — shift pet right
+    pet: { x: 10, y: 0, w: 190, h: 200, aspect: 'none' },
+  },
+  panda: {
+    // Panda — no tail, pet can sit closer
+    pet: { x: 0, y: 0, w: 200, h: 200, aspect: 'none' },
   },
 };
 
