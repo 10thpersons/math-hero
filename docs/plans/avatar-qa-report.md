@@ -1,6 +1,6 @@
 # Avatar QA Report
 
-Generated: 2026-07-13T12:20:58.399Z
+Generated: 2026-08-06T16:02:00.255Z
 
 **Overall OK:** true
 **Total items:** 170
@@ -14,6 +14,7 @@ Generated: 2026-07-13T12:20:58.399Z
 - hand: 10
 - pet: 20
 - hair: 30
+- hair_front: 0
 - face: 8
 - pants: 8
 - shoes: 8
@@ -22,19 +23,19 @@ Generated: 2026-07-13T12:20:58.399Z
 
 ## Coverage
 
-- meta.slots: background, headgear, top, cape, hand, pet, hair, face, pants, shoes, glasses, accessory
-- AVATAR_LAYER_RECTS: background, cape, pet, pants, top, shoes, hand, face, hair, headgear, glasses, accessory
+- meta.slots: background, headgear, top, cape, hand, pet, hair, hair_front, face, pants, shoes, glasses, accessory
+- AVATAR_LAYER_RECTS: background, cape, pet, pants, top, shoes, hand, face, hair, hair_front, headgear, glasses, accessory
 - slots without rects: (none)
 - missing assets: 0
 
 ## Render smoke (first-item full loadout)
 
-- fox: OK images=12 body=true bytes=3216
-- cat: OK images=12 body=true bytes=3431
-- panda: OK images=12 body=true bytes=3201
-- tiger: OK images=12 body=true bytes=5389
-- dragon: OK images=12 body=true bytes=3919
-- unicorn: OK images=12 body=true bytes=4169
+- fox: OK images=12 body=true bytes=3643
+- cat: OK images=12 body=true bytes=3858
+- panda: OK images=12 body=true bytes=3636
+- tiger: OK images=12 body=true bytes=5824
+- dragon: OK images=12 body=true bytes=4360
+- unicorn: OK images=12 body=true bytes=4614
 
 ## Sample loadout
 
