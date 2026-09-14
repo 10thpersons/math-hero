@@ -360,7 +360,7 @@ $('#nav-journal').onclick = showJournal;
 $('#parent-button').onclick = showParents;
 $('#how-to-play').onclick = showHowToPlay;
 $('#sound-button').onclick = () => { state.sound = !state.sound; if (!state.sound && 'speechSynthesis' in window) speechSynthesis.cancel(); save(); toast(state.sound ? 'Sound on. Tap “Listen” inside an adventure.' : 'Sound off. A little quiet time.'); };
-document.querySelectorAll('[data-location]').forEach(button=>{ button.onclick=()=>{ const location=button.dataset.location; if(location==='home') showHome(); else { selectedMission=location; updateQuest(); world?.focus(location); launchMission(location); } }; });
+document.querySelectorAll('[data-location]').forEach(button=>{ button.onclick=()=>{ const location=button.dataset.location; if(location==='home') return showHome(); if(location==='bridge'||location==='market'){selectedMission=location;updateQuest();world?.focus(location);return launchMission(location);} launchActivity(location); }; });
 updateHeader();
 renderCloudButton();
 async function bootCloud() {
