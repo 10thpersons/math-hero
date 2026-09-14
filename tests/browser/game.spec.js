@@ -1,4 +1,5 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { test } from './fixtures.js';
 
 async function solveMission(page, type, withHint=false) {
   for(let round=0;round<3;round++) {

@@ -1,4 +1,5 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { test } from './fixtures.js';
 
 test('parent cloud-save screen sends only the parent email to Supabase magic-link auth', async ({ page }) => {
   let payload;

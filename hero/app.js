@@ -18,6 +18,7 @@ const gradeTopics = { 1:'Build numbers and count real objects.', 2:'Join bigger 
 const activityIcons = { bridge:'bridge', market:'shop', science:'leaf', history:'book', geography:'compass' };
 let canSave = true;
 let cloudStatus = 'local';
+const GUIDE_KEY = 'hero-islands-how-to-play-v1';
 const panel = $('#panel');
 const content = $('#panel-content');
 const profile = () => state.profiles.find(p => p.id === state.active);
@@ -124,6 +125,13 @@ function openPanel(html) {
 function heading(kicker,title,description='') {
   return `<div class="panel-header"><div><div class="eyebrow">${kicker}</div><h2>${title}</h2>${description ? `<p>${description}</p>` : ''}</div><button class="icon-button" data-close aria-label="Close">${icon('close')}</button></div>`;
 }
+function showHowToPlay() {
+  openPanel(`<section class="panel-content how-to-play">${heading('WELCOME TO HERO ISLANDS','A little guide before you begin.','Kids can explore straight away. Grown-ups can help set the adventure up in a minute.')}<div class="guide-columns"><section class="guide-card kid-guide"><div class="guide-icon">${icon('star')}</div><div><span class="guide-label">FOR KIDS</span><h3>Play, learn, make it yours.</h3><ol><li><b>Play & earn</b><span>Choose a game or quick quiz. There is no timer, so take your time.</span></li><li><b>Try your best</b><span>Use a hint whenever you need one. Every try is practice.</span></li><li><b>Spend Hero Coins</b><span>Give your hero new looks and build up your island.</span></li></ol></div></section><section class="guide-card parent-guide"><div class="guide-icon">${icon('book')}</div><div><span class="guide-label">FOR GROWN-UPS</span><h3>Set up, then let them lead.</h3><ol><li><b>Choose their explorer</b><span>Tap the face at the top to switch child profiles and select Darjah 1 to 6.</span></li><li><b>Follow their curiosity</b><span>Games cover maths, science, history and geography. Hints and retries are part of learning.</span></li><li><b>Keep progress safe</b><span>Use Cloud save with a parent email if you want the same island on another device.</span></li></ol></div></section></div><p class="guide-note">You can reopen this guide any time with <b>How to play</b> at the bottom of the island.</p><div class="panel-actions guide-actions"><button class="secondary-button" id="guide-parents">More for grown-ups</button><button class="primary-button" id="guide-start">Let’s explore ${icon('arrow')}</button></div></section>`);
+  const remember = () => { try { localStorage.setItem(GUIDE_KEY, 'seen'); } catch {} };
+  $('#guide-start').onclick = () => { remember(); closePanel(); };
+  $('#guide-parents').onclick = () => { remember(); showParents(); };
+}
+function hasSeenGuide() { try { return localStorage.getItem(GUIDE_KEY) === 'seen'; } catch { return false; } }
 function chooseMission() {
   openPanel(`<section class="panel-content activity-center">${heading('A LITTLE PRACTICE. A LITTLE MORE YOU.','Play & earn Hero Coins',`Darjah ${profile().grade} · Play as often as you like. Spend your coins on your hero or island.`)}<section class="learning-trail" aria-label="Choose practice year"><span class="field-label">Your learning adventure</span><div class="year-picker">${GRADES.map(grade=>`<button data-practice-grade="${grade}" aria-pressed="${profile().grade===grade}"><small>Darjah</small><b>${grade}</b></button>`).join('')}</div><p>${gradeTopics[profile().grade]}</p><div class="adventure-stamps" aria-label="First adventures completed this year">${Object.entries(ACTIVITIES).map(([type,name])=>`<span class="${profile().completed.includes(`${type}-${profile().grade}`)?'earned':''}" title="${name}">${icon(profile().completed.includes(`${type}-${profile().grade}`)?'check':activityIcons[type])}<small>${name}</small></span>`).join('')}</div><small>First visits fill your adventure stamps. Replay any game for more coins.</small></section><h3 class="section-title">Hands-on adventures <small>15 coins per finish · +15 on your first visit</small></h3><div class="mission-list"><button class="mission-choice" data-mission="bridge">${icon('bridge')}<span><b>Build & Rescue</b><small>Join lengths. Build a way across.</small></span>${icon('arrow','arrow')}</button><button class="mission-choice" data-mission="market">${icon('shop')}<span><b>Pasar Hero</b><small>Pack your number skills for the market.</small></span>${icon('arrow','arrow')}</button></div><div class="discovery-menu">${[['science','Science Lab','Test materials. Discover their properties.'],['history','Time Detectives','Read clues. Restore a timeline.'],['geography','Island Navigator','Plan a route. Deliver across the map.']].map(([type,name,description])=>`<button class="mission-choice discovery-choice ${type}" data-mission="${type}">${icon(activityIcons[type])}<span><b>${name}</b><small>${description}</small></span>${icon('arrow','arrow')}</button>`).join('')} </div><p class="copy">Science experiments, history discovery and map skills for curious explorers. History and geography are enrichment activities.</p><h3 class="section-title">Quick quiz club <small>5 questions · 10–25 coins per finish</small></h3><div class="quiz-menu">${Object.entries(SUBJECTS).map(([key,name])=>`<button class="quiz-choice quiz-${key}" data-quiz="${key}">${icon(key==='sains'?'leaf':key==='math'?'bridge':'book')}<b>${name}</b><small>${key==='math'?'Fresh number puzzles':key==='sains'?'Discover how things work':key==='bm'?'Jom bermain dengan bahasa':'Words, stories & discovery'}</small><span>Let’s play ${icon('arrow')}</span></button>`).join('')}</div><p class="copy">No time limit. First-try answers earn 4 coins; answers with help earn 1. Finish all five for 5 extra coins.</p><button class="secondary-button" id="games-shop">See what I’m saving for ${icon('avatar')}</button></section>`);
   content.querySelectorAll('[data-mission]').forEach(button => { button.onclick = () => launchActivity(button.dataset.mission); });
@@ -350,6 +358,7 @@ $('#nav-avatar').onclick = showShop;
 $('#nav-home').onclick = showHome;
 $('#nav-journal').onclick = showJournal;
 $('#parent-button').onclick = showParents;
+$('#how-to-play').onclick = showHowToPlay;
 $('#sound-button').onclick = () => { state.sound = !state.sound; if (!state.sound && 'speechSynthesis' in window) speechSynthesis.cancel(); save(); toast(state.sound ? 'Sound on. Tap “Listen” inside an adventure.' : 'Sound off. A little quiet time.'); };
 document.querySelectorAll('[data-location]').forEach(button=>{ button.onclick=()=>{ const location=button.dataset.location; if(location==='home') showHome(); else { selectedMission=location; updateQuest(); world?.focus(location); launchMission(location); } }; });
 updateHeader();
@@ -382,9 +391,11 @@ async function bootWorld() {
       onSelect: location => { if(panel.open || buildMode)return; if(location==='home')showHome(); else launchMission(location); } });
     $('.world-loading')?.remove(); syncWorld(); world.setPaused(panel.open);
     if(buildMode){world.setPlotZone(activeZone);world.setPlotMode(true);world.focus('plot');renderHome();}
+    if (!hasSeenGuide()) showHowToPlay();
   } catch (error) {
     console.warn('3D island unavailable:',error);
     $('#world').innerHTML = `<div class="fallback-world">${icon('map')}<h2>Your adventures are ready.</h2><p>This browser cannot show the 3D island. You can still play both Maths adventures using the buttons below.</p></div>`;
+    if (!hasSeenGuide()) showHowToPlay();
   }
 }
 bootWorld();

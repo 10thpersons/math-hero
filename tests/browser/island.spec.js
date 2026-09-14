@@ -1,4 +1,5 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { test } from './fixtures.js';
 
 async function seed(page,coins=0) {
   await page.addInitScript(coins=>{
