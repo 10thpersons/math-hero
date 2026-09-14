@@ -67,3 +67,4 @@ assets/items-full/
 # Browser verification artifacts
 test-results/
 playwright-report/
+.vercel
