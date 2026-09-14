@@ -1,59 +1,28 @@
-// Math Hero Service Worker — offline cache for game assets
-const CACHE_NAME = 'math-hero-v1';
+// Cache the complete first chapter, including locally bundled fonts and renderer.
+const CACHE_NAME = 'hero-islands-v5';
 const ASSETS = [
-  './',
-  './index.html',
-  './data/bodies.js',
-  './data/items.js',
+  './', './index.html', './hero/app.js', './hero/state.js', './hero/styles.css',
+  './hero/world.js', './hero/missions.js', './hero/missions.css', './hero/icon.svg',
+  './hero/discovery.js', './hero/discovery.css', './hero/navigation.js', './hero/navigation.css', './hero/island-phase.css',
+  './hero/learning.css', './hero/grade-banks.js', './hero/quiz.js', './hero/quiz.css', './hero/expansion.css',
+  './data/d1-bm.json', './data/d1-bi.json', './data/d3-bm.json', './data/d3-bi.json',
+  './hero/vendor/three.module.js', './hero/vendor/three.core.js',
+  './hero/fonts/fredoka.ttf', './hero/fonts/nunito.ttf',
 ];
-
-// Dynamically cache all item PNGs on install
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
-    })
-  );
-  self.skipWaiting();
+self.addEventListener('install', event => {
+  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting()));
 });
-
-// Cache-first strategy for images, network-first for HTML/JS
-self.addEventListener('fetch', (event) => {
-  const url = new URL(event.request.url);
-  
-  // Cache-first for PNG assets
-  if (url.pathname.endsWith('.png')) {
-    event.respondWith(
-      caches.match(event.request).then((cached) => {
-        if (cached) return cached;
-        return fetch(event.request).then((response) => {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-          return response;
-        });
-      })
-    );
-    return;
-  }
-  
-  // Network-first for HTML/JS/data
-  event.respondWith(
-    fetch(event.request).then((response) => {
-      const clone = response.clone();
-      caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-      return response;
-    }).catch(() => caches.match(event.request))
-  );
-});
-
-// Clean old caches on activate
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((names) => {
-      return Promise.all(
-        names.filter((n) => n !== CACHE_NAME).map((n) => caches.delete(n))
-      );
-    })
-  );
-  self.clients.claim();
+self.addEventListener('activate', event => { event.waitUntil(self.clients.claim()); });
+self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET' || new URL(event.request.url).origin !== self.location.origin) return;
+  event.respondWith(fetch(event.request).then(response => {
+    if (response.ok) {
+      const copy = response.clone();
+      event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy)));
+    }
+    return response;
+  }).catch(async () => {
+    const cache = await caches.open(CACHE_NAME);
+    return await cache.match(event.request) || await caches.match(event.request) || Response.error();
+  }));
 });
