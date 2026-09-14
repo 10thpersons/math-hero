@@ -37,7 +37,13 @@ These are selected foundational skills, not a complete or formally certified KSS
 
 The previous application is preserved verbatim in `classic.html`. It still offers the original Maths, Science, BM, and English quizzes. Open it from the Grown-ups panel.
 
-Hero Islands stores progress under `hero-islands-v1`; it does not modify the existing `math-hero-profile-*` or `math-hero-profile-index` saves. Progress belongs to this browser/device, with no account or cloud sync. The Grown-ups panel can export a JSON backup. Existing explorer coins, first-completion markers, free avatar choices, and decorations are retained when loading earlier Hero Islands saves. Storage failures show a warning and allow session-only play.
+Hero Islands stores a device copy under `hero-islands-v1`; it does not modify the existing `math-hero-profile-*` or `math-hero-profile-index` saves. Optional parent cloud save can sync that progress across devices after setup. The Grown-ups panel can export a JSON backup. Existing explorer coins, first-completion markers, free avatar choices, and decorations are retained when loading earlier Hero Islands saves. Storage failures show a warning and allow session-only play.
+
+## Family cloud save
+
+The app includes an optional parent email magic-link flow. Children use the existing explorer profiles and do not need email accounts. The app stores the parent email through Supabase Auth and one JSON game save per parent, containing only child nicknames, Darjah, avatar choices and game progress. Do not put a Supabase `service_role` key in the app.
+
+Before enabling cloud save in production, run [`supabase/migrations/20260914_parent_cloud_save.sql`](supabase/migrations/20260914_parent_cloud_save.sql) once in the Supabase SQL Editor. Its Row Level Security policies allow a signed-in parent to read and change only their own row. Add every production Vercel URL to Supabase Auth **URL Configuration** as an allowed redirect URL, and set the Vercel production URL as the Site URL. The first sign-in imports the device's current local progress if the parent has no cloud save; later sign-ins load the cloud copy for that family.
 
 ## Architecture
 

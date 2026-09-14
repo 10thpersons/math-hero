@@ -3,6 +3,7 @@ import { startMission } from './missions.js';
 import { startQuiz } from './quiz.js';
 import { startDiscovery } from './discovery.js';
 import { startNavigation } from './navigation.js';
+import { account, loadSave, onCloudStatus, queueSave, requestMagicLink, restoreSession, saveNow, signOut } from './cloud.js';
 
 const $ = (selector) => document.querySelector(selector);
 const icon = (name, cls = '') => `<svg class="${cls}" aria-hidden="true"><use href="#i-${name}"/></svg>`;
@@ -16,9 +17,21 @@ let plotPositions = [], activeZone = 'home';
 const gradeTopics = { 1:'Build numbers and count real objects.', 2:'Join bigger numbers and follow directions.', 3:'Explore equal groups and multiplication.', 4:'Convert measurements and work out change.', 5:'Build with fractions and decimal money.', 6:'Solve ratios, discounts and multi-step problems.' };
 const activityIcons = { bridge:'bridge', market:'shop', science:'leaf', history:'book', geography:'compass' };
 let canSave = true;
+let cloudStatus = 'local';
 const panel = $('#panel');
 const content = $('#panel-content');
 const profile = () => state.profiles.find(p => p.id === state.active);
+
+function renderCloudButton() {
+  const button = $('#cloud-button');
+  const dot = $('#cloud-account .cloud-dot');
+  if (!button || !dot) return;
+  const parent = account();
+  dot.className = `cloud-dot ${cloudStatus}`;
+  button.textContent = parent ? (cloudStatus === 'syncing' ? 'Saving…' : 'Cloud saved') : 'Cloud save';
+  button.setAttribute('aria-label', parent ? `Cloud account ${parent.email}. ${cloudStatus === 'syncing' ? 'Saving progress.' : 'Progress saved.'}` : 'Set up cloud save');
+}
+onCloudStatus(status => { cloudStatus = status; renderCloudButton(); });
 
 function storageWarning() {
   canSave = false;
@@ -35,6 +48,7 @@ try {
 function save() {
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); }
   catch { storageWarning(); }
+  queueSave(state);
   updateHeader();
 }
 function toast(message) {
@@ -191,10 +205,23 @@ function showShop(selectedId = 'headphones') {
   content.querySelectorAll('[data-unequip]').forEach(button=>{button.onclick=()=>{p.avatar[button.dataset.unequip]='none';save();syncWorld();showShop(item.id);$('#shop-feedback').textContent='Taken off. It is still in your wardrobe.';};});
 }
 function showProfiles() {
-  openPanel(`<section class="panel-content">${heading('YOUR OWN ADVENTURE','Who’s exploring?','Each explorer has their own home, coins, and discoveries.')}<div class="profile-grid">${state.profiles.map(p=>`<button class="profile-choice ${p.id === state.active ? 'selected' : ''}" data-profile="${p.id}" aria-pressed="${p.id === state.active}"><span class="mini-face" aria-hidden="true"><i></i></span><span><b>${escape(p.name)}</b><small>Darjah ${p.grade} · ${p.coins} coins</small></span></button>`).join('')}</div><form id="profile-form"><div class="edit-profile"><label><span class="field-label">Explorer’s nickname</span><input id="nickname" maxlength="24" value="${escape(profile().name)}" required autocomplete="off"></label><label><span class="field-label">School year</span><select id="school-year">${GRADES.map(grade=>`<option value="${grade}" ${profile().grade===grade?'selected':''}>Darjah ${grade}</option>`).join('')}</select></label></div><div class="panel-actions"><button class="primary-button" type="submit">Let’s explore ${icon('arrow')}</button></div></form><p class="copy">Maths instructions are in English, with Malay word help inside each adventure.</p></section>`);
+  const parent = account();
+  openPanel(`<section class="panel-content">${heading('YOUR OWN ADVENTURE','Who’s exploring?','Each explorer has their own home, coins, and discoveries.')}<button class="shop-banner" id="profiles-cloud">${icon('leaf')}<span><b>${parent ? 'Family cloud save is on' : 'Set up family cloud save'}</b><small>${parent ? escape(parent.email) : 'Keep the island safe across your devices.'}</small></span><span class="cloud-dot ${cloudStatus}"></span>${icon('arrow')}</button><div class="profile-grid">${state.profiles.map(p=>`<button class="profile-choice ${p.id === state.active ? 'selected' : ''}" data-profile="${p.id}" aria-pressed="${p.id === state.active}"><span class="mini-face" aria-hidden="true"><i></i></span><span><b>${escape(p.name)}</b><small>Darjah ${p.grade} · ${p.coins} coins</small></span></button>`).join('')}</div><form id="profile-form"><div class="edit-profile"><label><span class="field-label">Explorer’s nickname</span><input id="nickname" maxlength="24" value="${escape(profile().name)}" required autocomplete="off"></label><label><span class="field-label">School year</span><select id="school-year">${GRADES.map(grade=>`<option value="${grade}" ${profile().grade===grade?'selected':''}>Darjah ${grade}</option>`).join('')}</select></label></div><div class="panel-actions"><button class="primary-button" type="submit">Let’s explore ${icon('arrow')}</button></div></form><p class="copy">Maths instructions are in English, with Malay word help inside each adventure.</p></section>`);
+  $('#profiles-cloud').onclick = showCloudAccount;
   content.querySelectorAll('[data-profile]').forEach(button => { button.onclick = () => { state.active = button.dataset.profile; save(); syncWorld(); showProfiles(); }; });
   $('#profile-form').onsubmit = e => { e.preventDefault(); const name = $('#nickname').value.trim(); if (!name) { $('#nickname').setCustomValidity('Give your explorer a nickname.'); $('#nickname').reportValidity(); return; } profile().name = name; profile().grade = Number($('#school-year').value); save(); closePanel(); };
   $('#nickname').oninput = () => $('#nickname').setCustomValidity('');
+}
+function showCloudAccount() {
+  const parent = account();
+  if (parent) {
+    openPanel(`<section class="panel-content">${heading('FAMILY CLOUD SAVE','Your family account',`Signed in as ${escape(parent.email)}.`)}<div class="account-card"><b>Your children’s island progress is protected</b><small>Coins, avatars, islands and discoveries sync to this parent account. Children do not need an email address or password.</small><p class="cloud-status" id="cloud-status">${cloudStatus === 'syncing' ? 'Saving your latest changes…' : 'Cloud save is up to date.'}</p></div><div class="account-actions"><button class="primary-button" id="cloud-sync">Sync now</button><button class="secondary-button" id="cloud-signout">Sign out on this device</button></div><p class="cloud-note">When this family account is opened on another device, its saved progress replaces that device’s local Hero Islands progress.</p></section>`);
+    $('#cloud-sync').onclick = async () => { try { await saveNow(state); $('#cloud-status').textContent = 'Saved to your family cloud.'; toast('Family cloud save is up to date.'); } catch (error) { $('#cloud-status').textContent = error.message; } };
+    $('#cloud-signout').onclick = async () => { await signOut(); renderCloudButton(); toast('Signed out. This device keeps its local copy.'); showProfiles(); };
+    return;
+  }
+  openPanel(`<section class="panel-content">${heading('FAMILY CLOUD SAVE','Save your family’s island','One parent email. Separate explorer profiles for your children.')}<div class="account-card"><b>No child account is needed</b><small>We only save the parent email, child nicknames, Darjah, avatars and game progress. We do not ask for a child’s email, real name, photo or location.</small><form id="cloud-login"><label>Parent email<input id="cloud-email" type="email" inputmode="email" autocomplete="email" required placeholder="you@example.com"></label><div class="account-actions"><button class="primary-button" type="submit">Email me a sign-in link</button></div><p class="cloud-status" id="cloud-status" role="status"></p></form></div><p class="cloud-note">The first successful sign-in copies this device’s existing explorer progress into the family cloud. Add your Vercel address to Supabase’s redirect URLs before using this in production.</p></section>`);
+  $('#cloud-login').onsubmit = async event => { event.preventDefault(); const status = $('#cloud-status'); const button = event.currentTarget.querySelector('button'); button.disabled = true; status.textContent = 'Sending your secure sign-in link…'; try { await requestMagicLink($('#cloud-email').value.trim()); status.textContent = 'Check your email, then open the sign-in link on this device.'; } catch (error) { status.textContent = error.message; button.disabled = false; } };
 }
 function showHome() {
   if(panel.open)closePanel();
@@ -308,10 +335,11 @@ function showJournal() {
 }
 function showParents(e) {
   e?.preventDefault();
-  openPanel(`<section class="panel-content">${heading('FOR GROWN-UPS','Made for curious minds.','A first playable chapter, built around learning by doing.')}<div class="parent-details"><p>Maths adventures and quizzes are available for Darjah 1–6, with English instructions for DLP learners. Selected skills progress from composing numbers to measurements, fractions, decimal money, ratios and discounts.</p><ul><li>Three rounds per adventure. No time limit, lost lives, or daily streak pressure.</li><li>Hints and retries help children learn. The journal distinguishes independent rounds.</li><li>Completed mini-games earn 15 Hero Coins, plus 15 on the first completion. Five-question quizzes earn 10–25 coins. Replays always earn coins; unfinished runs do not.</li><li>Each explorer’s progress stays in this browser. Clearing browser data removes it. There is no account or cloud sync.</li><li>This chapter covers selected skills. It is not a complete or formally certified KSSR curriculum.</li></ul><p>After a mission, ask: “Can you show me another way?” Later, try a fresh example with real objects.</p><p>Maths and Science quizzes are in English. BM and English quizzes also join the club. Science Lab adds material investigations. Time Detectives practises chronology with labelled fictional stories and Malaysian milestones. Island Navigator develops directions and map planning on fictional islands. History and geography are enrichment, not complete school subject coverage. All six years have selected practice activities. A school-year label is a starting difficulty, not a complete syllabus or mastery assessment. Your existing Maths, Science, BM, and English quizzes remain in <a href="./classic.html">Math Hero Classic</a>.</p><p id="offline-status">The island can be revisited offline after its files have been saved.</p></div><div class="panel-actions"><button class="secondary-button" id="export-save">Back up progress</button><button class="primary-button" data-close>Back to the island</button></div></section>`);
+  openPanel(`<section class="panel-content">${heading('FOR GROWN-UPS','Made for curious minds.','A first playable chapter, built around learning by doing.')}<div class="parent-details"><p>Maths adventures and quizzes are available for Darjah 1–6, with English instructions for DLP learners. Selected skills progress from composing numbers to measurements, fractions, decimal money, ratios and discounts.</p><ul><li>Three rounds per adventure. No time limit, lost lives, or daily streak pressure.</li><li>Hints and retries help children learn. The journal distinguishes independent rounds.</li><li>Completed mini-games earn 15 Hero Coins, plus 15 on the first completion. Five-question quizzes earn 10–25 coins. Replays always earn coins; unfinished runs do not.</li><li>A parent may turn on cloud save with an email magic link. Children use explorer profiles and do not need email accounts.</li><li>This chapter covers selected skills. It is not a complete or formally certified KSSR curriculum.</li></ul><p>After a mission, ask: “Can you show me another way?” Later, try a fresh example with real objects.</p><p>Maths and Science quizzes are in English. BM and English quizzes also join the club. Science Lab adds material investigations. Time Detectives practises chronology with labelled fictional stories and Malaysian milestones. Island Navigator develops directions and map planning on fictional islands. History and geography are enrichment, not complete school subject coverage. All six years have selected practice activities. A school-year label is a starting difficulty, not a complete syllabus or mastery assessment. Your existing Maths, Science, BM, and English quizzes remain in <a href="./classic.html">Math Hero Classic</a>.</p><p id="offline-status">The island can be revisited offline after its files have been saved.</p></div><div class="panel-actions"><button class="secondary-button" id="export-save">Back up progress</button><button class="primary-button" data-close>Back to the island</button></div></section>`);
   $('#export-save').onclick = () => { const blob = new Blob([JSON.stringify(state,null,2)],{type:'application/json'}); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href=url; link.download=`hero-islands-progress-${new Date().toISOString().slice(0,10)}.json`; link.click(); setTimeout(()=>URL.revokeObjectURL(url),1000); toast('Progress backup downloaded.'); };
 }
 $('#profile-button').onclick = showProfiles;
+$('#cloud-button').onclick = showCloudAccount;
 $('#start-quest').onclick = () => launchMission(selectedMission);
 $('#choose-mission').onclick = chooseMission;
 $('#choose-mission').textContent = 'All games & quizzes · earn more coins';
@@ -325,6 +353,27 @@ $('#parent-button').onclick = showParents;
 $('#sound-button').onclick = () => { state.sound = !state.sound; if (!state.sound && 'speechSynthesis' in window) speechSynthesis.cancel(); save(); toast(state.sound ? 'Sound on. Tap “Listen” inside an adventure.' : 'Sound off. A little quiet time.'); };
 document.querySelectorAll('[data-location]').forEach(button=>{ button.onclick=()=>{ const location=button.dataset.location; if(location==='home') showHome(); else { selectedMission=location; updateQuest(); world?.focus(location); launchMission(location); } }; });
 updateHeader();
+renderCloudButton();
+async function bootCloud() {
+  const parent = await restoreSession();
+  renderCloudButton();
+  if (!parent) return;
+  try {
+    const remote = await loadSave();
+    if (remote?.state) {
+      state = normalizeState(remote.state);
+      save(); syncWorld();
+      toast('Your family cloud progress is ready on this device.');
+    } else {
+      await saveNow(state);
+      toast('This device’s explorer progress is now saved to your family cloud.');
+    }
+  } catch (error) {
+    cloudStatus = 'error'; renderCloudButton();
+    console.warn('Cloud save unavailable:', error);
+  }
+}
+bootCloud();
 async function bootWorld() {
   try {
     const { createWorld } = await import('./world.js');
