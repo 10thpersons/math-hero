@@ -3,6 +3,29 @@ import assert from 'node:assert/strict';
 import { freshState, normalizeState, rewardMission, buyDecoration, buyCosmetic, equipCosmetic, rewardQuiz, SAVE_KEY } from '../hero/state.js';
 import { createProblems, checkAnswer } from '../hero/missions.js';
 
+test('companions and outfits preserve purchases, separate siblings and reject unowned equipment', () => {
+  const state = freshState(), p = state.profiles[0];
+  assert.equal(buyCosmetic(p,'cat'),false);
+  assert.equal(equipCosmetic(p,'cat'),false);
+  p.coins=200;
+  assert.equal(buyCosmetic(p,'cat'),true);
+  assert.equal(equipCosmetic(p,'cat'),true);
+  assert.equal(buyCosmetic(p,'cat'),true);
+  assert.equal(p.coins,165);
+  buyCosmetic(p,'raincoat'); equipCosmetic(p,'raincoat');
+  buyCosmetic(p,'rabbit'); equipCosmetic(p,'rabbit');
+  let restored=normalizeState(JSON.parse(JSON.stringify(state)));
+  assert.equal(restored.profiles[0].avatar.pet,'rabbit');
+  assert.equal(restored.profiles[0].avatar.outfit,'raincoat');
+  assert.equal(restored.profiles[0].coins,80);
+  assert.equal(restored.profiles[1].avatar.pet,'none');
+  p.avatar.pet='dragon';
+  restored=normalizeState(state);
+  assert.equal(restored.profiles[0].avatar.pet,'none');
+  p.avatar.pet='none';
+  assert.ok(normalizeState(state).profiles[0].ownedCosmetics.includes('cat'));
+});
+
 test('new explorers are independent and use a separate save namespace', () => {
   const s = freshState();
   assert.equal(s.profiles.length,2);

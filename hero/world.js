@@ -277,6 +277,84 @@ export function createWorld(container, { onSelect, onPlotSlot, onPlotUpdate, red
   block(glasses,0,0.015,0,0.055,0.025,0.03,'#3d535d');
   [crown,wizard,headphones,cape,backpack,glasses].forEach(o=>o.visible=false);
 
+  const wardrobe = {hat:{},back:{},face:{},outfit:{}};
+  const frog = wardrobe.hat.frog = group(0,1.68,0,avatar);
+  block(frog,0,0,0,.7,.09,.62,'#78b765');
+  block(frog,0,.12,0,.5,.23,.46,'#92cf79');
+  for(const side of [-1,1]) {
+    block(frog,side*.17,.26,.12,.15,.16,.15,'#92cf79');
+    block(frog,side*.17,.27,.205,.065,.07,.025,'#244b3b');
+  }
+  const helmet = wardrobe.hat.astronaut = group(0,1.43,0,avatar);
+  block(helmet,0,.08,-.12,.68,.61,.44,'#eef4ed');
+  block(helmet,0,.08,.24,.54,.36,.08,'#e8bb5d');
+  block(helmet,-.15,.16,.289,.12,.13,.02,'#fff2bf');
+  for(const side of [-1,1]) block(helmet,side*.34,.02,.04,.12,.29,.28,'#75aab3');
+  const wings = wardrobe.back.wings = group(0,.95,-.27,avatar);
+  for(const side of [-1,1]) {
+    puff(wings,side*.43,.13,0,.43,'#b098db',[1,1.2,.18]);
+    puff(wings,side*.32,-.28,0,.28,'#e6b0d2',[1,1,.2]);
+  }
+  const jetpack = wardrobe.back.jetpack = group(0,.9,-.3,avatar);
+  block(jetpack,0,0,0,.43,.4,.2,'#678793');
+  for(const side of [-1,1]) {
+    block(jetpack,side*.22,0,-.07,.18,.56,.23,'#d8e5e5');
+    block(jetpack,side*.22,-.31,-.07,.13,.1,.16,'#eeaf50');
+  }
+  const shades = wardrobe.face.sunglasses = group(0,1.34,.26,avatar);
+  block(shades,0,0,0,.45,.035,.045,'#439e99');
+  for(const side of [-1,1]) {
+    block(shades,side*.115,0,0,.21,.17,.035,'#439e99');
+    block(shades,side*.115,0,.025,.15,.11,.025,'#283e55');
+  }
+  for(const [id,color] of [['raincoat','#efbf4f'],['ranger','#56896d'],['spacesuit','#e7eded']]) {
+    const outfit = wardrobe.outfit[id] = group(0,.86,0,avatar);
+    block(outfit,0,0,.01,.57,.58,.42,color);
+    block(outfit,0,0,.23,.025,.5,.02,id==='spacesuit'?'#719ea7':'#e6dcba');
+    if(id==='spacesuit') {
+      block(outfit,0,.1,.24,.28,.2,.04,'#567d93');
+      for(const side of [-1,1]) block(outfit,side*.07,.1,.269,.045,.055,.02,side<0?'#f3b65c':'#8cd8bc');
+    } else {
+      for(const side of [-1,1]) block(outfit,side*.15,-.15,.235,.14,.13,.03,id==='ranger'?'#c6ba82':'#ffdb7d');
+      if(id==='ranger') block(outfit,-.16,.15,.24,.09,.1,.025,'#f3cf71');
+    }
+  }
+  const companion = group(1.7,.45,1.8);
+  companion.name='hero-companion';
+  const pets = {};
+  for(const [id,color] of [['cat','#edb16c'],['rabbit','#eee4db'],['turtle','#86b889'],['robot','#79bbc0'],['hornbill','#374d5e'],['dragon','#b39aca']]) {
+    const pet=pets[id]=group(0,0,0,companion);
+    block(pet,0,.28,0,.4,.32,.5,color);
+    block(pet,0,.55,.16,.43,.35,.35,color);
+    for(const side of [-1,1]) {
+      block(pet,side*.115,.59,.342,.055,.065,.022,'#273d3b');
+      for(const z of [-.15,.2]) block(pet,side*.15,.07,z,.12,.14,.13,color);
+    }
+    block(pet,0,.48,.35,.065,.04,.025,'#b9766c');
+    if(id==='cat'||id==='rabbit'||id==='dragon') {
+      for(const side of [-1,1]) block(pet,side*.15,id==='rabbit'?.92:.79,.14,.11,id==='rabbit'?.45:.19,.13,color).rotation.z=side*-.13;
+      block(pet,0,.29,-.34,.11,.12,.31,color).rotation.x=-.3;
+    }
+    if(id==='turtle') {
+      puff(pet,0,.4,-.08,.35,'#447c61',[1.2,.8,1.3]);
+      block(pet,0,.66,-.1,.18,.035,.23,'#d7d797');
+    }
+    if(id==='robot') {
+      block(pet,0,.82,.15,.035,.19,.035,'#52757d');
+      block(pet,0,.93,.15,.11,.09,.11,'#edbd65');
+      block(pet,0,.3,.26,.14,.13,.025,'#f6d376');
+    }
+    if(id==='hornbill') {
+      block(pet,0,.52,.43,.18,.14,.28,'#e7a443');
+      block(pet,0,.75,.28,.2,.16,.25,'#f2bb58');
+      block(pet,0,.29,.25,.3,.26,.03,'#ede8d5');
+      for(const side of [-1,1]) block(pet,side*.24,.36,-.04,.09,.29,.35,'#253a48');
+    }
+    if(id==='dragon') for(const side of [-1,1]) puff(pet,side*.32,.44,-.11,.25,'#d5a4c6',[1,.7,.2]);
+    pet.visible=false;
+  }
+  Object.values(wardrobe).forEach(slot=>Object.values(slot).forEach(item=>item.visible=false));
+
   const zones={home:{x:3.6,z:2.4,start:0},beach:{x:0,z:10,start:6},forest:{x:-11,z:-1,start:12},village:{x:0,z:-11,start:18}};
   let plotZone='home';
   const decorations = group(0,0.48,0);
@@ -478,6 +556,8 @@ export function createWorld(container, { onSelect, onPlotSlot, onPlotUpdate, red
       avatar.position.lerp(target,Math.min(1,delta*3));
       limbs.forEach((limb,i)=>limb.rotation.x=reducedMotion?0:Math.sin(time*12)*(i%2?1:-1)*0.35);
     } else limbs.forEach(limb=>limb.rotation.x=0);
+    companion.position.set(avatar.position.x+.85,avatar.position.y+(reducedMotion?0:Math.sin(time*4)*.035),avatar.position.z+.35);
+    companion.rotation.y=avatar.rotation.y;
     if(!reducedMotion) {
       boat.position.y=-0.07+Math.sin(time*1.8)*0.045; boat.rotation.z=Math.sin(time*1.2)*0.025;
       ripples.forEach((r,i)=>r.scale.x=(0.38+i%3*0.12)*(1+Math.sin(time*1.3+i)*0.18));
@@ -496,6 +576,9 @@ export function createWorld(container, { onSelect, onPlotSlot, onPlotUpdate, red
   return {
     setPaused(value) { paused=Boolean(value); },
     setAvatar(style = {}) {
+      Object.entries(wardrobe).forEach(([slot,items])=>Object.entries(items).forEach(([id,item])=>item.visible=style[slot]===id));
+      Object.entries(pets).forEach(([id,pet])=>pet.visible=style.pet===id);
+      renderer.domElement.dataset.companion=Object.hasOwn(pets,style.pet)?style.pet:'none';
       for(const [key,mat] of [['shirt',shirt],['skin',skin],['hair',hair]]) if(typeof style[key]==='string' && /^#[0-9a-f]{6}$/i.test(style[key])) mat.color.set(style[key]);
       if(style.hat!==undefined) {
         hat.visible=style.hat===true || style.hat==='explorer' || style.hat==='sunhat';

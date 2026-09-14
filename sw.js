@@ -1,7 +1,7 @@
 // Cache the complete first chapter, including locally bundled fonts and renderer.
-const CACHE_NAME = 'hero-islands-v9';
+const CACHE_NAME = 'hero-islands-v10';
 const ASSETS = [
-  './', './index.html', './hero/app.js', './hero/state.js', './hero/styles.css',
+  './', './index.html', './hero/app.js', './hero/state.js', './hero/styles.css', './hero/wardrobe.css',
   './hero/world.js', './hero/missions.js', './hero/missions.css', './hero/icon.svg',
   './hero/discovery.js', './hero/discovery.css', './hero/navigation.js', './hero/navigation.css', './hero/island-phase.css',
   './hero/learning.css', './hero/cloud.css', './hero/cloud.js', './hero/grade-banks.js', './hero/quiz.js', './hero/quiz.css', './hero/expansion.css',

@@ -24,6 +24,22 @@ export const ZONES = [
 ];
 export const ACTIVITIES = { bridge: 'Build & Rescue', market: 'Pasar Hero', science: 'Science Lab', history: 'Time Detectives', geography: 'Island Navigator' };
 export const COSMETICS = [
+  ...[
+    ['cat', 'Mango kitten', 35, 'pet', 'A sunny little friend to explore beside you.'],
+    ['rabbit', 'Cloud bunny', 45, 'pet', 'Long ears, tiny paws, a big sense of adventure.'],
+    ['turtle', 'Lumut turtle', 55, 'pet', 'Take your time together. Discovery is not a race.'],
+    ['robot', 'Bolt buddy', 75, 'pet', 'Your very own pocket-sized invention.'],
+    ['hornbill', 'Rimba hornbill', 90, 'pet', 'A bright-beaked island companion.'],
+    ['dragon', 'Sprout dragon', 120, 'pet', 'A friendly make-believe dragon with little wings.'],
+    ['frog', 'Frog bucket hat', 35, 'hat', 'Two curious eyes perched on a leafy green hat.'],
+    ['astronaut', 'Moon helmet', 80, 'hat', 'A golden visor for imaginary space adventures.'],
+    ['wings', 'Butterfly wings', 65, 'back', 'A pair of lavender wings for your explorer.'],
+    ['jetpack', 'Rocket pack', 90, 'back', 'Twin rockets for a space-inspired look.'],
+    ['sunglasses', 'Sunshine shades', 30, 'face', 'Teal frames and cool midnight lenses.'],
+    ['raincoat', 'Sunshine raincoat', 40, 'outfit', 'A bright yellow coat with big pockets.'],
+    ['ranger', 'Rimba ranger', 55, 'outfit', 'Forest-green gear with a discovery badge.'],
+    ['spacesuit', 'Star explorer suit', 85, 'outfit', 'A white space suit with a colourful control panel.'],
+  ].map(([id,name,cost,slot,description]) => ({id,name,cost,slot,value:id,description,icon:slot==='pet'?'leaf':'star'})),
   { id: 'glasses', name: 'Explorer specs', cost: 20, slot: 'face', value: 'glasses', icon: 'avatar', description: 'A bright new way to see your island.' },
   { id: 'headphones', name: 'Jam headphones', cost: 25, slot: 'hat', value: 'headphones', icon: 'sound', description: 'Big teal headphones, big adventures.' },
   { id: 'backpack', name: 'Trail backpack', cost: 35, slot: 'back', value: 'backpack', icon: 'book', description: 'Packed and ready for discovery.' },
@@ -56,7 +72,9 @@ export function normalizeState(raw) {
         hair: COLORS.hairs.includes(avatar.hair) ? avatar.hair : fallback.avatar.hair,
         hat: ['cap', 'none', 'explorer'].includes(avatar.hat) || allowedStyle('hat',avatar.hat) ? avatar.hat : 'cap',
         back: allowedStyle('back',avatar.back) ? avatar.back : 'none',
-        face: allowedStyle('face',avatar.face) ? avatar.face : 'none' },
+        face: allowedStyle('face',avatar.face) ? avatar.face : 'none',
+        outfit: allowedStyle('outfit',avatar.outfit) ? avatar.outfit : 'none',
+        pet: allowedStyle('pet',avatar.pet) ? avatar.pet : 'none' },
       ownedCosmetics,
       unlockedZones, islandZone: unlockedZones.includes(p.islandZone) ? p.islandZone : 'home',
       completed: Array.isArray(p.completed) ? [...new Set(p.completed.filter(v => /^(bridge|market|science|history|geography)-([1-6])$/.test(v)))] : [],
