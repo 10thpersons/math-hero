@@ -25,6 +25,12 @@ export const ZONES = [
 export const ACTIVITIES = { bridge: 'Build & Rescue', market: 'Pasar Hero', science: 'Science Lab', history: 'Time Detectives', geography: 'Island Navigator' };
 export const COSMETICS = [
   ...[
+    ['bow','Coral ribbon bow',25,'hat','A cheerful coral bow for any hairstyle.'],
+    ['flowercrown','Meadow flower crown',45,'hat','Pink flowers and fresh green leaves.'],
+    ['dress','Lavender adventure dress',45,'outfit','A lavender dress with a sunshine sash.'],
+    ['baju_kurung','Turquoise baju kurung',60,'outfit','A turquoise tunic and long skirt with golden trim.'],
+  ].map(([id,name,cost,slot,description])=>({id,name,cost,slot,value:id,description,icon:slot==='hat'?'flower':'avatar'})),
+  ...[
     ['cat', 'Mango kitten', 35, 'pet', 'A sunny little friend to explore beside you.'],
     ['rabbit', 'Cloud bunny', 45, 'pet', 'Long ears, tiny paws, a big sense of adventure.'],
     ['turtle', 'Lumut turtle', 55, 'pet', 'Take your time together. Discovery is not a race.'],
@@ -67,7 +73,9 @@ export function normalizeState(raw) {
     const allowedStyle = (slot,value) => COSMETICS.some(c => c.slot === slot && c.value === value && ownedCosmetics.includes(c.id));
     return { ...fallback, name: typeof p.name === 'string' && p.name.trim() ? p.name.trim().slice(0, 24) : fallback.name,
       grade: GRADES.includes(p.grade) ? p.grade : 1, coins: Number.isSafeInteger(p.coins) && p.coins >= 0 ? p.coins : 0,
-      avatar: { shirt: COLORS.shirts.includes(avatar.shirt) ? avatar.shirt : fallback.avatar.shirt,
+      avatar: { character: avatar.character==='girl'?'girl':'boy',
+        hairstyle: ['short','bob','ponytail','pigtails'].includes(avatar.hairstyle) ? avatar.hairstyle : 'short',
+        shirt: COLORS.shirts.includes(avatar.shirt) ? avatar.shirt : fallback.avatar.shirt,
         skin: COLORS.skins.includes(avatar.skin) ? avatar.skin : fallback.avatar.skin,
         hair: COLORS.hairs.includes(avatar.hair) ? avatar.hair : fallback.avatar.hair,
         hat: ['cap', 'none', 'explorer'].includes(avatar.hat) || allowedStyle('hat',avatar.hat) ? avatar.hat : 'cap',

@@ -3,6 +3,22 @@ import assert from 'node:assert/strict';
 import { freshState, normalizeState, rewardMission, buyDecoration, buyCosmetic, equipCosmetic, rewardQuiz, SAVE_KEY } from '../hero/state.js';
 import { createProblems, checkAnswer } from '../hero/missions.js';
 
+test('character and hair choices survive saves while purchased dresses require ownership', () => {
+  const state=freshState(), p=state.profiles[0];
+  p.avatar.character='girl';p.avatar.hairstyle='pigtails';
+  p.coins=100;
+  buyCosmetic(p,'dress');equipCosmetic(p,'dress');
+  const restored=normalizeState(JSON.parse(JSON.stringify(state)));
+  assert.equal(restored.profiles[0].avatar.character,'girl');
+  assert.equal(restored.profiles[0].avatar.hairstyle,'pigtails');
+  assert.equal(restored.profiles[0].avatar.outfit,'dress');
+  assert.equal(restored.profiles[0].coins,55);
+  assert.equal(restored.profiles[1].avatar.character,'boy');
+  p.avatar.hairstyle='invalid';p.avatar.outfit='baju_kurung';
+  assert.equal(normalizeState(state).profiles[0].avatar.hairstyle,'short');
+  assert.equal(normalizeState(state).profiles[0].avatar.outfit,'none');
+});
+
 test('companions and outfits preserve purchases, separate siblings and reject unowned equipment', () => {
   const state = freshState(), p = state.profiles[0];
   assert.equal(buyCosmetic(p,'cat'),false);

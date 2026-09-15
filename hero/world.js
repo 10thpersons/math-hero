@@ -231,6 +231,23 @@ export function createWorld(container, { onSelect, onPlotSlot, onPlotUpdate, red
   body(0,1.32,0,0.49,0.48,0.44,skin);
   body(0,1.56,-0.02,0.53,0.15,0.48,hair);
   body(-0.21,1.4,-0.04,0.09,0.23,0.42,hair);
+  const hairstyles = {};
+  for(const id of ['bob','ponytail','pigtails']) {
+    const style=hairstyles[id]=group(0,0,0,avatar);
+    const lock=(x,y,z,w,h,d)=>{const mesh=block(style,x,y,z,w,h,d,'#fff');mesh.material=hair;return mesh;};
+    lock(0,1.32,-.23,.53,.5,.14);
+    if(id==='bob') for(const side of [-1,1]) lock(side*.25,1.27,-.01,.12,.43,.43);
+    if(id==='ponytail') {
+      lock(0,1.35,-.4,.25,.47,.23);
+      lock(0,1.03,-.44,.2,.28,.18);
+      block(style,0,1.53,-.39,.28,.07,.25,'#e895a3');
+    }
+    if(id==='pigtails') for(const side of [-1,1]) {
+      lock(side*.34,1.2,-.13,.19,.49,.24);
+      block(style,side*.34,1.4,-.13,.21,.07,.26,'#e895a3');
+    }
+    style.visible=false;
+  }
   for (const x of [-0.1,0.1]) block(avatar,x,1.34,0.23,0.05,0.065,0.018,'#353237');
   block(avatar,0,1.2,0.23,0.105,0.026,0.02,'#7f4e3c');
   const limbs=[];
@@ -278,6 +295,28 @@ export function createWorld(container, { onSelect, onPlotSlot, onPlotUpdate, red
   [crown,wizard,headphones,cape,backpack,glasses].forEach(o=>o.visible=false);
 
   const wardrobe = {hat:{},back:{},face:{},outfit:{}};
+  const bow=wardrobe.hat.bow=group(.22,1.65,.04,avatar);
+  for(const side of [-1,1]) block(bow,side*.12,0,0,.2,.17,.1,'#ed8b98').rotation.z=side*.3;
+  block(bow,0,0,.035,.1,.12,.12,'#ba566e');
+  const flowercrown=wardrobe.hat.flowercrown=group(0,1.62,0,avatar);
+  block(flowercrown,0,0,0,.57,.065,.51,'#80a968');
+  for(const x of [-.22,0,.22]) {
+    puff(flowercrown,x,.07,.24,.105,'#f4acbe',[1,1,.4]);
+    block(flowercrown,x,.07,.28,.055,.055,.025,'#f6d66b');
+  }
+  for(const [id,color] of [['dress','#af96cd'],['baju_kurung','#52a8a6']]) {
+    const outfit=wardrobe.outfit[id]=group(0,.8,0,avatar);
+    block(outfit,0,.06,0,.56,.48,.37,color);
+    if(id==='dress') {
+      block(outfit,0,-.29,0,.72,.3,.48,color);
+      block(outfit,0,-.1,0,.6,.065,.4,'#efd17e');
+    } else {
+      block(outfit,0,-.12,0,.61,.26,.43,color);
+      block(outfit,0,-.43,0,.55,.4,.37,'#357f89');
+      block(outfit,0,-.25,.225,.62,.055,.02,'#efd17e');
+    }
+    block(outfit,0,.23,.205,.12,.07,.025,'#efd17e');
+  }
   const frog = wardrobe.hat.frog = group(0,1.68,0,avatar);
   block(frog,0,0,0,.7,.09,.62,'#78b765');
   block(frog,0,.12,0,.5,.23,.46,'#92cf79');
@@ -576,10 +615,15 @@ export function createWorld(container, { onSelect, onPlotSlot, onPlotUpdate, red
   return {
     setPaused(value) { paused=Boolean(value); },
     setAvatar(style = {}) {
+      Object.entries(hairstyles).forEach(([id,item])=>item.visible=style.hairstyle===id);
+      renderer.domElement.dataset.character=style.character==='girl'?'girl':'boy';
+      renderer.domElement.dataset.hairstyle=Object.hasOwn(hairstyles,style.hairstyle)?style.hairstyle:'short';
       Object.entries(wardrobe).forEach(([slot,items])=>Object.entries(items).forEach(([id,item])=>item.visible=style[slot]===id));
       Object.entries(pets).forEach(([id,pet])=>pet.visible=style.pet===id);
       renderer.domElement.dataset.companion=Object.hasOwn(pets,style.pet)?style.pet:'none';
       for(const [key,mat] of [['shirt',shirt],['skin',skin],['hair',hair]]) if(typeof style[key]==='string' && /^#[0-9a-f]{6}$/i.test(style[key])) mat.color.set(style[key]);
+      if(style.outfit==='dress') shirt.color.set('#af96cd');
+      if(style.outfit==='baju_kurung') shirt.color.set('#52a8a6');
       if(style.hat!==undefined) {
         hat.visible=style.hat===true || style.hat==='explorer' || style.hat==='sunhat';
         cap.visible=style.hat==='cap';
