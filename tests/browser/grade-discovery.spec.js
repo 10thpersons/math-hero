@@ -48,8 +48,9 @@ async function navigation(page) {
       }
       return data;
     });
-    for(const step of [...route(p,p.start,p.waypoint),...route(p,p.waypoint,p.target)])await page.locator(`[data-action="${step}"]`).click();
-    await expect(page.locator('.mh-nav-budget')).toHaveText('12 / 12 steps used');
+    const moves=[...route({...p,blocked:[...p.blocked,p.target]},p.start,p.waypoint),...route(p,p.waypoint,p.target)];
+    for(const step of moves)await page.locator(`[data-action="${step}"]`).click();
+    await expect(page.locator('.mh-nav-budget')).toHaveText(`${moves.length} / ${moves.length} steps used`);
     await page.locator('[data-action="send"]').click();await page.locator('[data-action="next"]').click();
   }
 }
@@ -57,10 +58,10 @@ test('Darjah6 completes circuits, dated evidence and fuel-budget navigation with
   test.setTimeout(90000);const errors=[];page.on('pageerror',e=>errors.push(e.message));await prepare(page,6);
   for(const [index,type] of ['science','history','geography'].entries()) {
     await open(page,type);if(type==='geography')await navigation(page);else await discovery(page,type);
-    await expect(page.locator('.success-content')).toBeVisible();await expect(page.locator('#coin-count')).toHaveText(String((index+1)*30));await page.getByRole('button',{name:'Back to exploring',exact:true}).click();
+    await expect(page.locator('.success-content')).toBeVisible();await expect(page.locator('#coin-count')).toHaveText(String(24+index*30));await page.getByRole('button',{name:'Back to exploring',exact:true}).click();
   }
   await page.reload();const p=await page.evaluate(()=>JSON.parse(localStorage.getItem('hero-islands-v1')).profiles[0]);
-  expect(p.sessions.map(s=>s.grade)).toEqual([6,6,6]);expect(p.sessions.map(s=>s.independent)).toEqual([1,3,3]);expect(p.coins).toBe(90);expect(errors).toEqual([]);
+  expect(p.sessions.map(s=>s.grade)).toEqual([6,6,6]);expect(p.sessions.map(s=>s.independent)).toEqual([1,3,3]);expect(p.coins).toBe(84);expect(errors).toEqual([]);
 });
 for(const grade of [2,4,5])test(`Darjah${grade} discovery and navigation launch on a phone without overflow`,async({page})=>{
   await page.setViewportSize({width:390,height:844});await prepare(page,grade);
@@ -72,5 +73,23 @@ for(const grade of [2,4,5])test(`Darjah${grade} discovery and navigation launch 
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
     await page.getByRole('button',{name:'Back to island',exact:true}).click();
   }
+  await expect(page.locator('#coin-count')).toHaveText('0');
+});
+
+test('a wrong sorting answer requires an observed clue before checking again',async({page})=>{
+  await prepare(page,1);await open(page,'science');
+  const keys=await page.locator('.md-cards .md-card').evaluateAll(nodes=>nodes.map(n=>n.dataset.action));
+  for(const key of keys) {
+    await page.locator(`[data-action="${key}"]`).click();
+    await page.locator('[data-action="target-other"]').click();
+  }
+  await page.locator('[data-action="check"]').click();
+  await expect(page.locator('[data-action="check"]')).toBeDisabled();
+  await expect(page.locator('.md-feedback')).toContainText('Test selected object');
+  await page.locator(`[data-action="${keys[0]}"]`).click();
+  await expect(page.locator('[data-action="check"]')).toBeDisabled();
+  await page.locator('[data-action="hint"]').click();
+  await expect(page.locator('[data-action="check"]')).toBeEnabled();
+  await expect(page.locator('.md-specimen')).toBeVisible();
   await expect(page.locator('#coin-count')).toHaveText('0');
 });

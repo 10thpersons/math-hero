@@ -78,8 +78,11 @@ export function createQuizQuestions(grade, rng = Math.random) {
     questions.push(numericQuestion(`You pay RM50 for a RM${cost} toy. How many ringgit change?`, 50 - cost, `Change = amount paid minus price: 50 − ${cost} = ${50 - cost}.`, rng));
   } else if (Number(grade) >= 4) {
     const level = Number(grade);
-    const parts = integer(2, 5), denominator = parts * 2;
-    questions.push({ text: `What is ${parts}/${denominator} in simplest form?`, answer: '1/2', options: shuffle(['1/2', '1/3', '2/3', '1/4'], rng), explanation: `Divide numerator and denominator by ${parts}: ${parts}/${denominator} = 1/2.` });
+    const fractions = [[1, 2], [1, 3], [2, 3], [1, 4], [3, 4]];
+    const [numerator, denominator] = fractions[integer(0, fractions.length - 1)];
+    const factor = integer(2, 5), answer = `${numerator}/${denominator}`;
+    const distractors = shuffle(fractions.map(([a, b]) => `${a}/${b}`).filter(value => value !== answer), rng).slice(0, 3);
+    questions.push({ text: `What is ${numerator * factor}/${denominator * factor} in simplest form?`, answer, options: shuffle([answer, ...distractors], rng), explanation: `Divide numerator and denominator by ${factor}: ${numerator * factor}/${denominator * factor} = ${answer}.` });
     const tenths = integer(11, 59), add = integer(11, 39), result = ((tenths + add) / 10).toFixed(1);
     questions.push({ text: `${(tenths / 10).toFixed(1)} + ${(add / 10).toFixed(1)} = ?`, answer: result, options: shuffle([result, ((tenths + add + 1) / 10).toFixed(1), ((tenths + add - 1) / 10).toFixed(1), ((tenths + add + 10) / 10).toFixed(1)], rng), explanation: `Add ${tenths} tenths and ${add} tenths to get ${tenths + add} tenths, or ${result}.` });
     if (level === 4) {
@@ -168,16 +171,43 @@ const science = {
   ],
 };
 
-export function createScienceQuestions(grade, rng = Math.random) {
+export function createScienceQuestions(grade, rng = Math.random, count = 5) {
   const bank = science[grade] || additionalScience[grade];
   if (!bank) throw new Error('Unsupported grade');
-  return shuffle(bank, rng).slice(0, 5).map(([text, answer, distractors, explanation]) => ({ text, answer, options: shuffle([answer, ...distractors.split('|')], rng), explanation }));
+  return shuffle(bank, rng).slice(0, count).map(([text, answer, distractors, explanation]) => ({ text, answer, options: shuffle([answer, ...distractors.split('|')], rng), explanation }));
 }
 
-export function createLanguageQuestions(grade, subject, rng = Math.random) {
+export function createLanguageQuestions(grade, subject, rng = Math.random, count = 5) {
   const bank = languagePractice[grade]?.[subject];
   if (!bank) throw new Error('Unsupported original language bank');
-  return shuffle(bank, rng).slice(0, 5).map(([text, answer, distractors, explanation]) => ({ text, answer, options: shuffle([answer, ...distractors.split('|')], rng), explanation }));
+  return shuffle(bank, rng).slice(0, count).map(([text, answer, distractors, explanation]) => ({ text, answer, options: shuffle([answer, ...distractors.split('|')], rng), explanation }));
+}
+
+export function questionKey(question) {
+  return JSON.stringify([question.passage || '', question.text, String(question.answer)]);
+}
+
+// Unseen questions first; once a finite bank runs out, revisit the oldest ones.
+export function selectFreshQuestions(pool, recent = [], count = 5) {
+  const unique = [...new Map(pool.map(question => [questionKey(question), question])).values()];
+  const age = new Map(recent.map((key, index) => [key, index]));
+  return unique.sort((a, b) => (age.get(questionKey(a)) ?? -1) - (age.get(questionKey(b)) ?? -1)).slice(0, count);
+}
+
+const recentQuestions = new Map();
+function readRecent(key) {
+  try {
+    const saved = JSON.parse(localStorage.getItem(key) || '[]');
+    if (Array.isArray(saved)) return saved.filter(value => typeof value === 'string').slice(-150);
+  } catch { /* Private browsing can block storage. Keep this visit playable. */ }
+  return recentQuestions.get(key) || [];
+}
+
+function rememberQuestions(key, recent, questions) {
+  const added = questions.map(questionKey);
+  const next = [...recent.filter(item => !added.includes(item)), ...added].slice(-150);
+  recentQuestions.set(key, next);
+  try { localStorage.setItem(key, JSON.stringify(next)); } catch { /* The in-memory history still works. */ }
 }
 
 function node(tag, className, text) {
@@ -192,7 +222,7 @@ export function startQuiz(container, { grade, subject, onComplete, onExit, speak
   const root = node('section', 'mh-quiz');
   container.replaceChildren(root);
   let questions = [], index = 0, independent = 0, hints = 0, tried = false, solved = false, disposed = false, completed = false;
-  let rejected = new Set();
+  let rejected = new Set(), reviewingClue = false;
   const controller = new AbortController();
   const names = { math: 'Maths workshop', sains: 'Science explorer', bm: 'Bahasa Melayu', bi: 'English explorer' };
   function button(text, action, key = text, className = '') {
@@ -237,41 +267,52 @@ export function startQuiz(container, { grade, subject, onComplete, onExit, speak
       const correct = String(option) === String(question.answer);
       const choice = button(String(option), () => {
         if (correct) { if (!tried) independent++; solved = true; render('Well done. You found the answer!'); }
-        else { if (!tried) hints++; tried = true; rejected.add(i); render(question.explanation || `Read it again: ${question.text} The correct answer is “${question.answer}”. Select it to practise.`); }
+        else { if (!tried) hints++; tried = true; reviewingClue = true; rejected.add(i); render(question.explanation || `Read it again: ${question.text} The correct answer is “${question.answer}”. Select it to practise.`); }
       }, `choice-${i}`, `${solved && correct ? 'mh-quiz-correct' : ''} ${rejected.has(i) ? 'mh-quiz-rejected' : ''}`);
-      choice.disabled = solved || rejected.has(i);
+      choice.disabled = solved || reviewingClue || rejected.has(i);
       choices.append(choice);
     });
     root.append(choices);
     const feedback = node('p', 'mh-quiz-feedback', message || 'Take your time. Choose the answer you think fits.');
     feedback.setAttribute('role', 'status'); root.append(feedback);
+    if (reviewingClue) root.append(button('Try with this clue', () => {
+      reviewingClue = false;
+      render(question.explanation || `Read it again: ${question.text} The answer is “${question.answer}”. Choose it to practise.`);
+    }, 'review-clue', 'mh-quiz-next'));
     if (solved) {
       if (question.explanation) root.append(node('p', 'mh-quiz-explanation', question.explanation));
       root.append(button(index === 4 ? 'Finish and collect coins' : 'Next question →', () => {
         if (index === 4) { completed = true; onComplete?.({ type: 'quiz', subject, grade: Number(grade), rounds: 5, independent, hints, correct: independent }); }
-        else { index++; tried = false; solved = false; rejected = new Set(); render(); }
+        else { index++; tried = false; solved = false; reviewingClue = false; rejected = new Set(); render(); }
       }, 'next', 'mh-quiz-next'));
     }
     if (focus) {
       const buttons = [...root.querySelectorAll('button')];
-      const target = buttons.find(item => item.dataset.action === focus && !item.disabled) || buttons.find(item => item.dataset.action === 'next') || buttons.find(item => item.dataset.action.startsWith('choice-') && !item.disabled);
+      const target = buttons.find(item => item.dataset.action === focus && !item.disabled) || buttons.find(item => item.dataset.action === 'review-clue') || buttons.find(item => item.dataset.action === 'next') || buttons.find(item => item.dataset.action.startsWith('choice-') && !item.disabled);
       target?.focus({ preventScroll: true });
     }
   }
   async function load() {
     root.replaceChildren(node('p', 'mh-quiz-feedback', 'Preparing your questions…'), button('Back to island', () => onExit?.()));
     try {
-      if (subject === 'math') questions = createQuizQuestions(Number(grade));
-      else if (subject === 'sains') questions = createScienceQuestions(Number(grade));
-      else if (languagePractice[grade]?.[subject]) questions = createLanguageQuestions(Number(grade), subject);
+      const historyKey = `hero-islands-quiz-recent-${grade}-${subject}`;
+      const recent = readRecent(historyKey);
+      if (subject === 'math') {
+        questions = createQuizQuestions(Number(grade));
+        for (let attempt = 0; attempt < 8 && questions.some(question => recent.includes(questionKey(question))); attempt++) {
+          questions = selectFreshQuestions([...questions, ...createQuizQuestions(Number(grade))], recent);
+        }
+      }
+      else if (subject === 'sains') questions = selectFreshQuestions(createScienceQuestions(Number(grade), Math.random, Infinity), recent);
+      else if (languagePractice[grade]?.[subject]) questions = selectFreshQuestions(createLanguageQuestions(Number(grade), subject, Math.random, Infinity), recent);
       else {
         const response = await fetch(`./data/d${Number(grade)}-${subject}.json`, { signal: controller.signal });
         if (!response.ok) throw new Error('Unable to load questions');
         const bank = await response.json();
         if (Number(bank.grade) !== Number(grade) || bank.subject !== subject) throw new Error('Question bank does not match');
-        questions = shuffle(normalizeBank(bank)).slice(0, 5).map(question => ({ ...question, options: shuffle(question.options) }));
+        questions = selectFreshQuestions(shuffle(normalizeBank(bank)), recent).map(question => ({ ...question, options: shuffle(question.options) }));
       }
-      if (!disposed) render();
+      if (!disposed) { rememberQuestions(historyKey, recent, questions); render(); }
     } catch (error) {
       if (disposed || error.name === 'AbortError') return;
       root.replaceChildren(node('h2', '', 'Could not load this quiz'), node('p', '', 'Your coins are unchanged. Try again when your connection is ready.'), button('Try again', load), button('Back to island', () => onExit?.()));

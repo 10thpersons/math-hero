@@ -12,7 +12,7 @@ export function createWorld(container, { onSelect, onPlotSlot, onPlotUpdate, red
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.setClearColor(0x000000, 0);
-  renderer.domElement.setAttribute('aria-label', 'Hero Island: a tropical village with a bridge, pasar and your home');
+  renderer.domElement.setAttribute('aria-label', 'Hero Island: explore the bridge, pasar, science lab, clock museum, navigation lighthouse and your home');
   renderer.domElement.setAttribute('role', 'img');
   renderer.domElement.style.cssText = 'width:100%;height:100%;display:block;touch-action:pan-y;';
   container.appendChild(renderer.domElement);
@@ -132,6 +132,44 @@ export function createWorld(container, { onSelect, onPlotSlot, onPlotUpdate, red
   block(home, 0, 0.55, -1.65, 4.1, 0.11, 0.1, '#fff0cb');
   landmark(home, 'home');
 
+  // Learning landmarks occupy permanent sites outside the decoration plots.
+  const lab = group(-4.4, 0.45, 3.35);
+  block(lab, 0, 0.1, 0, 1.85, 0.2, 1.65, '#e8e4bb');
+  block(lab, 0, 0.72, 0, 1.45, 1.25, 1.25, '#fff0cd');
+  block(lab, 0, 1.4, 0, 1.7, 0.2, 1.5, '#6aa9b4');
+  for (const x of [-0.43, 0.43]) block(lab, x, 0.9, 0.64, 0.4, 0.52, 0.04, '#8ad9df');
+  block(lab, 0, 0.5, 0.67, 0.32, 0.8, 0.05, '#527f95');
+  puff(lab, 0, 1.92, 0, 0.44, '#88d7b0', [1, 1.15, 1]);
+  block(lab, 0, 2.37, 0, 0.27, 0.4, 0.27, '#c5f0df');
+  block(lab, 0, 2.58, 0, 0.4, 0.08, 0.4, '#edf8d8');
+  puff(lab, 0.38, 2.8, 0, 0.12, '#b3e5d0');
+  puff(lab, -0.2, 2.95, 0, 0.09, '#b3e5d0');
+  landmark(lab, 'science');
+
+  const museum = group(0.3, 0.45, -3.35);
+  block(museum, 0, 0.1, 0, 1.85, 0.2, 1.7, '#dfc695');
+  block(museum, 0, 0.95, 0, 1.35, 1.7, 1.2, '#f7d6a0');
+  block(museum, 0, 1.9, 0, 1.65, 0.24, 1.5, '#ce8876');
+  block(museum, 0, 2.13, 0, 1.1, 0.23, 1.1, '#e7ab85');
+  block(museum, 0, 1.38, 0.63, 0.78, 0.78, 0.07, '#fff6da');
+  block(museum, 0, 1.5, 0.68, 0.06, 0.3, 0.03, '#685c79');
+  block(museum, 0.13, 1.37, 0.68, 0.3, 0.06, 0.03, '#685c79');
+  block(museum, 0, 0.48, 0.63, 0.45, 0.75, 0.07, '#977553');
+  for (const x of [-0.68, 0.68]) block(museum, x, 0.65, 0.72, 0.12, 1.15, 0.12, '#fff1c7');
+  landmark(museum, 'history');
+
+  const navigator = group(6, 0.45, 0.35);
+  block(navigator, 0, 0.08, 0, 1.5, 0.16, 1.5, '#dfcda6');
+  block(navigator, 0, 0.9, 0, 0.85, 1.7, 0.85, '#fff1d6');
+  block(navigator, 0, 1.05, 0, 0.89, 0.3, 0.89, '#57a8ad');
+  block(navigator, 0, 1.85, 0, 1.15, 0.16, 1.15, '#507e91');
+  block(navigator, 0, 2.16, 0, 0.7, 0.48, 0.7, '#ffe3a0');
+  block(navigator, 0, 2.47, 0, 1.04, 0.17, 1.04, '#ed9b72');
+  block(navigator, 0, 2.72, 0, 0.06, 0.42, 0.06, '#507e91');
+  block(navigator, 0.2, 2.85, 0, 0.4, 0.2, 0.04, '#f4be60');
+  block(navigator, 0, 0.39, 0.45, 0.31, 0.6, 0.06, '#507e91');
+  landmark(navigator, 'geography');
+
   function tree(parent, x, z, scale = 1) {
     const t = group(x, 0, z, parent);
     t.scale.setScalar(scale);
@@ -141,7 +179,7 @@ export function createWorld(container, { onSelect, onPlotSlot, onPlotUpdate, red
     puff(t, 0.35, 2.2, 0.05, 0.59, '#80c76a');
     return t;
   }
-  [[-5.9, -4, 1.1], [-3.75, -4, 0.9], [0, -4.3, 1.15], [6.1, -3.8, 0.8], [-0.1, -2.7, 0.75]].forEach(([x,z,s]) => tree(group(0, 0.45, 0), x,z,s));
+  [[-5.9, -4, 1.1], [-3.75, -4, 0.9], [1.4, -4.6, 0.75], [6.1, -3.8, 0.8]].forEach(([x,z,s]) => tree(group(0, 0.45, 0), x,z,s));
   function palm(x, z, scale = 1) {
     const p = group(x, 0.32, z);
     p.scale.setScalar(scale);
@@ -520,7 +558,7 @@ export function createWorld(container, { onSelect, onPlotSlot, onPlotUpdate, red
       makeDecoration(item,decorations);
     }
   }
-  const targets = { bridge:new THREE.Vector3(-1.95,0.58,1.5), market:new THREE.Vector3(-4.8,0.42,0.7), home:new THREE.Vector3(3.7,0.5,-0.5) };
+  const targets = { bridge:new THREE.Vector3(-1.95,0.58,1.5), market:new THREE.Vector3(-4.8,0.42,0.7), home:new THREE.Vector3(3.7,0.5,-0.5), science:new THREE.Vector3(-4.4,0.45,4.4), history:new THREE.Vector3(0.3,0.45,-2.2), geography:new THREE.Vector3(6,0.45,1.4) };
   let target=avatar.position.clone();
   let celebrationUntil=0;
   const confetti=group(); confetti.visible=false;

@@ -26,6 +26,7 @@ async function completeQuiz(page,subject,grade,wrongFirst=false) {
       const wrong=q.options.find(o=>String(o)!==String(q.answer));
       await page.locator('.mh-quiz-choices').getByRole('button',{name:String(wrong),exact:true}).click();
       await expect(page.locator('.mh-quiz-rejected')).toBeDisabled();
+      await page.getByRole('button',{name:'Try with this clue',exact:true}).click();
     }
     await page.locator('.mh-quiz-choices').getByRole('button',{name:String(q.answer),exact:true}).click();
     await expect(page.locator('.mh-quiz-correct')).toBeDisabled();

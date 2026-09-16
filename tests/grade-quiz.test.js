@@ -13,7 +13,9 @@ function expected(q) {
   if ((m = q.text.match(/^What is (\d+)\/(\d+) in simplest form/))) {
     const [a, b] = q.answer.split('/').map(Number);
     assert.equal(a * Number(m[2]), b * Number(m[1]));
-    assert.equal(a, 1); assert.equal(b, 2);
+    let x = a, y = b;
+    while (y) [x, y] = [y, x % y];
+    assert.equal(x, 1, 'answer must be fully reduced');
     return q.answer;
   }
   if ((m = q.text.match(/^(\d+) m (\d+) cm/))) return Number(m[1]) * 100 + Number(m[2]);

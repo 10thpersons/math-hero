@@ -1,12 +1,50 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createQuizQuestions, createScienceQuestions, normalizeBank, validateQuestion, questionNarration } from '../hero/quiz.js';
+import { createQuizQuestions, createScienceQuestions, normalizeBank, validateQuestion, questionNarration, questionKey, selectFreshQuestions } from '../hero/quiz.js';
 
 function seeded(seed) {
   let state = seed;
   return () => ((state = (Math.imul(state, 1664525) + 1013904223) >>> 0) / 4294967296);
 }
+
+test('replay selection covers the finite bank before returning to oldest questions', () => {
+  const bank = createScienceQuestions(1, seeded(13), Infinity);
+  const history = [];
+  for (let run = 0; run < 4; run++) {
+    const selected = selectFreshQuestions(bank, history);
+    assert.equal(selected.length, 5);
+    assert.ok(selected.every(question => !history.includes(questionKey(question))));
+    history.push(...selected.map(questionKey));
+  }
+  assert.equal(new Set(history).size, 20);
+  assert.deepEqual(selectFreshQuestions(bank, history).map(questionKey), history.slice(0, 5));
+});
+
+test('replay identity ignores answer position but distinguishes numeric and passage variants', () => {
+  const question = { text: 'Which is greatest?', answer: '9', options: ['1', '4', '9', '3'] };
+  assert.equal(questionKey(question), questionKey({ ...question, options: [...question.options].reverse() }));
+  assert.notEqual(questionKey(question), questionKey({ ...question, answer: '12' }));
+  assert.notEqual(questionKey(question), questionKey({ ...question, passage: 'Different context' }));
+  assert.equal(selectFreshQuestions([question, { ...question }]).length, 1);
+});
+
+test('upper-primary simplest fractions vary and reduce correctly', () => {
+  const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
+  for (const grade of [4, 5, 6]) {
+    const answers = new Set();
+    for (let seed = 1; seed <= 400; seed++) {
+      const questions = createQuizQuestions(grade, seeded(seed * 793));
+      const question = questions.find(item => item.text.includes('simplest form'));
+      const [, a, b] = question.text.match(/(\d+)\/(\d+)/).map(Number);
+      const divisor = gcd(a, b);
+      assert.equal(question.answer, `${a / divisor}/${b / divisor}`);
+      assert.ok(validateQuestion(question));
+      answers.add(question.answer);
+    }
+    assert.equal(answers.size, 5);
+  }
+});
 function checkRun(questions) {
   assert.equal(questions.length, 5);
   assert.equal(new Set(questions.map(q => q.text)).size, 5);

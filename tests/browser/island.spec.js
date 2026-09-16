@@ -65,13 +65,13 @@ for(const type of ['science','history','geography'])test(`${type} is playable at
     await selectGrade(page,grade);await page.locator('#nav-play').click();await page.locator(`[data-mission="${type}"]`).click();
     if(type==='geography')await solveNavigation(page);else await solveDiscovery(page,type);
     await expect(page.locator('.success-content')).toBeVisible();
-    await expect(page.locator('#coin-count')).toHaveText(grade===1?'30':'60');
+    await expect(page.locator('#coin-count')).toHaveText(String((type==='science'?27:30)*(grade===1?1:2)));
     await page.getByRole('button',{name:'Back to exploring',exact:true}).click();
   }
   await page.reload();const p=await page.evaluate(()=>JSON.parse(localStorage.getItem('hero-islands-v1')).profiles[0]);
   expect(p.sessions.map(s=>s.type)).toEqual([type,type]);expect(p.sessions.map(s=>s.independent)).toEqual(type==='science'?[2,2]:[3,3]);
   await page.locator('#nav-play').click();await page.locator(`[data-mission="${type}"]`).click();
-  await page.getByRole('button',{name:'Back to island',exact:true}).click();await expect(page.locator('#coin-count')).toHaveText('60');
+  await page.getByRole('button',{name:'Back to island',exact:true}).click();await expect(page.locator('#coin-count')).toHaveText(type==='science'?'54':'60');
   expect(errors).toEqual([]);
 });
 

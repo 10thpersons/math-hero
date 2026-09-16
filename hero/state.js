@@ -98,7 +98,7 @@ export function rewardMission(profile, result) {
   if (!Object.hasOwn(ACTIVITIES,result.type) || !GRADES.includes(result.grade) || !Number.isInteger(result.independent) || result.independent < 0 || result.independent > 3) return 0;
   const key = `${result.type}-${result.grade}`;
   const first = !profile.completed.includes(key);
-  const earned = first ? 30 : 15;
+  const earned = 6 + result.independent * 3 + (first ? 15 : 0);
   if (first) profile.completed.push(key);
   profile.coins += earned;
   profile.sessions.push({ type: result.type, grade: result.grade, rounds: 3, independent: result.independent, hints: result.hints, earned, date: new Date().toISOString() });

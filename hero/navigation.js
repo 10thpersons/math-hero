@@ -1,6 +1,22 @@
 const STEPS = { N: [0, -1], E: [1, 0], S: [0, 1], W: [-1, 0] };
 const DIRECTIONS = { N: 'North', E: 'East', S: 'South', W: 'West' };
 const same = (a, b) => a[0] === b[0] && a[1] === b[1];
+const randomIndex = (length, rng) => Math.min(length - 1, Math.max(0, Math.floor(rng() * length)));
+
+function shortestDistance(problem, start, target, avoid) {
+  const queue = [[start, 0]], seen = new Set();
+  for (let index = 0; index < queue.length; index++) {
+    const [at, distance] = queue[index], key = at.join(',');
+    if (seen.has(key)) continue;
+    seen.add(key);
+    if (same(at, target)) return distance;
+    for (const [dx, dy] of Object.values(STEPS)) {
+      const next = [at[0] + dx, at[1] + dy];
+      if (next.every(value => value >= 0 && value < problem.size) && !problem.blocked.some(cell => same(cell, next)) && !(avoid && same(avoid, next))) queue.push([next, distance + 1]);
+    }
+  }
+  return Infinity;
+}
 
 export function createNavigationProblems(grade, rng = Math.random) {
   if (![1, 2, 3, 4, 5, 6].includes(Number(grade))) throw new Error('Unsupported navigation grade');
@@ -33,6 +49,24 @@ export function createNavigationProblems(grade, rng = Math.random) {
   }
   const selected = [];
   while (selected.length < 3) selected.push(pool.splice(Math.min(pool.length - 1, Math.max(0, Math.floor(rng() * pool.length))), 1)[0]);
+  for (const problem of selected) {
+    if (problem.waypoint) problem.waypoint = [1 + randomIndex(problem.size - 2, rng), 1 + randomIndex(problem.size - 2, rng)];
+    problem.blocked = [];
+    const candidates = [];
+    for (let y = 0; y < problem.size; y++) for (let x = 0; x < problem.size; x++) {
+      const cell = [x, y];
+      if (![problem.start, problem.target, problem.waypoint].filter(Boolean).some(stop => same(stop, cell))) candidates.push(cell);
+    }
+    // Add fresh forests only while both delivery legs remain reachable.
+    const distance = () => problem.waypoint ? shortestDistance(problem, problem.start, problem.waypoint, problem.target) + shortestDistance(problem, problem.waypoint, problem.target) : shortestDistance(problem, problem.start, problem.target);
+    const forestCount = Math.floor(problem.size * problem.size * .22);
+    while (candidates.length && problem.blocked.length < forestCount) {
+      const [cell] = candidates.splice(randomIndex(candidates.length, rng), 1);
+      problem.blocked.push(cell);
+      if (!Number.isFinite(distance()) || distance() > 30) problem.blocked.pop();
+    }
+    if (year >= 5) problem.maxSteps = distance();
+  }
   return selected;
 }
 

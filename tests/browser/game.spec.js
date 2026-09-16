@@ -6,7 +6,9 @@ async function solveMission(page, type, withHint=false) {
     if(withHint && round===0) await page.getByRole('button',{name:'Show a hint',exact:true}).click();
     let target;
     if(type==='bridge') {
-      target=Number((await page.locator('.mh-mission-scene-label').textContent()).match(/\d+/)[0]);
+      const prompt=await page.locator('.mh-mission-prompt').textContent();
+      const repair=prompt.match(/must be (\d+) units long; (\d+) units are already safe/);
+      target=repair ? Number(repair[1])-Number(repair[2]) : Number((await page.locator('.mh-mission-scene-label').textContent()).match(/\d+/)[0]);
       const labels=await page.locator('.mh-mission-pieces button').allTextContents();
       const sizes=labels.map(s=>Number(s.match(/\d+/)[0])).sort((a,b)=>b-a);
       for(const size of sizes) while(target>=size) {
@@ -18,6 +20,8 @@ async function solveMission(page, type, withHint=false) {
       const quantity=text.match(/Buy (\d+)/);
       const price=Number(text.match(/RM(\d+)/)[1]);
       target=quantity?Number(quantity[1])*price:price;
+      const alreadyPaid=text.match(/already paid RM(\d+)/);
+      if(alreadyPaid)target-=Number(alreadyPaid[1]);
       const denominations=(await page.locator('.mh-mission-pieces button').allTextContents()).map(s=>Number(s.match(/\d+/)[0])).sort((a,b)=>b-a);
       for(const value of denominations) while(target>=value) {
         await page.getByRole('button',{name:`+ RM${value}`,exact:true}).click(); target-=value;
@@ -40,23 +44,23 @@ test('island, both grade missions, rewards, avatar and home persist without alte
   await page.getByRole('button',{name:'Test my bridge',exact:true}).click();
   await expect(page.locator('.mh-mission-feedback')).toContainText('gap');
   await solveMission(page,'bridge',true);
-  await expect(page.locator('#coin-count')).toHaveText('30');
+  await expect(page.locator('#coin-count')).toHaveText('27');
   await page.getByRole('button',{name:'Back to exploring',exact:true}).click();
   await page.locator('#start-quest').click(); await solveMission(page,'bridge');
-  await expect(page.locator('#coin-count')).toHaveText('45');
+  await expect(page.locator('#coin-count')).toHaveText('42');
   await page.getByRole('button',{name:'Back to exploring',exact:true}).click();
   await page.locator('[data-location="market"]').click(); await solveMission(page,'market');
-  await expect(page.locator('#coin-count')).toHaveText('75');
+  await expect(page.locator('#coin-count')).toHaveText('72');
   await page.locator('#reward-decorate').click();
   await page.locator('[data-decor="tree"]').click(); await page.locator('[data-slot="2"]').click(); await page.locator('#place-item').click();
-  await expect(page.locator('#coin-count')).toHaveText('60');
+  await expect(page.locator('#coin-count')).toHaveText('57');
   await page.locator('#build-done').click();
   await page.locator('#nav-avatar').click(); await page.locator('#shop-wardrobe').click();
   await page.getByRole('button',{name:'Shirt colour 3',exact:true}).click();
   await page.getByRole('button',{name:'Explorer hat',exact:true}).click();
   await page.getByRole('button',{name:'Ready for adventure',exact:false}).click();
   await page.reload();
-  await expect(page.locator('#coin-count')).toHaveText('60');
+  await expect(page.locator('#coin-count')).toHaveText('57');
   const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('hero-islands-v1')));
   expect(saved.profiles[0].avatar.hat).toBe('explorer');
   expect(saved.profiles[0].decorations).toEqual([{type:'tree',slot:2,rotation:0,level:1}]);

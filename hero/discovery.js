@@ -21,14 +21,20 @@ function shuffled(items, rng) {
   }
   return copy;
 }
+const randomIndex = (length, rng) => Math.min(length - 1, Math.max(0, Math.floor(rng() * length)));
 export function createDiscoveryRounds(type, grade, rng = Math.random) {
   if (!['science', 'history'].includes(type) || ![1, 2, 3, 4, 5, 6].includes(Number(grade))) throw new Error('Unsupported discovery');
   if (type === 'science') {
     const year = Number(grade);
-    const sets = year === 1 ? [[0, 2, 3, 1], [4, 5, 2, 0], [3, 1, 5, 4]] : year === 2 ? [[0, 2, 3, 1, 4], [4, 5, 2, 0, 3], [3, 1, 5, 4, 2]] : year === 3 ? [[0, 6, 7, 1], [7, 5, 2, 6], [3, 1, 6, 5]] : year === 4 ? [[0, 6, 2, 3], [7, 5, 4, 2], [6, 1, 3, 4]] : year === 5 ? [[0, 6, 7, 2, 3, 4], [7, 5, 2, 6, 1, 3], [3, 1, 6, 5, 4, 7]] : [[0, 1, 2, 3, 4, 5, 6, 7], [0, 1, 2, 3, 4, 5, 6, 7], [0, 1, 2, 3, 4, 5, 6, 7]];
-    return sets.map((set, index) => {
+    return Array.from({ length: 3 }, (_, index) => {
       const property = year >= 4 && !(year === 6 && index === 1) ? 'conductive' : 'magnetic';
-      return { type, property, title: property === 'conductive' ? ['Light the workshop', 'Repair the circuit kit', 'Choose your circuit materials'][index] : ['Sort the workshop', 'Rescue the mixed supplies', 'Pack the science kit'][index], items: shuffled(set.map(i => materials[i]), rng) };
+      const pool = year <= 2 ? materials.filter(item => !['foil', 'copper'].includes(item.id)) : materials;
+      const yes = shuffled(pool.filter(item => item[property]), rng);
+      const no = shuffled(pool.filter(item => !item[property]), rng);
+      const count = [4, 5, 4, 4, 6, 7][year - 1];
+      const minimum = Math.max(1, count - no.length);
+      const yesCount = minimum + randomIndex(Math.min(yes.length, count - 1) - minimum + 1, rng);
+      return { type, property, title: property === 'conductive' ? ['Light the workshop', 'Repair the circuit kit', 'Choose your circuit materials'][index] : ['Sort the workshop', 'Rescue the mixed supplies', 'Pack the science kit'][index], items: shuffled([...yes.slice(0, yesCount), ...no.slice(0, count - yesCount)], rng) };
     });
   }
   const family = [
@@ -53,6 +59,30 @@ export function createDiscoveryRounds(type, grade, rng = Math.random) {
     if (Number(grade) >= 5) archive.push({ id: 'labels', label: 'Write the exhibit labels', date: '1 March 2024', order: 20240301, shape: 'paper', evidence: 'Exhibit checklist dated 1 March 2024.' });
     if (Number(grade) === 6) archive.push({ id: 'interview', label: 'Record an elder’s interview', date: '25 January 2024', order: 20240125, shape: 'book', evidence: 'Oral-history recording log dated 25 January 2024.' });
     family.splice(0, family.length, ...archive);
+  }
+  const name = ['Aina', 'Ravi', 'Mei', 'Adam', 'Sara', 'Amir'][randomIndex(6, rng)];
+  const yearOffset = randomIndex(12, rng) - 6;
+  for (const item of family) {
+    item.label = item.label.replaceAll('Aina', name);
+    item.date = item.date.replace(/20\d{2}/g, value => String(Number(value) + yearOffset));
+    item.evidence = item.evidence.replace(/20\d{2}/g, value => String(Number(value) + yearOffset));
+    item.order += yearOffset * (Number(grade) >= 4 ? 10000 : 1);
+  }
+  // Interview evidence can fall before or after the collection entry: read the date.
+  const interview = family.find(item => item.id === 'interview');
+  if (interview) {
+    const day = [2, 5, 12, 18, 25][randomIndex(5, rng)];
+    interview.date = `${day} January ${2024 + yearOffset}`;
+    interview.order = (2024 + yearOffset) * 10000 + 100 + day;
+    interview.evidence = `Oral-history recording log dated ${interview.date}.`;
+  }
+  // These are fictional diary observations, with a fresh month and observation dates.
+  const month = ['January', 'March', 'May', 'June', 'July', 'August', 'October'][randomIndex(7, rng)];
+  const days = { seed: 1 + randomIndex(3, rng), sprout: 5 + randomIndex(4, rng), leaves: 12 + randomIndex(6, rng), flower: 24 + randomIndex(5, rng) };
+  for (const item of garden) {
+    const oldDate = item.date;
+    item.date = `${days[item.id]} ${month}`; item.order = days[item.id];
+    item.evidence = item.evidence.replace(oldDate, item.date);
   }
   const nation = [
     { id: 'merdeka', label: 'Malaya becomes independent', date: '31 August 1957', order: 1957, shape: 'flag', evidence: 'Arkib Negara records the Federation of Malaya independence declaration on 31 August 1957.' },
@@ -80,7 +110,7 @@ const el = (tag, cls, text) => {
 export function startDiscovery(container, { type, grade, onComplete, onExit, speak }) {
   const rounds = createDiscoveryRounds(type, grade);
   let round = 0, placements = {}, selected = null, tested = null, attempts = 0, roundHints = 0;
-  let hints = 0, independent = 0, solved = false, completed = false, disposed = false;
+  let hints = 0, independent = 0, solved = false, completed = false, disposed = false, needsReview = false;
   let message = 'Choose an object, then choose where it belongs.';
   const root = el('section', 'mh-discovery');
   root.setAttribute('aria-label', type === 'science' ? 'Science Lab' : 'Time Detectives');
@@ -153,6 +183,7 @@ export function startDiscovery(container, { type, grade, onComplete, onExit, spe
       if (solved) return;
       if (!selected) { message = 'Tap an object first, then use this help button.'; render(); return; }
       hints++; roundHints++;
+      needsReview = false;
       const item = problem.items.find(item => item.id === selected);
       tested = selected;
       message = circuit ? `${item.label}: ${item.conductive ? 'electricity passes through this material, lighting the bulb.' : 'this dry material does not complete our battery circuit.'}` : type === 'science' ? `${item.label} ${item.magnetic ? 'is attracted to the magnet. Put it in the picks-up tray.' : 'is not picked up by this magnet. Put it in the other tray.'}` : `${item.evidence} Compare its date with the other cards.`;
@@ -161,7 +192,7 @@ export function startDiscovery(container, { type, grade, onComplete, onExit, spe
     const check = button(solved ? (round === 2 ? 'Finish discovery' : 'Next discovery') : (type === 'science' ? 'Check my sorting' : 'Restore this timeline'), () => {
       if (solved) {
         if (round === 2) { completed = true; onComplete?.({ type, grade: Number(grade), rounds: 3, independent, hints }); return; }
-        round++; placements = {}; selected = null; tested = null; attempts = 0; roundHints = 0; solved = false; message = 'Choose an object, then choose where it belongs.'; render(); return;
+        round++; placements = {}; selected = null; tested = null; attempts = 0; roundHints = 0; solved = false; needsReview = false; message = 'Choose an object, then choose where it belongs.'; render(); return;
       }
       if (Object.keys(placements).length !== problem.items.length) { message = 'Place every object first. You can move any object by tapping it.'; render(); return; }
       attempts++;
@@ -169,9 +200,13 @@ export function startDiscovery(container, { type, grade, onComplete, onExit, spe
         if (attempts === 1 && roundHints === 0) independent++;
         solved = true; selected = null;
         message = circuit ? 'Circuit kit sorted! Iron, copper and aluminium conduct electricity. Dry wood, plastic and dry paper are insulators in our model. Copper and aluminium conduct electricity even though a magnet does not pick them up.' : type === 'science' ? 'Sorted! Iron is picked up by this magnet. Wood, plastic, paper, copper and aluminium are not. Not every metal is magnetic.' : 'Timeline restored! Dates are evidence that help us put events in order.';
-      } else message = circuit ? 'Some objects need a different tray. Test a material in the battery circuit, then move it. Electrical conduction and magnet attraction are different properties.' : type === 'science' ? 'Some objects need a different tray. Tap an object and test it, then move it. Iron is a useful clue.' : 'Some events are out of order. Read the dates from smallest to largest. Tap a card, then a new space to move it.';
+      } else {
+        needsReview = true;
+        message = circuit ? 'Before checking again, select an object and tap Test selected object. Observe the bulb, then adjust your trays. Conducting electricity and magnet attraction are different properties.' : type === 'science' ? 'Before checking again, select an object and tap Test selected object. Observe the magnet, then adjust your trays.' : 'Before checking again, select a card and tap Read a clue. Compare its date with the neighbouring cards, then adjust your timeline.';
+      }
       render(); say(message);
     }, 'check', 'md-primary');
+    check.disabled = needsReview;
     actions.append(reset, hint, check); root.append(actions);
     if (focus) root.querySelectorAll('[data-action]').forEach(node => { if (node.dataset.action === focus && !node.disabled) node.focus({ preventScroll: true }); });
   }

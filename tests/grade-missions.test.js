@@ -78,3 +78,22 @@ test('invalid grades and mission types are rejected instead of silently falling 
   for (const grade of [0, 7, 2.5, 'nonsense', NaN]) assert.throws(() => createProblems('bridge', grade));
   assert.throws(() => createProblems('bogus', 5));
 });
+
+test('procedural rounds vary widely and stay solvable across the full selection range', () => {
+  for (let grade = 1; grade <= 6; grade++) for (const type of ['bridge', 'market']) {
+    const variants = new Map();
+    for (let i = 0; i < 1000; i++) {
+      for (const problem of createProblems(type, grade, () => i / 1000)) {
+        variants.set(JSON.stringify(problem), problem);
+        assert.ok(solve(problem).length <= 20, `${type} D${grade} must fit the tray`);
+      }
+    }
+    assert.ok(variants.size >= 27, `${type} D${grade} has at least 27 different problems`);
+    if (grade <= 2) {
+      assert.ok([...variants.values()].some(p => p.variant));
+      for (const problem of variants.values()) if (problem.paid) {
+        assert.equal(problem.target, problem.price - problem.paid);
+      }
+    }
+  }
+});

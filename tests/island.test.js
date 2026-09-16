@@ -39,10 +39,10 @@ test('new discovery activities reward each first completion and retain replay re
   const state=freshState(),p=state.profiles[0];
   for(const type of ['science','history','geography']) {
     assert.equal(rewardMission(p,{type,grade:1,independent:3,hints:0}),30);
-    assert.equal(rewardMission(p,{type,grade:1,independent:1,hints:2}),15);
+    assert.equal(rewardMission(p,{type,grade:1,independent:1,hints:2}),9);
   }
   const loaded=normalizeState(state).profiles[0];
-  assert.equal(loaded.coins,135);assert.equal(loaded.sessions.length,6);
+  assert.equal(loaded.coins,117);assert.equal(loaded.sessions.length,6);
   assert.deepEqual(loaded.completed,['science-1','history-1','geography-1']);
 });
 

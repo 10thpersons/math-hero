@@ -47,7 +47,7 @@ test('new explorers are independent and use a separate save namespace', () => {
   assert.equal(s.profiles.length,2);
   assert.notEqual(SAVE_KEY,'math-hero-profile-index');
   rewardMission(s.profiles[0],{type:'bridge',grade:1,independent:2,hints:1});
-  assert.equal(s.profiles[0].coins,30);
+  assert.equal(s.profiles[0].coins,27);
   assert.equal(s.profiles[1].coins,0);
   assert.equal(s.profiles[1].sessions.length,0);
 });
@@ -59,6 +59,17 @@ test('replays earn coins; only the first-completion bonus is limited', () => {
   assert.equal(p.sessions.length,2);
   assert.equal(rewardMission(p,{...result,grade:3}),30);
   assert.equal(p.coins,75);
+});
+
+test('hands-on rewards value independent work while still rewarding supported practice', () => {
+  const supported = freshState().profiles[0], independent = freshState().profiles[0];
+  const result = {type:'bridge',grade:1,independent:0,hints:3};
+  assert.equal(rewardMission(supported,result),21);
+  assert.equal(rewardMission(supported,result),6);
+  assert.equal(rewardMission(independent,{...result,independent:3,hints:0}),30);
+  assert.equal(rewardMission(independent,{...result,independent:3,hints:0}),15);
+  assert.equal(supported.sessions[1].earned,6);
+  assert.equal(independent.sessions[1].earned,15);
 });
 test('decorations cannot overspend and unlocking is charged once', () => {
   const p = freshState().profiles[0];
