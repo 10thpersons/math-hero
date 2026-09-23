@@ -3,7 +3,7 @@ import { startMission } from './missions.js';
 import { startQuiz } from './quiz.js';
 import { startDiscovery } from './discovery.js';
 import { startNavigation } from './navigation.js';
-import { account, loadSave, onCloudStatus, queueSave, requestMagicLink, restoreSession, saveNow, signOut } from './cloud.js';
+import { account, acceptCloudCopy, canImportDevice, hasPendingChanges, completeCloudLoad, loadSave, onCloudStatus, queueSave, requestMagicLink, restoreSession, saveNow, signOut } from './cloud.js';
 
 const $ = (selector) => document.querySelector(selector);
 const icon = (name, cls = '') => `<svg class="${cls}" aria-hidden="true"><use href="#i-${name}"/></svg>`;
@@ -29,8 +29,9 @@ function renderCloudButton() {
   if (!button || !dot) return;
   const parent = account();
   dot.className = `cloud-dot ${cloudStatus}`;
-  button.textContent = parent ? (cloudStatus === 'syncing' ? 'Saving…' : 'Cloud saved') : 'Cloud save';
-  button.setAttribute('aria-label', parent ? `Cloud account ${parent.email}. ${cloudStatus === 'syncing' ? 'Saving progress.' : 'Progress saved.'}` : 'Set up cloud save');
+  const label = cloudStatus === 'offline' ? 'Saved on device' : cloudStatus === 'error' ? 'Cloud needs attention' : cloudStatus === 'syncing' ? 'Connecting…' : parent ? 'Cloud saved' : 'Cloud save';
+  button.textContent = label;
+  button.setAttribute('aria-label', parent ? `Cloud account ${parent.email}. ${label}.` : label);
 }
 onCloudStatus(status => { cloudStatus = status; renderCloudButton(); });
 
@@ -46,10 +47,10 @@ try {
   const saved = localStorage.getItem(SAVE_KEY);
   if (saved) state = normalizeState(JSON.parse(saved));
 } catch { storageWarning(); }
-function save() {
+function save(localChange = true) {
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); }
   catch { storageWarning(); }
-  queueSave(state);
+  if (localChange) { try { queueSave(state); } catch { storageWarning(); } }
   updateHeader();
 }
 function toast(message) {
@@ -242,13 +243,13 @@ function showProfiles() {
 function showCloudAccount() {
   const parent = account();
   if (parent) {
-    openPanel(`<section class="panel-content">${heading('FAMILY CLOUD SAVE','Your family account',`Signed in as ${escape(parent.email)}.`)}<div class="account-card"><b>Your children’s island progress is protected</b><small>Coins, avatars, islands and discoveries sync to this parent account. Children do not need an email address or password.</small><p class="cloud-status" id="cloud-status">${cloudStatus === 'syncing' ? 'Saving your latest changes…' : 'Cloud save is up to date.'}</p></div><div class="account-actions"><button class="primary-button" id="cloud-sync">Sync now</button><button class="secondary-button" id="cloud-signout">Sign out on this device</button></div><p class="cloud-note">When this family account is opened on another device, its saved progress replaces that device’s local Hero Islands progress.</p></section>`);
-    $('#cloud-sync').onclick = async () => { try { await saveNow(state); $('#cloud-status').textContent = 'Saved to your family cloud.'; toast('Family cloud save is up to date.'); } catch (error) { $('#cloud-status').textContent = error.message; } };
+    openPanel(`<section class="panel-content">${heading('FAMILY CLOUD SAVE','Your family account',`Signed in as ${escape(parent.email)}.`)}<div class="account-card"><b>Your children’s island progress is protected</b><small>Coins, avatars, islands and discoveries sync to this parent account. Children do not need an email address or password.</small><p class="cloud-status" id="cloud-status">${cloudStatus === 'saved' ? 'Cloud save is up to date.' : 'Your device keeps its progress. Tap Sync now to reconnect and review your saved copies.'}</p></div><div class="account-actions"><button class="primary-button" id="cloud-sync">Sync now</button><button class="secondary-button" id="cloud-signout">Sign out on this device</button></div><p class="cloud-note">When this family account is opened on another device, you can choose which progress to keep if this device has unsynced changes.</p></section>`);
+    $('#cloud-sync').onclick = async () => { await bootCloud(); };
     $('#cloud-signout').onclick = async () => { await signOut(); renderCloudButton(); toast('Signed out. This device keeps its local copy.'); showProfiles(); };
     return;
   }
-  openPanel(`<section class="panel-content">${heading('FAMILY CLOUD SAVE','Save your family’s island','One parent email. Separate explorer profiles for your children.')}<div class="account-card"><b>No child account is needed</b><small>We only save the parent email, child nicknames, Darjah, avatars and game progress. We do not ask for a child’s email, real name, photo or location.</small><form id="cloud-login"><label>Parent email<input id="cloud-email" type="email" inputmode="email" autocomplete="email" required placeholder="you@example.com"></label><div class="account-actions"><button class="primary-button" type="submit">Email me a sign-in link</button></div><p class="cloud-status" id="cloud-status" role="status"></p></form></div><p class="cloud-note">We’ll email you a sign-in link. No password needed. If your family has no cloud save yet, we’ll save this device’s progress. If you already have a cloud save, signing in loads it in place of this device’s progress.</p></section>`);
-  $('#cloud-login').onsubmit = async event => { event.preventDefault(); const status = $('#cloud-status'); const button = event.currentTarget.querySelector('button'); button.disabled = true; status.textContent = 'Sending your secure sign-in link…'; try { await requestMagicLink($('#cloud-email').value.trim()); status.textContent = 'Check your email, then open the sign-in link on this device.'; } catch (error) { status.textContent = error.message; button.disabled = false; } };
+  openPanel(`<section class="panel-content">${heading('FAMILY CLOUD SAVE','Save your family’s island','One parent email. Separate explorer profiles for your children.')}<div class="account-card"><b>No child account is needed</b><small>We only save the parent email, child nicknames, Darjah, avatars and game progress. We do not ask for a child’s email, real name, photo or location.</small><form id="cloud-login"><label>Parent email<input id="cloud-email" type="email" inputmode="email" autocomplete="email" required placeholder="you@example.com"></label><div class="account-actions"><button class="primary-button" type="submit">Email me a sign-in link</button></div><p class="cloud-status" id="cloud-status" role="status"></p></form></div><p class="cloud-note">We’ll email you a sign-in link. No password needed. If your family has no cloud save yet, we’ll save this device’s progress. If you already have a cloud save, we’ll ask which copy to keep if this device has unsynced changes.</p></section>`);
+  $('#cloud-login').onsubmit = async event => { event.preventDefault(); const status = $('#cloud-status'); const button = event.currentTarget.querySelector('button'); button.disabled = true; status.textContent = 'Sending your secure sign-in link…'; try { await requestMagicLink($('#cloud-email').value.trim()); status.textContent = 'Check your email, then open the sign-in link in this same browser.'; } catch (error) { status.textContent = error.message; button.disabled = false; } };
 }
 function showHome() {
   if(panel.open)closePanel();
@@ -389,15 +390,30 @@ async function bootCloud() {
   try {
     const remote = await loadSave();
     if (remote?.state) {
+      if (hasPendingChanges()) {
+        cloudStatus = 'error'; renderCloudButton();
+        openPanel(`<section class="panel-content">${heading('CHOOSE YOUR PROGRESS','Your device has unsynced changes','Choose the progress you want to keep. These copies cannot be combined.')}<p class="copy">Use this device to keep its latest play, or use the cloud copy from your other device. The other copy will be replaced.</p><div class="account-actions"><button class="primary-button" id="keep-device">Keep this device’s progress</button><button class="secondary-button" id="keep-cloud">Use cloud progress</button></div><p id="cloud-status" role="status"></p></section>`);
+        $('#keep-device').onclick = async () => {
+          $('#keep-device').disabled = true; $('#keep-cloud').disabled = true;
+          try { completeCloudLoad(); await saveNow(state); closePanel(); toast('This device’s progress is saved to your family cloud.'); }
+          catch (error) { if ($('#cloud-status')) $('#cloud-status').textContent = error.message; }
+        };
+        if (!canImportDevice()) { $('#keep-device').disabled = true; $('#cloud-status').textContent = 'This device’s progress belongs to another family. Only this account’s cloud copy can be used here.'; }
+        $('#keep-cloud').onclick = () => { state = normalizeState(remote.state); acceptCloudCopy(); save(false); syncWorld(); completeCloudLoad(true); closePanel(); toast('Your family cloud progress is ready.'); };
+        return;
+      }
+      closePanel();
       state = normalizeState(remote.state);
-      save(); syncWorld();
+      save(false); syncWorld();
+      completeCloudLoad(true);
       toast('Your family cloud progress is ready on this device.');
     } else {
+      completeCloudLoad();
       await saveNow(state);
       toast('This device’s explorer progress is now saved to your family cloud.');
     }
   } catch (error) {
-    cloudStatus = 'error'; renderCloudButton();
+    cloudStatus = navigator.onLine ? 'error' : 'offline'; renderCloudButton();
     console.warn('Cloud save unavailable:', error);
   }
 }

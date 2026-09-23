@@ -1,0 +1,11 @@
+docs/
+tests/
+test-results/
+playwright-report/
+supabase/
+scripts/
+.omc/
+.codex/
+AGENTS.md
+RTK.md
+user-profile.md

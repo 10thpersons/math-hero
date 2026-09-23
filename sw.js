@@ -1,5 +1,5 @@
-// Cache the complete first chapter, including locally bundled fonts and renderer.
-const CACHE_NAME = 'hero-islands-v12';
+// Only public Hero Islands assets belong in the offline cache.
+const CACHE_NAME = 'hero-islands-v13';
 const ASSETS = [
   './', './index.html', './hero/app.js', './hero/state.js', './hero/styles.css', './hero/wardrobe.css',
   './hero/world.js', './hero/missions.js', './hero/missions.css', './hero/icon.svg',
@@ -9,20 +9,29 @@ const ASSETS = [
   './hero/vendor/three.module.js', './hero/vendor/three.core.js',
   './hero/fonts/fredoka.ttf', './hero/fonts/nunito.ttf',
 ];
+const ASSET_URLS = new Set(ASSETS.map(path => new URL(path, self.location.href).href));
+const HOME_URL = new URL('./', self.location.href).href;
+const INDEX_URL = new URL('./index.html', self.location.href).href;
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', event => { event.waitUntil(self.clients.claim()); });
 self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET' || new URL(event.request.url).origin !== self.location.origin) return;
+  const url = new URL(event.request.url);
+  if (event.request.method !== 'GET' || url.origin !== self.location.origin) return;
+  const isAsset = ASSET_URLS.has(url.href);
+  const isHomeNavigation = event.request.mode === 'navigate' &&
+    (url.origin + url.pathname === HOME_URL || url.origin + url.pathname === INDEX_URL);
+  if (!isAsset && !isHomeNavigation) return;
   event.respondWith(fetch(event.request).then(response => {
-    if (response.ok) {
+    // Auth callbacks and other query strings must never enter Cache Storage.
+    if (isAsset && response.ok && !response.redirected) {
       const copy = response.clone();
       event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy)));
     }
     return response;
   }).catch(async () => {
     const cache = await caches.open(CACHE_NAME);
-    return await cache.match(event.request) || await caches.match(event.request) || Response.error();
+    return await cache.match(isHomeNavigation ? INDEX_URL : event.request) || Response.error();
   }));
 });
