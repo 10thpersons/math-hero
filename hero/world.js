@@ -163,7 +163,13 @@ export function createWorld(container, { onSelect, onPlotSlot, onPlotUpdate, red
   block(navigator, 0, 0.9, 0, 0.85, 1.7, 0.85, '#fff1d6');
   block(navigator, 0, 1.05, 0, 0.89, 0.3, 0.89, '#57a8ad');
   block(navigator, 0, 1.85, 0, 1.15, 0.16, 1.15, '#507e91');
-  block(navigator, 0, 2.16, 0, 0.7, 0.48, 0.7, '#ffe3a0');
+  const lighthouseLantern = block(navigator, 0, 2.16, 0, 0.7, 0.48, 0.7, '#879c9c');
+  const lighthouseBeams = group(0, 2.16, 0, navigator);
+  for (const direction of [-1, 1]) {
+    const beam = block(lighthouseBeams, direction * 1.15, 0, 0, 1.5, 0.22, 0.35, '#ffe7a2');
+    beam.rotation.z = direction * 0.12;
+  }
+  lighthouseBeams.visible = false;
   block(navigator, 0, 2.47, 0, 1.04, 0.17, 1.04, '#ed9b72');
   block(navigator, 0, 2.72, 0, 0.06, 0.42, 0.06, '#507e91');
   block(navigator, 0.2, 2.85, 0, 0.4, 0.2, 0.04, '#f4be60');
@@ -651,6 +657,11 @@ export function createWorld(container, { onSelect, onPlotSlot, onPlotUpdate, red
   }
   frame=requestAnimationFrame(animate);
   return {
+    setLighthouse(restored) {
+      lighthouseBeams.visible = Boolean(restored);
+      lighthouseLantern.material = material(restored ? '#ffe3a0' : '#879c9c');
+      renderer.domElement.dataset.lighthouse = restored ? 'restored' : 'waiting';
+    },
     setPaused(value) { paused=Boolean(value); },
     setAvatar(style = {}) {
       Object.entries(hairstyles).forEach(([id,item])=>item.visible=style.hairstyle===id);

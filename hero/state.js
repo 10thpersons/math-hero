@@ -1,3 +1,4 @@
+import { normalizeArcade, normalizeClub } from './club.js';
 export const GRADES = [1, 2, 3, 4, 5, 6];
 export const SAVE_KEY = 'hero-islands-v1';
 export const COLORS = { shirts: ['#f4ab3d', '#43a99b', '#ed795a', '#6e8ac9', '#b583b6'], skins: ['#f2c79f', '#cd9464', '#885b40'], hairs: ['#342b28', '#7d5034', '#d8a94c'] };
@@ -57,13 +58,14 @@ export const SUBJECTS = { math: 'Maths', sains: 'Science', bm: 'Bahasa Melayu', 
 export function makeProfile(id, grade) {
   return { id, name: grade === 1 ? 'Little explorer' : 'Brave builder', grade, coins: 0,
     avatar: { shirt: COLORS.shirts[grade === 1 ? 0 : 1], skin: COLORS.skins[0], hair: COLORS.hairs[0], hat: 'cap', back: 'none', face: 'none' },
-    completed: [], sessions: [], decorations: [], owned: ['flower'], ownedCosmetics: [], unlockedZones: ['home'], islandZone: 'home' };
+    arcade: normalizeArcade(), completed: [], sessions: [], decorations: [], owned: ['flower'], ownedCosmetics: [], unlockedZones: ['home'], islandZone: 'home' };
 }
-export function freshState() { return { version: 1, active: 'explorer-1', sound: true, profiles: [makeProfile('explorer-1', 1), makeProfile('explorer-2', 3)] }; }
+export function freshState() { return { version: 1, familyClub: normalizeClub(), active: 'explorer-1', sound: true, profiles: [makeProfile('explorer-1', 1), makeProfile('explorer-2', 3)] }; }
 export function normalizeState(raw) {
   const base = freshState();
   if (!raw || raw.version !== 1 || !Array.isArray(raw.profiles)) return base;
   base.sound = raw.sound !== false;
+  base.familyClub = normalizeClub(raw.familyClub);
   base.profiles = base.profiles.map((fallback) => {
     const p = raw.profiles.find(p => p?.id === fallback.id);
     if (!p) return fallback;
@@ -83,7 +85,7 @@ export function normalizeState(raw) {
         face: allowedStyle('face',avatar.face) ? avatar.face : 'none',
         outfit: allowedStyle('outfit',avatar.outfit) ? avatar.outfit : 'none',
         pet: allowedStyle('pet',avatar.pet) ? avatar.pet : 'none' },
-      ownedCosmetics,
+      ownedCosmetics, arcade: normalizeArcade(p.arcade),
       unlockedZones, islandZone: unlockedZones.includes(p.islandZone) ? p.islandZone : 'home',
       completed: Array.isArray(p.completed) ? [...new Set(p.completed.filter(v => /^(bridge|market|science|history|geography)-([1-6])$/.test(v)))] : [],
       sessions: Array.isArray(p.sessions) ? p.sessions.filter(s => (Object.hasOwn(ACTIVITIES,s?.type) || s?.type === 'quiz') && (s.type !== 'quiz' || Object.hasOwn(SUBJECTS,s.subject)) && GRADES.includes(s.grade) && Number.isInteger(s.independent) && s.independent >= 0 && s.independent <= (s.type === 'quiz' ? 5 : 3)).map(s => ({ ...s, rounds: s.type === 'quiz' ? 5 : 3 })).slice(-50) : [],

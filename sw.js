@@ -1,7 +1,7 @@
 // Only public Hero Islands assets belong in the offline cache.
-const CACHE_NAME = 'hero-islands-v13';
+const CACHE_NAME = 'hero-islands-v14';
 const ASSETS = [
-  './', './index.html', './hero/app.js', './hero/state.js', './hero/styles.css', './hero/wardrobe.css',
+  './', './index.html', './hero/app.js', './hero/club.js', './hero/club.css', './hero/arcade.js', './hero/arcade.css', './hero/state.js', './hero/styles.css', './hero/wardrobe.css',
   './hero/world.js', './hero/missions.js', './hero/missions.css', './hero/icon.svg',
   './hero/discovery.js', './hero/discovery.css', './hero/navigation.js', './hero/navigation.css', './hero/island-phase.css',
   './hero/learning.css', './hero/cloud.css', './hero/cloud.js', './hero/grade-banks.js', './hero/quiz.js', './hero/quiz.css', './hero/expansion.css',
