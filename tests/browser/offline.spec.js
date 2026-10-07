@@ -75,7 +75,7 @@ test('offline navigation tolerates query strings without caching callback URLs o
     await fetch('/package.json');
   });
   const urls = await page.evaluate(async () => {
-    const cache = await caches.open('hero-islands-v14');
+    const cache = await caches.open('hero-islands-v15');
     return (await cache.keys()).map(request => request.url);
   });
   expect(urls.some(url => url.includes('?') || url.endsWith('/package.json'))).toBe(false);
