@@ -3650,7 +3650,9 @@
         const idx = loadProfileIndex();
         const key = name.trim().toLowerCase();
         const bodyIds = idx[key] || [];
-        return bodyIds.map((bid) => loadProfile(bid)).filter(Boolean);
+        return bodyIds
+          .map((bid) => loadProfile(bid))
+          .filter((p) => p && (p.name || '').trim().toLowerCase() === key);
       }
       function indexSuggestNames(prefix) {
         const idx = loadProfileIndex();
@@ -3757,6 +3759,24 @@
           } catch (e) {}
         }
         return p;
+      }
+
+      // Check the raw slot: even an unreadable saved record must not be replaced.
+      function isBodyOccupied(bodyId) {
+        return localStorage.getItem(PROFILE_KEY(bodyId)) !== null;
+      }
+
+      function saveNewProfile(p) {
+        try {
+          // No await between this decisive occupancy check and the first write.
+          if (isBodyOccupied(p.body)) return false;
+          localStorage.setItem(PROFILE_KEY(p.body), JSON.stringify(p));
+          if (p.name) indexAddProfile(p.name, p.body);
+          return true;
+        } catch (e) {
+          console.warn('New profile save failed:', e);
+          return false;
+        }
       }
 
       function saveProfile(p) {
@@ -4182,7 +4202,47 @@
         // For pin-load: list of profile candidates matching the typed name
         candidates: [],
         candidateIndex: 0, // which candidate we're trying PIN against
+        profileAction: null, // null (named login), 'select', or 'reset'
+        pinBusy: false,
       };
+
+      // All ordinary existing-profile entrypoints share this PIN gate.
+      function profilePinMatches(p, pinHash) {
+        return !p.pinHash || p.pinHash === pinHash;
+      }
+
+      function requestProfileAccess(bodyId, action) {
+        const p = loadProfile(bodyId);
+        if (!p) return;
+        if (profilePinMatches(p)) {
+          completeProfileAccess(p, action);
+          return;
+        }
+        loginState.profileAction = action;
+        loginState.candidates = [p];
+        loginState.candidateIndex = 0;
+        goToLoadPin();
+        showScreen('login');
+      }
+
+      function completeProfileAccess(p, action) {
+        if (action === 'reset') {
+          showScreen('start');
+          showVerifiedResetConfirm(p);
+          return;
+        }
+        activateProfile(p);
+        Sound.correct();
+        showToast(`Selamat kembali, ${p.name}! 🎉`);
+        finishLogin(p);
+      }
+
+      function activateProfile(p) {
+        const bonus = checkDailyBonus(p);
+        saveProfile(p);
+        state.profile = p;
+        return bonus;
+      }
 
       // Generic PIN pad setup. Returns object with current PIN string.
       function setupPinPad(padId, dotsId, onComplete, delBtnId, errorId) {
@@ -4259,6 +4319,7 @@
         loginState.pendingBodyId = null;
         loginState.pin = '';
         loginState.candidates = [];
+        loginState.profileAction = null;
         el('login-name-input').value = '';
         showLoginStep('name');
         setTimeout(() => el('login-name-input').focus(), 50);
@@ -4277,7 +4338,10 @@
         if (existing.length > 0) {
           loginState.candidates = existing;
           loginState.candidateIndex = 0;
-          goToLoadPin();
+          loginState.profileAction = null;
+          const publicProfile = existing.find((p) => !p.pinHash);
+          if (publicProfile) completeProfileAccess(publicProfile, 'select');
+          else goToLoadPin();
         } else {
           goToChooseBody();
         }
@@ -4297,12 +4361,19 @@
           const btn = document.createElement('button');
           btn.className = 'body-btn';
           btn.dataset.body = b.id;
+          btn.disabled = isBodyOccupied(b.id);
+          if (btn.disabled) btn.title = 'Hero ini sudah ada profil. Pilih hero lain.';
           btn.innerHTML = `
       <div class="body-art">${renderAvatar(b.id, {})}</div>
       <span class="body-name">${b.name}</span>
       <span class="body-class" style="color:${b.color}">${b.icon} ${b.cls}</span>`;
           btn.addEventListener('click', () => {
             Sound.click();
+            if (isBodyOccupied(b.id)) {
+              showToast('Hero ini sudah ada profil. Pilih hero lain.');
+              goToChooseBody();
+              return;
+            }
             loginState.pendingBodyId = b.id;
             goToCreatePin();
           });
@@ -4330,42 +4401,61 @@
 
       // User picked PIN (4 digits) — dispatch based on mode
       async function onLoginPinComplete(pin) {
-        if (loginState.step === 'pin-create') {
+        if (loginState.pinBusy) return;
+        const step = loginState.step;
+        const bodyId = loginState.pendingBodyId;
+        const name = loginState.name;
+        const target = loginState.candidates[loginState.candidateIndex];
+        const action = loginState.profileAction;
+        loginState.pinBusy = true;
+        try {
           const pinHash = await hashPin(pin);
-          const bodyId = loginState.pendingBodyId;
-          const body = BODIES.find((b) => b.id === bodyId);
-          const p = createProfile(bodyId, { name: loginState.name, pinHash });
-          // First-day bonus for new player (don't auto-deduct from existing flow)
-          checkDailyBonus(p);
-          saveProfile(p);
-          state.profile = p;
-          Sound.correct();
-          showToast(`Selamat datang, ${p.name}! 🌟`);
-          // Wire end-screen too so the welcome card shows
-          finishLogin(p);
-        } else if (loginState.step === 'pin-load') {
-          const target = loginState.candidates[loginState.candidateIndex];
-          const pinHash = await hashPin(pin);
-          if (target.pinHash === pinHash) {
-            // Success — load profile
-            checkDailyBonus(target);
-            saveProfile(target);
-            state.profile = target;
+          // Ignore completions after Back or another login flow.
+          if (
+            loginState.step !== step ||
+            loginState.pendingBodyId !== bodyId ||
+            loginState.name !== name ||
+            loginState.profileAction !== action ||
+            loginState.candidates[loginState.candidateIndex] !== target
+          ) return;
+          if (step === 'pin-create') {
+            const p = createProfile(bodyId, { name, pinHash });
+            checkDailyBonus(p);
+            if (!saveNewProfile(p)) {
+              showToast('Hero tidak tersedia atau profil gagal disimpan. Pilih semula.');
+              loginState.pendingBodyId = null;
+              goToChooseBody();
+              return;
+            }
+            loginState.step = 'done';
+            state.profile = p;
             Sound.correct();
-            showToast(`Selamat kembali, ${target.name}! 🎉`);
-            finishLogin(target);
-          } else {
-            // Try next candidate (in case same name has multiple bodies)
-            loginState.candidateIndex++;
-            if (loginState.candidateIndex < loginState.candidates.length) {
+            showToast(`Selamat datang, ${p.name}! 🌟`);
+            finishLogin(p);
+          } else if (step === 'pin-load' && target) {
+            // Re-read before acting so a stale login candidate is not trusted.
+            const current = loadProfile(target.body);
+            if (
+              current &&
+              current.name === target.name &&
+              current.pinHash === target.pinHash &&
+              profilePinMatches(current, pinHash)
+            ) {
+              loginState.step = 'done';
+              loginState.profileAction = null;
+              completeProfileAccess(current, action || 'select');
+            } else {
+              // Keep retries usable, including the last/single candidate.
+              loginState.candidateIndex =
+                (loginState.candidateIndex + 1) % loginState.candidates.length;
               const next = loginState.candidates[loginState.candidateIndex];
               el('login-pin-mode').textContent =
                 `Taip 4 nombor rahsia kamu, ${next.name || next.bodyName}.`;
-              loginPad.shakeError('Cuba lagi untuk profil seterusnya…');
-            } else {
               loginPad.shakeError('Nombor salah. Cuba lagi.');
             }
           }
+        } finally {
+          loginState.pinBusy = false;
         }
       }
 
@@ -4407,8 +4497,12 @@
           loginState.step = 'name';
           setTimeout(() => el('login-name-input').focus(), 50);
         } else if (loginState.step === 'pin-load') {
-          showLoginStep('name');
+          const fromBody = loginState.profileAction;
+          loginState.profileAction = null;
+          loginState.candidates = [];
           loginState.step = 'name';
+          if (fromBody) showScreen('start');
+          else showLoginStep('name');
         } else {
           showScreen('start');
           renderBodies();
@@ -4747,7 +4841,9 @@
 
       // Track 3-tap reset per body: tap within 1.2s of previous tap
       const _bodyTapHistory = new Map();
+      let _bodySelectTimer = null;
       function onBodyTap(bodyId, btn) {
+        clearTimeout(_bodySelectTimer);
         Sound.click();
         const existing = loadProfile(bodyId);
         // Only allow 3-tap reset on bodies that already have a profile
@@ -4774,10 +4870,22 @@
             setTimeout(() => btn.classList.remove('reset-hint'), 1200);
           }
         }
-        selectBody(bodyId);
+        if (existing && existing.pinHash) {
+          // Let the triple-tap gesture finish before opening a single PIN prompt.
+          _bodySelectTimer = setTimeout(() => {
+            if (screens.start.classList.contains('active')) selectBody(bodyId);
+          }, 1200);
+        } else {
+          selectBody(bodyId);
+        }
       }
 
       function showResetConfirm(bodyId) {
+        requestProfileAccess(bodyId, 'reset');
+      }
+
+      function showVerifiedResetConfirm(verifiedProfile) {
+        const bodyId = verifiedProfile.body;
         const body = BODIES.find((b) => b.id === bodyId);
         const overlay = document.createElement('div');
         overlay.className = 'reset-overlay';
@@ -4798,6 +4906,15 @@
         });
         el('reset-confirm-btn').addEventListener('click', () => {
           overlay.remove();
+          const current = loadProfile(bodyId);
+          if (
+            !current ||
+            current.name !== verifiedProfile.name ||
+            current.pinHash !== verifiedProfile.pinHash
+          ) {
+            showToast('Profil berubah. Cuba semula.');
+            return;
+          }
           deleteProfile(bodyId);
           state.profile = null;
           document
@@ -4816,13 +4933,18 @@
       function selectBody(bodyId) {
         Sound.click();
         let p = loadProfile(bodyId);
+        if (p && p.pinHash) {
+          requestProfileAccess(bodyId, 'select');
+          return;
+        }
         if (!p) {
           p = createProfile(bodyId);
-          saveProfile(p);
+          if (!saveNewProfile(p)) {
+            showToast('Hero tidak tersedia atau profil gagal disimpan.');
+            return;
+          }
         }
-        state.profile = p;
-
-        const bonus = checkDailyBonus(p);
+        const bonus = activateProfile(p);
         if (bonus.isNewDay) {
           setTimeout(() => showDailyBonusBanner(bonus), 300);
         }

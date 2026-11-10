@@ -81,6 +81,8 @@ Supported fields per question:
 
 ## Privacy
 
-No accounts. No analytics. No tracking. No data leaves the device.
+Profiles, progress, and PIN fingerprints are stored locally in this browser; the app does not upload them to an account service. The page loads fonts from fixed Google Fonts endpoints (`fonts.googleapis.com` and `fonts.gstatic.com`), so loading it can contact Google rather than remaining entirely device-only.
+
+Telegram sharing is optional and user-triggered: the app downloads an avatar PNG locally and opens Telegram with a fixed caption. It does not put profile names, PINs, or saved profile records in the share URL or automatically upload the PNG. Attaching and sending the downloaded image in Telegram is a separate manual action.
 
 Built with ❤️ for Cikgu Adeen & anak-anak.
